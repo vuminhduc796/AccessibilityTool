@@ -1,0 +1,4 @@
+androidx.work.impl.background.systemalarm.SystemAlarmService
+androidx.work.impl.background.systemjob.SystemJobService
+androidx.work.impl.foreground.SystemForegroundService
+androidx.room.MultiInstanceInvalidationService

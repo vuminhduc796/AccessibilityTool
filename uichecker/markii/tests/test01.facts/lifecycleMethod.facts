@@ -1,0 +1,6 @@
+com.example.test01.MainActivity	onCreate	&lt;com.example.test01.MainActivity: void onCreate(android.os.Bundle)&gt;
+com.example.test01.MainActivity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;
+com.example.test01.Main3Activity	onCreate	&lt;com.example.test01.Main3Activity: void onCreate(android.os.Bundle)&gt;
+com.example.test01.Main3Activity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;
+com.example.test01.Main2Activity	onCreate	&lt;com.example.test01.Main2Activity: void onCreate(android.os.Bundle)&gt;
+com.example.test01.Main2Activity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;

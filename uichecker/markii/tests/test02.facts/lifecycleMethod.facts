@@ -1,0 +1,4 @@
+com.example.my_first_app.MainActivity	onCreate	&lt;com.example.my_first_app.MainActivity: void onCreate(android.os.Bundle)&gt;
+com.example.my_first_app.MainActivity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;
+com.example.my_first_app.DisplayMessageActivity	onCreate	&lt;com.example.my_first_app.DisplayMessageActivity: void onCreate(android.os.Bundle)&gt;
+com.example.my_first_app.DisplayMessageActivity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;

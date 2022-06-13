@@ -1,0 +1,4 @@
+&lt;com.example.validrec.MainActivity: void startRec(android.view.View)&gt;	click	&lt;com.example.validrec.Recorder: void startRecording(java.io.File)&gt;	com.example.validrec.MainActivity.__app.recorder.audioRecorder	STARTED	STARTED
+&lt;com.example.validrec.MainActivity: void startRec(android.view.View)&gt;	click	&lt;com.example.validrec.Recorder: void startRecording(java.io.File)&gt;	com.example.validrec.MainActivity.__app.recorder.audioRecorder	STOPPED	STARTED
+&lt;com.example.validrec.MainActivity: void stopRec(android.view.View)&gt;	click	&lt;com.example.validrec.Recorder: void stopRecording()&gt;	com.example.validrec.MainActivity.__app.recorder.audioRecorder	STOPPED	STOPPED
+&lt;com.example.validrec.MainActivity: void stopRec(android.view.View)&gt;	click	&lt;com.example.validrec.Recorder: void stopRecording()&gt;	com.example.validrec.MainActivity.__app.recorder.audioRecorder	STARTED	STOPPED

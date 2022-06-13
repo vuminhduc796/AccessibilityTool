@@ -1,0 +1,1 @@
+This is a simple android app that I (LuxiWang99) wrote from scratch to test that markii handles the xml linked onClick correctly.

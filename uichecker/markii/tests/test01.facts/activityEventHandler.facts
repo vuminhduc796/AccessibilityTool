@@ -1,0 +1,2 @@
+itemSelected	&lt;com.example.test01.MainActivity: boolean onOptionsItemSelected(android.view.MenuItem)&gt;	com.example.test01.MainActivity
+backPressed	&lt;com.example.test01.Main2Activity: void onBackPressed()&gt;	com.example.test01.Main2Activity

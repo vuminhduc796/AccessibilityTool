@@ -1,0 +1,23 @@
+#### State transition rules for MediaRecorder API ####
+
+# Class of tracked object
+baseClassName: "android.media.MediaRecorder"
+
+# Enumerations of possible abstract states
+states: ["STOPPED", "STARTED"]
+
+# Initial state when the object is constructed
+initialState: "STOPPED"
+
+# State transition rules as a map
+# - key represents the method of which the invocation is tracked
+# - value represents the target state of transition.
+#
+# For example, "<android.media.MediaRecorder: void start()>": "STARTED" means that, if the abstract state of
+# MediaRecorder object "x" is STARTED or STOPPED, then after the statement "x.start();", its abstract state
+# will become STARTED.
+# 
+# Note that there is no constraint over the source state, thus left unspecified.
+transferMap:
+  "<android.media.MediaRecorder: void start()>": "STARTED"
+  "<android.media.MediaRecorder: void stop()>": "STOPPED"

@@ -1,0 +1,2 @@
+com.example.validrec.MainActivity	onCreate	&lt;com.example.validrec.MainActivity: void onCreate(android.os.Bundle)&gt;
+com.example.validrec.MainActivity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;

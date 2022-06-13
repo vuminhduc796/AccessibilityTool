@@ -1,0 +1,41 @@
+pre_analysis_time_seconds: 4
+soot_get_classes_size: 4317
+soot_get_application_classes_size: 29
+soot_get_application_classes:
+    - com.example.test01.R$mipmap
+    - com.example.test01.Main3Activity
+    - com.example.test01.R$interpolator
+    - com.example.test01.R$anim
+    - com.example.test01.R$plurals
+    - com.example.test01.BuildConfig
+    - com.example.test01.R$animator
+    - com.example.test01.R$style
+    - com.example.test01.R$dimen
+    - com.example.test01.R$color
+    - com.example.test01.Main2Activity
+    - com.example.test01.R$drawable
+    - com.example.test01.R
+    - com.example.test01.Main2Activity$1
+    - com.example.test01.Main2Activity$2
+    - com.example.test01.R$bool
+    - com.example.test01.R$string
+    - com.example.test01.R$attr
+    - com.example.test01.R$xml
+    - com.example.test01.R$styleable
+    - com.example.test01.R$integer
+    - com.example.test01.MainActivity$1
+    - com.example.test01.MainActivity$1$1
+    - com.example.test01.MainActivity$1$2
+    - com.example.test01.R$id
+    - com.example.test01.R$menu
+    - com.example.test01.MainActivity
+    - com.example.test01.Main3Activity$Obj
+    - com.example.test01.R$layout
+hier_application_activity_classes_size: 3
+hier_application_activity_classes:
+    - com.example.test01.MainActivity
+    - com.example.test01.Main2Activity
+    - com.example.test01.Main3Activity
+ifds_entrypoints_size: 0
+ifds_entrypoints:
+

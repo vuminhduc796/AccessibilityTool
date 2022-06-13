@@ -1,0 +1,47 @@
+pre_analysis_time_seconds: 3
+soot_get_classes_size: 3330
+soot_get_application_classes_size: 24
+soot_get_application_classes:
+    - com.example.my_first_app.R$string
+    - com.example.my_first_app.R$layout
+    - com.example.my_first_app.R$color
+    - com.example.my_first_app.FireMissilesDialogFragment2
+    - com.example.my_first_app.R$dimen
+    - com.example.my_first_app.R$attr
+    - com.example.my_first_app.R$anim
+    - com.example.my_first_app.R$mipmap
+    - com.example.my_first_app.R$bool
+    - com.example.my_first_app.BuildConfig
+    - com.example.my_first_app.FireMissilesDialogFragment
+    - com.example.my_first_app.FireMissilesDialogFragment$2
+    - com.example.my_first_app.FireMissilesDialogFragment$1
+    - com.example.my_first_app.DisplayMessageActivity
+    - com.example.my_first_app.FireMissilesDialogFragment2$2
+    - com.example.my_first_app.FireMissilesDialogFragment2$1
+    - com.example.my_first_app.R$style
+    - com.example.my_first_app.R$id
+    - com.example.my_first_app.R$drawable
+    - com.example.my_first_app.R
+    - com.example.my_first_app.R$interpolator
+    - com.example.my_first_app.R$integer
+    - com.example.my_first_app.MainActivity
+    - com.example.my_first_app.R$styleable
+hier_application_activity_classes_size: 2
+hier_application_activity_classes:
+    - com.example.my_first_app.MainActivity
+    - com.example.my_first_app.DisplayMessageActivity
+ifds_entrypoints_before_filtering_size: 5
+ifds_entrypoints_before_filtering:
+    - <java.lang.ThreadGroup: void uncaughtException(java.lang.Thread,java.lang.Throwable)>
+    - <java.lang.ClassLoader: void <init>()>
+    - <java.security.PrivilegedActionException: void <init>(java.lang.Exception)>
+    - <java.lang.Thread: void <init>(java.lang.ThreadGroup,java.lang.Runnable)>
+    - <java.lang.Thread: void <init>(java.lang.ThreadGroup,java.lang.String)>
+entrypoints_full_size: 2
+entrypoints_full:
+    - <com.example.my_first_app.MainActivity: void run_markii_generated()>
+    - <com.example.my_first_app.DisplayMessageActivity: void run_markii_generated()>
+ifds_entrypoints_size: 2
+ifds_entrypoints:
+    - <com.example.my_first_app.MainActivity: void run_markii_generated()>
+    - <com.example.my_first_app.DisplayMessageActivity: void run_markii_generated()>

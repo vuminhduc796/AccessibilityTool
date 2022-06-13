@@ -1,0 +1,34 @@
+====== Method <com.example.test01.Main3Activity: void onCreate(android.os.Bundle)> =======
+    protected void onCreate(android.os.Bundle)
+    {
+        com.example.test01.Main3Activity $r0;
+        android.os.Bundle $r1;
+        com.example.test01.Main3Activity$Obj $r2;
+
+        $r0 := @this: com.example.test01.Main3Activity;
+
+        $r1 := @parameter0: android.os.Bundle;
+
+        specialinvoke $r0.<androidx.appcompat.app.AppCompatActivity: void onCreate(android.os.Bundle)>($r1);
+
+        $r2 = new com.example.test01.Main3Activity$Obj;
+
+        specialinvoke $r2.<com.example.test01.Main3Activity$Obj: void <init>()>();
+
+        staticinvoke <com.example.test01.Main3Activity: void updateObj(com.example.test01.Main3Activity$Obj)>($r2);
+
+        return;
+    }
+
+	Unit: specialinvoke $r2.<com.example.test01.Main3Activity$Obj: void <init>()>()
+Domain: 
+(Map(localMap -> 1, globalMap -> 0, paramMap -> 0, aliases -> 1),Map(localMap -> Map($r2 -> List((field,Interval(0,1)))), globalMap -> Map(), aliases -> Map($r1 -> @parameter0: android.os.Bundle)))
+
+	Unit: staticinvoke <com.example.test01.Main3Activity: void updateObj(com.example.test01.Main3Activity$Obj)>($r2)
+Domain: 
+(Map(localMap -> 1, globalMap -> 0, paramMap -> 0, aliases -> 1),Map(localMap -> Map($r2 -> List((field,Interval(1,2)))), globalMap -> Map(), aliases -> Map($r1 -> @parameter0: android.os.Bundle)))
+
+	Unit: return
+Domain: 
+(Map(localMap -> 1, globalMap -> 0, paramMap -> 0, aliases -> 1),Map(localMap -> Map($r2 -> List((field,Interval(1,2)))), globalMap -> Map(), aliases -> Map($r1 -> @parameter0: android.os.Bundle)))
+

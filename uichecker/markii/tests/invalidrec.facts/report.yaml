@@ -1,0 +1,30 @@
+pre_analysis_time_seconds: 3
+soot_get_classes_size: 3787
+soot_get_application_classes_size: 20
+soot_get_application_classes:
+    - com.example.invalidrec.R$anim
+    - com.example.invalidrec.SneakyRecWorker
+    - com.example.invalidrec.BuildConfig
+    - com.example.invalidrec.Recorder
+    - com.example.invalidrec.R$id
+    - com.example.invalidrec.R$dimen
+    - com.example.invalidrec.R$color
+    - com.example.invalidrec.R$attr
+    - com.example.invalidrec.R$bool
+    - com.example.invalidrec.R$style
+    - com.example.invalidrec.R$mipmap
+    - com.example.invalidrec.R$string
+    - com.example.invalidrec.R$layout
+    - com.example.invalidrec.MainActivity
+    - com.example.invalidrec.R$integer
+    - com.example.invalidrec.R
+    - com.example.invalidrec.R$interpolator
+    - com.example.invalidrec.R$styleable
+    - com.example.invalidrec.R$drawable
+    - com.example.invalidrec.MyApplication
+hier_application_activity_classes_size: 1
+hier_application_activity_classes:
+    - com.example.invalidrec.MainActivity
+ifds_entrypoints_size: 0
+ifds_entrypoints:
+

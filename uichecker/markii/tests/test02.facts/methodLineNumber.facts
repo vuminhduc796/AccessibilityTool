@@ -1,0 +1,7 @@
+&lt;com.example.my_first_app.MainActivity: void sendMessage(android.view.View)&gt;	/var/folders/9k/qn4lpw1s63nc_brv567pwtl00000gn/T/gator-aqon35n2/res//layout/activity_main.xml	23	com.example.my_first_app.MainActivity	-573694694
+&lt;com.example.my_first_app.FireMissilesDialogFragment$2: void onClick(android.content.DialogInterface,int)&gt;	method linked in java	26	com.example.my_first_app.FireMissilesDialogFragment$2	1913029071
+&lt;com.example.my_first_app.FireMissilesDialogFragment2$1: void onClick(android.content.DialogInterface,int)&gt;	method linked in java	27	com.example.my_first_app.FireMissilesDialogFragment2$1	243912676
+&lt;com.example.my_first_app.FireMissilesDialogFragment$1: void onClick(android.content.DialogInterface,int)&gt;	method linked in java	19	com.example.my_first_app.FireMissilesDialogFragment$1	1913029067
+&lt;com.example.my_first_app.MainActivity: void fire2(android.view.View)&gt;	/var/folders/9k/qn4lpw1s63nc_brv567pwtl00000gn/T/gator-aqon35n2/res//layout/activity_main.xml	37	com.example.my_first_app.MainActivity	-573694676
+&lt;com.example.my_first_app.FireMissilesDialogFragment2$2: void onClick(android.content.DialogInterface,int)&gt;	method linked in java	20	com.example.my_first_app.FireMissilesDialogFragment2$2	243912672
+&lt;com.example.my_first_app.MainActivity: void fire(android.view.View)&gt;	/var/folders/9k/qn4lpw1s63nc_brv567pwtl00000gn/T/gator-aqon35n2/res//layout/activity_main.xml	32	com.example.my_first_app.MainActivity	-573694701

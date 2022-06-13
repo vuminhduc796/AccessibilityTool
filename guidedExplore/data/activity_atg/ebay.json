@@ -1,0 +1,1348 @@
+{
+    "com/ebay/mobile/settings/notifications/NotificationPreferencesNavigationTarget": [
+        "com.ebay.mobile.settings.notifications.NotificationSubscriptionPreferencesUpdateActivity"
+    ],
+    "com/ebay/mobile/settings/notifications/NotificationSubscriptionsPreferencesViewModel": [
+        "com.ebay.mobile.settings.SettingsActivity"
+    ],
+    "com/ebay/mobile/settings/notifications/NotificationPreferencesFragment": [
+        "com.ebay.mobile.settings.notifications.OcsNotificationsActivity"
+    ],
+    "com/ebay/mobile/settings/notifications/AppSettingsLinkProcessor": [
+        "com.ebay.mobile.settings.SettingsActivity",
+        "com.ebay.mobile.settings.notifications.NotificationSubscriptionPreferencesUpdateActivity"
+    ],
+    "com/ebay/mobile/settings/developeroptions/DeveloperPreferenceFragment": [
+        "com.ebay.mobile.sell.lists.SellingListActivity"
+    ],
+    "com/ebay/mobile/settings/developeroptions/dcs/DcsValuesFragment": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/settings/developeroptions/dcs/DcsRootPreferenceFragment": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/settings/developeroptions/dcs/DcsOverridePreferenceFragment": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/shippinglabels/ui/ShippingLabelsIntentProviderImpl": [
+        "com.ebay.mobile.shippinglabels.ui.ShippingLabelsActivity"
+    ],
+    "com/ebay/mobile/shipmenttracking/addedit/AddEditShipmentTrackingIntentBuilderImpl": [
+        "com.ebay.mobile.shipmenttracking.addedit.view.AddEditShipmentTrackingActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/CampusMainActivityIntentModule": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/CampusWebViewActivityIntentModule": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/onboarding/CampusOnboardingActivityIntentBuilder": [
+        "com.ebay.mobile.ebayoncampus.onboarding.CampusOnboardingActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/chat/CampusChatActivityIntentBuilder": [
+        "com.ebay.mobile.ebayoncampus.chat.CampusChatActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/home/CampusHomeActivityIntentBuilder": [
+        "com.ebay.mobile.ebayoncampus.home.CampusHomeActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/mycampus/CampusMyCampusActivityIntentBuilder": [
+        "com.ebay.mobile.ebayoncampus.mycampus.CampusMyCampusActivity"
+    ],
+    "com/google/android/exoplayer2/ui/DefaultTimeBar": [
+        "\"android.widget.SeekBar\""
+    ],
+    "com/google/android/gms/internal/vision/zzs": [
+        "\"com.google.android.gms\"",
+        "\"com.google.android.gms.vision.DependencyBroadcastReceiverProxy\""
+    ],
+    "com/google/android/gms/internal/ads/zzakk": [
+        "\"com.google.android.gms.ads.AdActivity\""
+    ],
+    "com/google/android/gms/ads/internal/overlay/zzl": [
+        "\"com.google.android.gms.ads.AdActivity\""
+    ],
+    "com/google/android/gms/common/api/GoogleApiActivity": [
+        "com.google.android.gms.common.api.GoogleApiActivity"
+    ],
+    "com/google/android/gms/auth/api/signin/internal/zzh": [
+        "com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+    ],
+    "com/facebook/CustomTabActivity": [
+        "com.facebook.CustomTabActivity",
+        "com.facebook.CustomTabMainActivity"
+    ],
+    "com/facebook/CustomTabMainActivity": [
+        "com.facebook.CustomTabMainActivity"
+    ],
+    "com/facebook/FacebookActivity": [
+        "com.facebook.FacebookActivity"
+    ],
+    "com/facebook/internal/DialogPresenter": [
+        "com.facebook.FacebookActivity",
+        "com.facebook.CustomTabMainActivity"
+    ],
+    "com/facebook/internal/NativeProtocol": [
+        "\"com.facebook.katana.platform.TokenRefreshService\""
+    ],
+    "com/facebook/login/CustomTabLoginMethodHandler": [
+        "com.facebook.CustomTabMainActivity"
+    ],
+    "com/facebook/login/LoginManager": [
+        "com.facebook.FacebookActivity"
+    ],
+    "com/facebook/referrals/ReferralClient": [
+        "com.facebook.CustomTabMainActivity"
+    ],
+    "com/facebook/referrals/ReferralManager": [
+        "com.facebook.FacebookActivity"
+    ],
+    "com/google/android/material/card/MaterialCardView": [
+        "\"androidx.cardview.widget.CardView\""
+    ],
+    "com/google/android/material/chip/Chip": [
+        "\"android.view.View\"",
+        "\"android.widget.CompoundButton\"",
+        "\"android.widget.Button\""
+    ],
+    "com/ebay/mobile/shoppingchannel/actions/ShoppingChannelWebViewIntentTarget": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/shopping/channel/browse/ShoppingChannelIntentBuilderImpl": [
+        "com.ebay.mobile.shopping.channel.browse.EnthusiastBrowseTimelineActivity",
+        "com.ebay.mobile.shopping.channel.browse.EnthusiastBrowseEntityActivity"
+    ],
+    "com/ebay/mobile/verticals/BindableContentActivity": [
+        "com.ebay.mobile.verticals.BindableContentActivity"
+    ],
+    "com/ebay/mobile/verticals/StaticContentModalActivity": [
+        "com.ebay.mobile.verticals.StaticContentModalActivity"
+    ],
+    "com/ebay/mobile/shoppingcart/ShoppingCartFactoryImpl": [
+        "com.ebay.mobile.shoppingcart.ShoppingCartActivity"
+    ],
+    "com/ebay/mobile/shoppingcart/ShoppingCartActivity": [
+        "com.ebay.mobile.payments.checkout.xoneor.ChangeCartItemQuantityActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/stores/storesearchlanding/dagger/StoreSearchLandingFactoryQualifierModule": [
+        "com.ebay.mobile.stores.storesearchlanding.presentation.StoreSearchLandingActivity"
+    ],
+    "com/ebay/mobile/stores/storefront/dagger/StorePolicyFactoryQualifierModule": [
+        "com.ebay.mobile.stores.storefront.presentation.StorePolicyActivity"
+    ],
+    "com/ebay/mobile/stores/storefront/dagger/StoreCategoryFactoryQualifierModule": [
+        "com.ebay.mobile.stores.storefront.presentation.StoreCategoryActivity"
+    ],
+    "com/ebay/mobile/stores/storefront/dagger/StoreFactoryQualifierModule": [
+        "com.ebay.mobile.stores.storefront.fallback.StoreFallbackActivity",
+        "com.ebay.mobile.stores.storefront.presentation.StoreActivity"
+    ],
+    "com/ebay/mobile/messages/MessagesIntentBuilder": [
+        "com.ebay.mobile.messages.material.MaterialMessagesActivity"
+    ],
+    "com/ebay/mobile/messages/ComposeNewMessageFragment": [
+        "com.ebay.mobile.photomanager.v2.PhotoManagerActivity2"
+    ],
+    "com/ebay/mobile/messages/material/MessageFragment": [
+        "com.ebay.mobile.activities.UserDetailActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/myebay/purchasehistory/PurchaseHistoryIntentV2IntentBuilderImpl": [
+        "com.ebay.mobile.myebay.purchasehistory.view.PurchaseHistoryActivity"
+    ],
+    "com/ebay/mobile/myebay/nav/MyEbayIntentBuilder": [
+        "com.ebay.mobile.myebay.experience.WatchListExperienceActivity"
+    ],
+    "com/ebay/mobile/myebay/experience/WatchListExperienceActivity": [
+        "com.ebay.mobile.myebay.experience.WatchListExperienceActivity"
+    ],
+    "com/ebay/mobile/myebay/experience/MyEbayDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/myebay/experience/PurchaseHistoryActivityIntentBuilder": [
+        "com.ebay.mobile.myebay.experience.PurchasesExperienceActivity"
+    ],
+    "com/ebay/mobile/myebay/v1/MyEbayLandingActivity": [
+        "com.ebay.mobile.myebay.auction.BidsOffersActivity",
+        "com.ebay.mobile.myebay.experience.BidsOffersExperienceActivity"
+    ],
+    "com/ebay/mobile/mktgtech/optin/BaseOptInDialogFragment": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/mktgtech/diagnostics/NotificationDiagnosticsHelpIntentBuilderImpl": [
+        "com.ebay.mobile.settings.notifications.OcsNotificationsActivity"
+    ],
+    "com/ebay/mobile/ads/gdpr/GdprWebViewIntentBuilder": [
+        "com.ebay.mobile.ads.gdpr.GdprWebViewActivity"
+    ],
+    "com/ebay/mobile/ads/adchoice/AdChoiceWebViewIntentBuilder": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/addon/AddOnUtil": [
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemChooseAddonActivity",
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemInstallationActivity"
+    ],
+    "com/ebay/mobile/activities/ComposeNewMessageActivity": [
+        "com.ebay.mobile.activities.ComposeNewMessageActivity"
+    ],
+    "com/ebay/mobile/activities/QuickSearchHandler": [
+        "com.ebay.mobile.activities.QuickSearchHandler"
+    ],
+    "com/ebay/mobile/activities/ViewFeedbackActivity": [
+        "com.ebay.mobile.activities.ViewFeedbackActivity"
+    ],
+    "com/ebay/mobile/activities/SharedImageActivity": [
+        "com.ebay.mobile.activities.SharedImageActivity"
+    ],
+    "com/ebay/mobile/activities/ErrorDialogActivity": [
+        "com.ebay.mobile.activities.ErrorDialogActivity"
+    ],
+    "com/ebay/mobile/activities/ReturnParamsWebViewActivity": [
+        "com.ebay.mobile.activities.ReturnParamsWebViewActivity"
+    ],
+    "com/ebay/mobile/activities/-": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/activities/RegistrationWebViewActivity": [
+        "com.ebay.mobile.activities.RegistrationWebViewActivity"
+    ],
+    "com/ebay/mobile/activities/SellingActivity": [
+        "com.ebay.mobile.sell.lists.SellingListActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/activities/WebViewLinkProcessor": [
+        "com.ebay.mobile.activities.HybridWebLandingActivity"
+    ],
+    "com/ebay/mobile/activities/MainActivity": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/activities/ShowFileWebViewActivity": [
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.activities.ShowFileWebViewActivity"
+    ],
+    "com/ebay/mobile/activities/SellingActivityIntentBuilder": [
+        "com.ebay.mobile.activities.SellingActivity"
+    ],
+    "com/ebay/mobile/activities/ShowWebViewActivity": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/activities/UserDetailActivity": [
+        "com.ebay.mobile.activities.UserDetailActivity",
+        "com.ebay.mobile.charity.CharityHubActivity"
+    ],
+    "com/ebay/mobile/seller/refund/landing/view/RefundDetailsActivity": [
+        "com.ebay.mobile.seller.refund.landing.view.RefundDetailsActivity"
+    ],
+    "com/ebay/mobile/selling/active/promotedreport/PromotedReportBuilder": [
+        "com.ebay.mobile.selling.active.promotedreport.PromotedReportActivity"
+    ],
+    "com/ebay/mobile/selling/scheduled/navigation/ScheduledListNavigationTarget": [
+        "com.ebay.mobile.selling.scheduled.ScheduledListActivity"
+    ],
+    "com/ebay/mobile/sellinflowhelp/SellInflowHelpFragment": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/sellinflowhelp/SellInflowHelpIntentBuilder": [
+        "com.ebay.mobile.sellinflowhelp.SellInflowHelpActivity"
+    ],
+    "com/ebay/mobile/sellerlandingexperience/SellLandingFragment": [
+        "com.ebay.mobile.sellinsights.SellInsightsActivity",
+        "com.ebay.mobile.wallet.page.ui.WalletActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.sell.lists.SellingListActivity"
+    ],
+    "com/ebay/mobile/wallet/page/navigation/WalletNavigationTarget": [
+        "com.ebay.mobile.wallet.page.ui.WalletActivity"
+    ],
+    "com/ebay/mobile/viewitem/mediagallery/dagger/ShowMediaGalleryModule": [
+        "com.ebay.mobile.viewitem.mediagallery.ui.ViewItemPhotoGalleryActivity"
+    ],
+    "com/ebay/mobile/viewitem/util/ViewItemIntentBuilder": [
+        "com.ebay.mobile.viewitem.ViewItemActivity",
+        "com.ebay.mobile.viewitem.PreviewItemActivity"
+    ],
+    "com/ebay/mobile/viewitem/multisku/ui/ChooseVariationActivity": [
+        "com.ebay.mobile.viewitem.multisku.ui.ChooseVariationActivity"
+    ],
+    "com/ebay/mobile/widgetdelivery/fullmodal/WidgetFullModalActivity": [
+        "com.ebay.mobile.loyalty.ebayplus.ui.PlusActivity",
+        "com.ebay.mobile.widgetdelivery.fullmodal.WidgetFullModalActivity"
+    ],
+    "com/google/mlkit/common/sdkinternal/OptionalModuleUtils": [
+        "\"com.google.android.gms\"",
+        "\"com.google.android.gms.vision.DependencyBroadcastReceiverProxy\""
+    ],
+    "com/ebay/mobile/identity/user/settings/profile/ProfileSettingsActivity": [
+        "com.ebay.mobile.identity.user.settings.profile.ProfileSettingsActivity"
+    ],
+    "com/ebay/mobile/identity/user/verification/IdentityRiskRemedyNavigationTarget": [
+        "com.ebay.mobile.identity.user.verification.VerificationActivity"
+    ],
+    "com/ebay/mobile/identity/user/verification/VerificationActivity": [
+        "com.ebay.mobile.identity.user.verification.VerificationActivity"
+    ],
+    "com/ebay/mobile/identity/user/auth/pushtwofactor/DenyApproveActivity": [
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity"
+    ],
+    "com/ebay/mobile/identity/user/auth/pushfirstfactor/settings/PushFirstFactorSettingsActivity": [
+        "com.ebay.mobile.identity.user.auth.pushfirstfactor.settings.PushFirstFactorSettingsActivity"
+    ],
+    "com/ebay/mobile/identity/user/auth/pushfirstfactor/notifications/PushFirstFactorDenyApproveActivity": [
+        "com.ebay.mobile.identity.user.auth.pushfirstfactor.notifications.PushFirstFactorDenyApproveActivity"
+    ],
+    "com/ebay/mobile/identity/user/signin/SignInActivity": [
+        "com.ebay.mobile.identity.user.signin.SignInActivity"
+    ],
+    "com/ebay/mobile/intents/IntentsHubTabbedActivity": [
+        "com.ebay.mobile.intents.IntentsHubTabbedActivity"
+    ],
+    "com/ebay/mobile/inventory/StorePickerActivity": [
+        "com.ebay.mobile.inventory.StorePickerActivity"
+    ],
+    "com/ebay/mobile/transaction/committobuy/dagger/ShowCommitToBuyFlowModule": [
+        "com.ebay.mobile.transaction.committobuy.ui.CommitToBuyActivity"
+    ],
+    "com/ebay/mobile/universallink/lpo/LandingPageActivity": [
+        "com.ebay.mobile.universallink.lpo.LandingPageActivity"
+    ],
+    "com/ebay/mobile/universallink/lpo/LandingPageOptimizationLinkProcessor": [
+        "com.ebay.mobile.universallink.lpo.LandingPageActivity"
+    ],
+    "com/ebay/mobile/universallink/impl/ui/LinkBuilderImpl": [
+        "com.ebay.mobile.universallink.impl.ui.LinkHandlerActivity"
+    ],
+    "com/ebay/mobile/uxcomponents/actions/WebViewIntentTargetImpl": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/uxcomponents/actions/NavigationActionIntents": [
+        "com.ebay.mobile.activities.UserDetailActivity",
+        "com.ebay.mobile.events.EventItemsActivity",
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity",
+        "com.ebay.mobile.user.symban.SymbanActivity"
+    ],
+    "com/ebay/mobile/uxcomponents/actions/target/MyEbaySellingNavigationTarget": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.sell.lists.SellingListActivity"
+    ],
+    "com/ebay/mobile/trust/aftersales/AfterSalesWebViewActivity": [
+        "com.ebay.mobile.aftersalescancel.ui.view.CancelActivity",
+        "com.ebay.mobile.aftersales.itemnotreceived.view.InrActivity"
+    ],
+    "com/ebay/mobile/trust/aftersales/AfterSalesWebViewIntentBuilder": [
+        "com.ebay.mobile.trust.aftersales.AfterSalesWebViewActivity"
+    ],
+    "com/ebay/mobile/user/symban/SymbanActivity": [
+        "com.ebay.mobile.user.symban.SymbanActivity"
+    ],
+    "com/ebay/mobile/user/symban/SymbanIntentBuilder": [
+        "com.ebay.mobile.symban.hub.v2.ui.SymbanActivityV2",
+        "com.ebay.mobile.user.symban.SymbanActivity"
+    ],
+    "com/google/android/gms/measurement/internal/zzff": [
+        "\"com.google.android.gms.measurement.AppMeasurementService\""
+    ],
+    "com/google/android/gms/measurement/internal/zzjk": [
+        "\"com.google.android.gms.measurement.AppMeasurementService\""
+    ],
+    "com/google/android/gms/measurement/internal/zzkc": [
+        "\"com.google.android.gms.measurement.AppMeasurementReceiver\""
+    ],
+    "com/ebay/mobile/payments/PaymentsDeepLinkFallbackModule": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/CheckoutActivity": [
+        "com.ebay.mobile.payments.checkout.CheckoutActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/CheckoutActionHandler": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/PayPalIntentBuilder": [
+        "com.ebay.mobile.payments.checkout.xoneor.PayPalIdentityActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/CheckoutIntentBuilder": [
+        "com.ebay.mobile.payments.checkout.CheckoutActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/storepicker/PudoSelectLogisticsActivity": [
+        "com.ebay.mobile.payments.checkout.storepicker.StorePickerActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/storepicker/StorePickerActivity": [
+        "com.ebay.mobile.payments.checkout.storepicker.LogisticsAccountNumberActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/instantcheckout/model/IncentiveInputViewModel": [
+        "com.ebay.mobile.camera.giftcard.GiftCardScannerActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/instantcheckout/model/UserAgreementViewModel": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/xoneor/ToolTipActivity": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/xoneor/IncentivesActivity": [
+        "com.ebay.mobile.camera.giftcard.GiftCardScannerActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/xoneor/SupportingDocumentActivity": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/xoneor/DonationActivity": [
+        "com.ebay.mobile.payments.checkout.xoneor.DonationCharityInfoActivity"
+    ],
+    "com/ebay/mobile/payments/checkout/prox/ProxHelper": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/experience/BasePaymentsRecyclerFragment": [
+        "com.ebay.mobile.cardscanner.impl.CreditCardScannerActivity"
+    ],
+    "com/ebay/mobile/payments/cobranded/CobrandedWebViewActivity": [
+        "com.ebay.mobile.payments.cobranded.CobrandedWebViewActivity"
+    ],
+    "com/ebay/mobile/payments/cobranded/CobrandedMakeDefaultFragment": [
+        "com.ebay.mobile.wallet.page.ui.WalletActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/payments/cobranded/CobrandedRewardsNavigationTarget": [
+        "com.ebay.mobile.payments.cobranded.CobrandedMembershipPortalActivity"
+    ],
+    "com/ebay/mobile/paymentinstruments/impl/navigation/InstrumentsOperationTarget": [
+        "com.ebay.mobile.paymentinstruments.impl.InstrumentsActivity"
+    ],
+    "com/ebay/mobile/paymentinstruments/impl/navigation/InstrumentSelectionNavigationTarget": [
+        "com.ebay.mobile.paymentinstruments.impl.InstrumentsActivity"
+    ],
+    "com/ebay/mobile/digitalcollections/impl/DigitalCollectionsNavigationTarget": [
+        "com.ebay.mobile.digitalcollections.impl.view.AddCollectibleActivity"
+    ],
+    "com/ebay/mobile/digitalcollections/impl/DigitalCollectionsFactoryImpl": [
+        "com.ebay.mobile.digitalcollections.impl.view.AddCollectibleActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.search.SearchFiltersActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.search.SuggestionsActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.DigitalCollectionsActivity"
+    ],
+    "com/ebay/mobile/listingform/ListingFormActivity": [
+        "com.ebay.mobile.listingform.ListingFormActivity"
+    ],
+    "com/ebay/mobile/listingform/PreListingFormIntentBuilder": [
+        "com.ebay.mobile.listing.prelist.PrelistActivity",
+        "com.ebay.mobile.prelist.PrelistFragmentActivity"
+    ],
+    "com/ebay/mobile/listingform/ListingFormIntentBuilder": [
+        "com.ebay.mobile.listingform.ListingNotSupportedActivity",
+        "com.ebay.mobile.listingform.ListingFormRoutingActivity"
+    ],
+    "com/ebay/mobile/listingform/ListingFormRoutingActivity": [
+        "com.ebay.mobile.listingform.ListingFormActivity"
+    ],
+    "com/ebay/mobile/listingform/ListingLinkProcessor": [
+        "com.ebay.mobile.activities.SellingActivity"
+    ],
+    "com/ebay/mobile/listingform/helper/CategorySelectorLauncher": [
+        "com.ebay.mobile.sell.CategoryPickerActivity"
+    ],
+    "com/ebay/mobile/listingform/fragment/SummaryFragment": [
+        "com.ebay.mobile.charity.CharityHubActivity"
+    ],
+    "com/ebay/mobile/listing/rtbay/RtbayListingService": [
+        "com.ebay.mobile.listing.rtbay.RtbayListingLinkActivity"
+    ],
+    "com/ebay/mobile/listing/rtbay/RtbayListingActivity": [
+        "com.ebay.mobile.listing.rtbay.RtbayListingActivity"
+    ],
+    "com/ebay/mobile/listing/rtbay/helper/RtbayListingIntentBuilderImpl": [
+        "com.ebay.mobile.listing.rtbay.RtbayListingActivity"
+    ],
+    "com/ebay/mobile/listing/featurescanner/ui/activity/FeatureScannerBuilderImpl": [
+        "com.ebay.mobile.listing.featurescanner.ui.activity.FeatureScannerActivity"
+    ],
+    "com/ebay/mobile/aftersales/rtn/AfterSalesReturnIntentBuilderImpl": [
+        "com.ebay.mobile.aftersales.rtn.view.ReturnActivity"
+    ],
+    "com/ebay/mobile/aftersales/itemnotreceived/AfterSalesInrIntentBuilderImpl": [
+        "com.ebay.mobile.aftersales.itemnotreceived.view.InrActivity"
+    ],
+    "com/ebay/mobile/aftersalescancel/ui/AfterSalesCancelFactoryImpl": [
+        "com.ebay.mobile.aftersalescancel.ui.view.CancelActivity"
+    ],
+    "com/ebay/mobile/verticals/viewitem/multiaddon/activity/ViewItemInstallConfirmationActivity": [
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemInstallConfirmationActivity"
+    ],
+    "com/ebay/mobile/verticals/viewitem/multiaddon/activity/VIBaseMultiAddonActivity": [
+        "com.ebay.mobile.activities.HybridWebLandingActivity"
+    ],
+    "com/ebay/mobile/verticals/viewitem/multiaddon/activity/ViewItemChooseAddonActivity": [
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemChooseAddonActivity"
+    ],
+    "com/ebay/mobile/verticals/viewitem/multiaddon/activity/ViewItemChooseInstallerActivity": [
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemChooseInstallerActivity"
+    ],
+    "com/ebay/mobile/verticals/picker/PickerActivity": [
+        "com.ebay.mobile.verticals.picker.PickerActivity"
+    ],
+    "com/ebay/mobile/verticals/verticallanding/navigation/VerticalLandingNavigationTarget": [
+        "com.ebay.mobile.verticals.verticallanding.ui.VerticalLandingActivity"
+    ],
+    "com/ebay/mobile/verticals/verticallanding/deeplink/VerticalLandingDeepLinkHandler": [
+        "com.ebay.mobile.verticals.verticallanding.ui.VerticalLandingActivity"
+    ],
+    "com/ebay/mobile/verticals/motor/MotorTireLearnMoreActivity": [
+        "com.ebay.mobile.verticals.motor.MotorTireLearnMoreActivity"
+    ],
+    "com/ebay/mobile/viewitem/ShipmentTrackingActivity": [
+        "com.ebay.mobile.viewitem.ShipmentTrackingActivity"
+    ],
+    "com/ebay/mobile/viewitem/ItemViewSellersLegalInfoActivity": [
+        "com.ebay.mobile.viewitem.ItemViewSellersLegalInfoActivity"
+    ],
+    "com/ebay/mobile/viewitem/MskuBuilderImpl": [
+        "com.ebay.mobile.viewitem.multisku.ui.ChooseVariationActivity"
+    ],
+    "com/ebay/mobile/viewitem/ViewItemPartDetailsActivity": [
+        "com.ebay.mobile.viewitem.ViewItemPartDetailsActivity"
+    ],
+    "com/ebay/mobile/viewitem/ViewItemLegacyFactoryImpl": [
+        "com.ebay.mobile.activities.AddEditTrackingInfoActivity",
+        "com.ebay.mobile.seller.refund.landing.view.RefundLandingActivity"
+    ],
+    "com/ebay/mobile/viewitem/ViewItemDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/viewitem/ItemViewDescriptionActivity": [
+        "com.ebay.mobile.viewitem.ItemViewDescriptionActivity"
+    ],
+    "com/ebay/mobile/viewitem/ViewItemChooseVariationsActivity": [
+        "com.ebay.mobile.viewitem.ViewItemChooseVariationsActivity"
+    ],
+    "com/ebay/mobile/viewitem/OrderSummaryActivity": [
+        "com.ebay.mobile.viewitem.OrderSummaryActivity",
+        "com.ebay.mobile.viewitem.OrderSummaryInstructionsActivity"
+    ],
+    "com/ebay/mobile/viewitem/dagger/ViewItemModule": [
+        "com.ebay.mobile.viewitem.ViewItemCouponActivity",
+        "com.ebay.mobile.viewitem.ItemViewDescriptionActivity"
+    ],
+    "com/ebay/mobile/viewitem/execution/LocalPickupExecution": [
+        "com.ebay.mobile.viewitem.localpickup.SellerValidateCodeActivity",
+        "com.ebay.mobile.viewitem.localpickup.BuyerShowCodeActivity"
+    ],
+    "com/ebay/mobile/viewitem/execution/ChangeOfferSettingsExecution": [
+        "com.ebay.mobile.bestoffer.v1.experience.BestOfferSettingsActivity"
+    ],
+    "com/ebay/mobile/viewitem/execution/SectionActionExecution": [
+        "com.ebay.mobile.charity.CharityHubActivity"
+    ],
+    "com/ebay/mobile/viewitem/execution/handlers/PostMarkShippedDialogHandler": [
+        "com.ebay.mobile.activities.AddEditTrackingInfoActivity"
+    ],
+    "com/ebay/mobile/viewitem/execution/viewmodels/-": [
+        "com.ebay.mobile.viewitem.OrderSummaryActivity"
+    ],
+    "com/ebay/mobile/viewitem/app/ShowBidHistoryModule": [
+        "com.ebay.mobile.viewitem.bidhistory.ui.BidHistoryActivity"
+    ],
+    "com/ebay/mobile/viewitem/localpickup/SecurePickupNavigationTarget": [
+        "com.ebay.mobile.viewitem.localpickup.SellerValidateCodeActivity"
+    ],
+    "com/ebay/mobile/viewitem/localpickup/BuyerShowCodeIntentBuilder": [
+        "com.ebay.mobile.viewitem.localpickup.BuyerShowCodeActivity"
+    ],
+    "com/ebay/mobile/seller/refund/landing/navigation/RefundDetailsNavigationTarget": [
+        "com.ebay.mobile.seller.refund.landing.view.RefundDetailsActivity"
+    ],
+    "com/ebay/mobile/seller/refund/landing/navigation/RefundLandingNavigationTarget": [
+        "com.ebay.mobile.seller.refund.landing.view.RefundLandingActivity"
+    ],
+    "com/adyen/threeds2/internal/ui/activity/ChallengeActivity": [
+        "com.adyen.threeds2.internal.ui.activity.ChallengeActivity"
+    ],
+    "androidx/customview/widget/ExploreByTouchHelper": [
+        "\"android.view.View\""
+    ],
+    "androidx/appcompat/widget/ScrollingTabContainerView": [
+        "\"androidx.appcompat.app.ActionBar"
+    ],
+    "androidx/appcompat/widget/SwitchCompat": [
+        "\"android.widget.Switch\""
+    ],
+    "androidx/appcompat/widget/LinearLayoutCompat": [
+        "\"androidx.appcompat.widget.LinearLayoutCompat\""
+    ],
+    "androidx/drawerlayout/widget/DrawerLayout": [
+        "\"androidx.drawerlayout.widget.DrawerLayout\""
+    ],
+    "com/ebay/mobile/seller/onboarding/dynamiclanding/DynamicLandingActivityIntentBuilder": [
+        "com.ebay.mobile.seller.onboarding.dynamiclanding.DynamicLandingActivity"
+    ],
+    "com/ebay/mobile/seller/onboarding/dynamiclanding/navigation/DynamicLandingNavigationTarget": [
+        "com.ebay.mobile.seller.onboarding.dynamiclanding.DynamicLandingActivity"
+    ],
+    "com/ebay/mobile/seller/onboarding/c2c/navigation/OnboardingNavigationTarget": [
+        "com.ebay.mobile.seller.onboarding.c2c.view.OnboardingActivity"
+    ],
+    "com/ebay/mobile/seller/account/view/payout/schedule/navigation/PayoutScheduleNavigationTarget": [
+        "com.ebay.mobile.seller.account.view.payout.schedule.view.PayoutActivity"
+    ],
+    "com/ebay/mobile/seller/account/view/transaction/helper/SellerAccountViewTransactionDetailsFactoryImpl": [
+        "com.ebay.mobile.seller.account.view.transaction.view.PaymentAccountActivity"
+    ],
+    "com/ebay/mobile/seller/account/view/transaction/navigation/SellerAccountViewTransactionsNavigationTarget": [
+        "com.ebay.mobile.seller.account.view.transaction.view.PaymentAccountActivity"
+    ],
+    "com/ebay/mobile/search/SavedSearchLinkHandler": [
+        "com.ebay.mobile.search.landing.LoadSavedSearchDeepLinkActivity"
+    ],
+    "com/ebay/mobile/search/internal/SearchResultActivityImpl": [
+        "com.ebay.mobile.search.internal.SearchResultActivityImpl"
+    ],
+    "com/ebay/mobile/screenshare/terms/views/TermsConditionsFragment": [
+        "com.ebay.mobile.screenshare.session.views.ScreenShareActivity"
+    ],
+    "com/ebay/mobile/reviews/SeeAllReviewsActivity": [
+        "com.ebay.mobile.reviews.SeeAllReviewsActivity"
+    ],
+    "com/ebay/mobile/reviews/ReviewsBuilderImpl": [
+        "com.ebay.mobile.reviews.SeeAllReviewsActivity",
+        "com.ebay.mobile.reviews.WriteReviewActivity",
+        "com.ebay.mobile.reviews.ReviewThankYouActivity"
+    ],
+    "com/ebay/mobile/reviews/SeeAllReviewsIntentBuilder": [
+        "com.ebay.mobile.reviews.SeeAllReviewsActivity"
+    ],
+    "com/ebay/mobile/reviews/ReviewThankYouIntentBuilder": [
+        "com.ebay.mobile.reviews.ReviewThankYouActivity"
+    ],
+    "com/ebay/mobile/reviews/WriteReviewIntentBuilder": [
+        "com.ebay.mobile.reviews.WriteReviewActivity"
+    ],
+    "com/ebay/mobile/reviews/WriteReviewActivity": [
+        "com.ebay.mobile.photomanager.v2.PhotoManagerActivity2"
+    ],
+    "com/ebay/mobile/qna/SeeAllAnswersIntentBuilder": [
+        "com.ebay.mobile.qna.SeeAllAnswersActivity"
+    ],
+    "com/ebay/mobile/qna/SeeAllQnaIntentBuilder": [
+        "com.ebay.mobile.qna.SeeAllQnaActivity"
+    ],
+    "com/ebay/mobile/loyalty/rewards/ui/intentbuilder/LoyaltyRewardsActivityIntentBuilderImpl": [
+        "com.ebay.mobile.loyalty.rewards.ui.LoyaltyRewardsActivity"
+    ],
+    "com/ebay/mobile/loyalty/ebayplus/ui/EbayPlusNavigationTarget": [
+        "com.ebay.mobile.loyalty.ebayplus.ui.PlusActivity"
+    ],
+    "com/ebay/mobile/ebayoncampus/viewitem/CampusViewItemActivityIntentBuilder": [
+        "com.ebay.mobile.ebayoncampus.viewitem.CampusViewItemActivity"
+    ],
+    "com/ebay/mobile/events/EventItemsActivity": [
+        "com.ebay.mobile.events.EventItemsActivity"
+    ],
+    "com/ebay/mobile/events/EventsDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/events/EventItemsFragment": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/notifications/ReminderItemsActivity": [
+        "com.ebay.mobile.notifications.ReminderItemsActivity"
+    ],
+    "com/ebay/mobile/notifications/EbayNotificationManager": [
+        "com.ebay.mobile.viewitem.OrderSummaryActivity",
+        "com.ebay.mobile.shoppingcart.util.ShoppingCartNotificationActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/orderdetails/page/OrderDetailsNavigationTarget": [
+        "com.ebay.mobile.orderdetails.page.view.OrderDetailsActivity"
+    ],
+    "com/ebay/mobile/orderdetails/page/OrderDetailsLinkProcessor": [
+        "com.ebay.mobile.orderdetails.page.view.OrderDetailsActivity"
+    ],
+    "com/ebay/mobile/buyagain/BuyAgainNavigationBuilderImpl": [
+        "com.ebay.mobile.buyagain.BuyAgainActivity"
+    ],
+    "com/ebay/mobile/buyagain/BuyAgainLinkProcessor": [
+        "com.ebay.mobile.buyagain.BuyAgainActivity"
+    ],
+    "com/ebay/mobile/browse/BrowseIntentBuilder": [
+        "com.ebay.mobile.browse.BrowseAnswersActivity"
+    ],
+    "com/ebay/mobile/browse/stores/StoresDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/camera/barcode/BarcodeScannerActivity": [
+        "com.ebay.mobile.camera.barcode.BarcodeScannerActivity"
+    ],
+    "com/ebay/mobile/bestoffer/settings/ShowOfferSettingsModule": [
+        "com.ebay.mobile.bestoffer.settings.ui.OfferSettingsActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/TransactionNavigationTarget": [
+        "com.ebay.mobile.bestoffer.v1.experience.BestOfferSettingsActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/utility/ManageOffersFactoryImpl": [
+        "com.ebay.mobile.bestoffer.v1.experience.ManageOffersExperienceActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/ui/UnifiedOfferSuccessBuilderImpl": [
+        "com.ebay.mobile.bestoffer.v1.ui.UnifiedOfferSuccessActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/MakeOfferActivity": [
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewOfferActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.SellerInitiatedOfferActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.AddOfferMessageExperienceActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/ReviewReceivedOfferBuilderImpl": [
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewReceivedOfferActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/MakeOfferExperienceActivity": [
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewOfferExperienceActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.SellerInitiatedOfferActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.AddOfferMessageExperienceActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/BestOfferBuilderImpl": [
+        "com.ebay.mobile.bestoffer.v1.experience.AcceptOfferDialogActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.DeclineOfferActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.DeclineOfferExperienceActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.MakeOfferExperienceActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.MakeOfferActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/OfferHistoryBuilderImpl": [
+        "com.ebay.mobile.bestoffer.v1.experience.OfferHistoryActivity"
+    ],
+    "com/ebay/mobile/bestoffer/v1/experience/SioFactoryImpl": [
+        "com.ebay.mobile.bestoffer.v1.experience.SellerInitiatedOfferActivity"
+    ],
+    "com/ebay/mobile/feedback/FeedbackIntentBuilder": [
+        "com.ebay.mobile.feedback.FeedbackActivity",
+        "com.ebay.mobile.activities.ViewFeedbackActivity"
+    ],
+    "com/ebay/mobile/feedback/LeaveFeedbackActivity": [
+        "com.ebay.mobile.feedback.LeaveFeedbackActivity"
+    ],
+    "com/ebay/mobile/feedback/intent/FeedbackExpIntentBuilderImpl": [
+        "com.ebay.mobile.feedback.view.LeaveFeedbackExpActivity"
+    ],
+    "com/ebay/mobile/transaction/bid/dagger/BidModule": [
+        "com.ebay.mobile.transaction.bid.ui.BidFlowActivity"
+    ],
+    "com/ebay/mobile/storeshub/browse/StoresHubIntentBuilderImpl": [
+        "com.ebay.mobile.storeshub.browse.StoresHubActivity"
+    ],
+    "com/ebay/mobile/cameracapture/impl/singlephoto/SinglePhotoCameraActivityIntentBuilderImpl": [
+        "com.ebay.mobile.cameracapture.impl.singlephoto.SinglePhotoCameraActivity"
+    ],
+    "com/ebay/mobile/cameracapture/impl/multiphoto/MultiPhotoCameraActivityIntentBuilderImpl": [
+        "com.ebay.mobile.cameracapture.impl.multiphoto.MultiPhotoCameraActivity"
+    ],
+    "com/ebay/mobile/compatibility/MotorsCompatibilityActivity": [
+        "com.ebay.mobile.compatibility.MotorsCompatibilityActivity"
+    ],
+    "com/ebay/mobile/compatibility/CompatibilityBySpecificationActivity": [
+        "com.ebay.mobile.compatibility.CompatibilityBySpecificationActivity"
+    ],
+    "com/ebay/mobile/categorybrowser/BrowseDeepLinkIntentHelper": [
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity"
+    ],
+    "com/ebay/mobile/cardscanner/impl/CreditCardScannerIntentBuilderImpl": [
+        "com.ebay.mobile.cardscanner.impl.CreditCardScannerActivity"
+    ],
+    "com/ebay/mobile/identity/HelpNavigationBuilderImpl": [
+        "com.ebay.mobile.activities.OcsActivity"
+    ],
+    "com/ebay/mobile/identity/SignInLegacyModule": [
+        "com.ebay.mobile.identity.user.signin.SignInActivity",
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationSocialStartActivity",
+        "com.ebay.mobile.connection.idsignin.registration.view.user.RegistrationUserActivity",
+        "com.ebay.mobile.connection.idsignin.SignInActivity"
+    ],
+    "com/ebay/mobile/identity/account/AccountUpgradeLegacyModule": [
+        "com.ebay.mobile.identity.account.AccountUpgradeActivity"
+    ],
+    "com/ebay/mobile/gifting/GiftingPreviewActivity": [
+        "com.ebay.mobile.gifting.GiftingPreviewActivity"
+    ],
+    "com/ebay/mobile/gifting/GiftingDetailsActivity": [
+        "com.ebay.mobile.gifting.GiftingDetailsActivity"
+    ],
+    "com/ebay/mobile/home/answers/HomeAnswersClickListener": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.deals.BrowseDealsActivity",
+        "com.ebay.mobile.following.BrowseFollowingActivity",
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity"
+    ],
+    "com/ebay/mobile/home/navigation/HomeNavigationTarget": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/home/navigation/HomeIntentBuilderImpl": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/garage/GarageIntentBuilder": [
+        "com.ebay.mobile.garage.GarageActivity"
+    ],
+    "com/ebay/mobile/giftcards/GiftCardCheckerActivityIntentBuilder": [
+        "com.ebay.mobile.giftcard.checker.view.GiftCardCheckerActivity",
+        "com.ebay.mobile.giftcards.GiftCardBalanceCheckerActivity"
+    ],
+    "com/ebay/mobile/giftcards/GiftCardWebViewIntentBuilder": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/giftcards/GiftCardBalanceCheckerActivity": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/postlistingform/PromotedListingExpressActivity": [
+        "com.ebay.mobile.postlistingform.PromotedListingExpressActivity"
+    ],
+    "com/ebay/mobile/postlistingform/PromotedListingExpressIntentBuilder": [
+        "com.ebay.mobile.postlistingform.PromotedListingExpressActivity"
+    ],
+    "com/ebay/mobile/plus/PlusSignupModule": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/plus/PlusSignupActivity": [
+        "com.ebay.mobile.plus.PlusSignupActivity"
+    ],
+    "com/ebay/mobile/product/topproducts/v1/TopProductsFactoryImpl": [
+        "com.ebay.mobile.product.topproducts.v1.TopProductsActivity"
+    ],
+    "com/ebay/mobile/photomanager/v2/PhotoManagerActivityIntentBuilder": [
+        "com.ebay.mobile.photomanager.v2.PhotoManagerActivity2"
+    ],
+    "com/ebay/mobile/prp/ProductRelatedBuilderImpl": [
+        "com.ebay.mobile.prp.PrpActivity"
+    ],
+    "com/ebay/mobile/prelist/PrelistViewModel": [
+        "com.ebay.mobile.prelist.common.CategoriesActivity"
+    ],
+    "com/ebay/mobile/following/BrowseFollowingActivity": [
+        "com.ebay.mobile.following.BrowseFollowingActivity"
+    ],
+    "com/ebay/mobile/dagger/DaggerAppComponent": [
+        "com.ebay.mobile.digitalcollections.impl.view.DigitalCollectionDeepLinkActivity",
+        "com.ebay.mobile.connection.idsignin.fingerprint.enroll.FingerprintEnrollmentActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewOfferActivity",
+        "com.ebay.mobile.browse.BrowseAnswersActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.SellerInitiatedOfferDeepLinkActivity",
+        "com.ebay.mobile.connection.idsignin.registration.RegistrationBusinessWebActivity",
+        "com.ebay.mobile.notifications.ReminderItemsActivity",
+        "com.ebay.mobile.feedback.LeaveFeedbackActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.MakeOfferExperienceActivity",
+        "com.ebay.mobile.search.internal.ImageSearchActivity",
+        "com.ebay.mobile.selling.scheduled.ScheduledListActivity",
+        "com.ebay.mobile.viewitem.ViewItemActivity",
+        "com.ebay.mobile.selling.sold.sendcoupon.SendCouponActivity",
+        "com.ebay.mobile.deals.BrowseDealsActivity",
+        "com.ebay.mobile.search.internal.SearchResultActivityImpl",
+        "com.ebay.mobile.bestoffer.v1.experience.OfferHistoryActivity",
+        "com.ebay.mobile.ebayoncampus.viewitem.CampusViewItemActivity",
+        "com.ebay.mobile.ebayoncampus.home.CampusHomeActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewReceivedOfferActivity",
+        "com.ebay.mobile.sellinflowhelp.SellInflowHelpActivity",
+        "com.ebay.mobile.listingform.ListingFormActivity",
+        "com.ebay.mobile.reviews.SeeAllReviewsActivity",
+        "com.ebay.mobile.seller.onboarding.dynamiclanding.DynamicLandingActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.AddCollectibleActivity",
+        "com.ebay.mobile.myebay.experience.WatchListExperienceActivity",
+        "com.ebay.mobile.identity.user.auth.pushfirstfactor.settings.PushFirstFactorSettingsActivity",
+        "com.ebay.mobile.viewitem.ItemViewSellersLegalInfoActivity",
+        "com.ebay.mobile.aftersales.itemnotreceived.view.InrActivity",
+        "com.ebay.mobile.bestoffer.v1.ui.UnifiedOfferSuccessActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.DeclineOfferActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.DeclineOfferExperienceActivity",
+        "com.ebay.mobile.intents.IntentsHubTabbedActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.search.SearchFiltersActivity",
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity",
+        "com.ebay.mobile.stores.storefront.presentation.StoreActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.success.CheckoutSuccessActivity",
+        "com.ebay.mobile.activities.UserDetailActivity",
+        "com.ebay.mobile.bestoffer.settings.ui.OfferSettingsActivity",
+        "com.ebay.mobile.buyagain.BuyAgainActivity",
+        "com.ebay.mobile.selling.sellermarketing.createcoupon.CreateCouponActivity",
+        "com.ebay.mobile.deals.DealsSpokeActivity",
+        "com.ebay.mobile.search.landing.LoadSavedSearchDeepLinkActivity",
+        "com.ebay.mobile.sellinglists.SellerNoteActivity",
+        "com.ebay.mobile.payments.checkout.storepicker.LogisticsAccountNumberActivity",
+        "com.ebay.mobile.myebay.experience.PurchasesExperienceActivity",
+        "com.ebay.mobile.viewitem.OrderSummaryActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleSignInActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsActivity",
+        "com.ebay.mobile.viewitem.bidhistory.ui.BidHistoryActivity",
+        "com.ebay.mobile.seller.account.view.ebaybalance.OptInActivity",
+        "com.ebay.mobile.myebay.purchasehistory.view.PurchaseHistoryActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.AddOfferMessageExperienceActivity",
+        "com.ebay.mobile.viewitem.multisku.ui.ChooseVariationActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.ToolTipActivity",
+        "com.ebay.mobile.myebay.auction.BidsOffersActivity",
+        "com.ebay.mobile.symban.hub.v2.ui.SymbanActivityV2",
+        "com.ebay.mobile.settings.SettingsActivity",
+        "com.ebay.mobile.universallink.impl.ui.LinkHandlerActivity",
+        "com.ebay.mobile.prp.PrpActivity",
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationGoogleSignInActivity",
+        "com.ebay.mobile.connection.idsignin.pushtwofactor.settings.Push2faSettingsActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.product.topproducts.v1.TopProductsActivity",
+        "com.ebay.mobile.viewitem.localpickup.BuyerShowCodeActivity",
+        "com.ebay.mobile.payments.checkout.storepicker.StorePickerActivity",
+        "com.ebay.mobile.search.internal.DealsSearchResultActivityImpl",
+        "com.ebay.mobile.verticals.verticallanding.ui.VerticalLandingActivity",
+        "com.ebay.mobile.universallink.lpo.LandingPageActivity",
+        "com.ebay.mobile.contentmanagement.page.ui.ContentManagementActivity",
+        "com.ebay.mobile.home.impl.HomeDeepLinkActivity",
+        "com.ebay.mobile.payments.cobranded.CobrandedMakeDefaultActivity",
+        "com.ebay.mobile.listing.prelist.PrelistActivity",
+        "com.ebay.mobile.camera.barcode.BarcodeScannerActivity",
+        "com.ebay.mobile.activities.SharedImageActivity",
+        "com.ebay.mobile.identity.account.AccountUpgradeActivity",
+        "com.ebay.mobile.search.internal.SearchResultStackActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.BestOfferSettingsActivity",
+        "com.ebay.mobile.ebayoncampus.mycampus.CampusMyCampusActivity",
+        "com.ebay.mobile.prp.MedioMutusPrpActivity",
+        "com.ebay.mobile.reviews.ReviewThankYouActivity",
+        "com.ebay.mobile.activities.ShowFileWebViewActivity",
+        "com.ebay.mobile.compatibility.MotorsCompatibilityActivity",
+        "com.ebay.mobile.seller.account.view.payout.schedule.view.PayoutActivity",
+        "com.ebay.mobile.viewitem.localpickup.SellerValidateCodeActivity",
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationSocialStartActivity",
+        "com.ebay.mobile.selling.sellermarketing.campaignselection.CampaignSelectionActivity",
+        "com.ebay.mobile.postlistingform.PostListingFormActivity",
+        "com.ebay.mobile.cardscanner.impl.CreditCardScannerActivity",
+        "com.ebay.mobile.listingform.ListingFormRoutingActivity",
+        "com.ebay.mobile.search.voice.ShowItemActivity",
+        "com.ebay.mobile.search.landing.SearchLandingPageActivity",
+        "com.ebay.mobile.shopping.channel.browse.EnthusiastBrowseEntityActivity",
+        "com.ebay.mobile.payments.cobranded.CobrandedWebViewActivity",
+        "com.ebay.mobile.activities.RegistrationWebViewActivity",
+        "com.ebay.mobile.activities.HybridWebLandingActivity",
+        "com.ebay.mobile.postlistingform.PromotedListingExpressActivity",
+        "com.ebay.mobile.viewitem.PreviewItemActivity",
+        "com.ebay.mobile.identity.user.verification.VerificationActivity",
+        "com.ebay.mobile.paymentinstruments.impl.InstrumentsActivity",
+        "com.ebay.mobile.shopping.channel.browse.EnthusiastBrowseTimelineActivity",
+        "com.ebay.mobile.camera.giftcard.GiftCardScannerActivity",
+        "com.ebay.mobile.garage.GarageActivity",
+        "com.ebay.mobile.inventory.StorePickerActivity",
+        "com.ebay.mobile.loyalty.rewards.ui.LoyaltyRewardsActivity",
+        "com.ebay.mobile.ebayoncampus.onboarding.deeplinking.CampusDeepLinkingActivity",
+        "com.ebay.mobile.seller.refund.landing.view.RefundDetailsActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.AcceptOfferDialogActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.ManageOffersExperienceActivity",
+        "com.ebay.mobile.ebayoncampus.onboarding.CampusOnboardingActivity",
+        "com.ebay.mobile.sell.CategoryPickerActivity",
+        "com.ebay.mobile.activities.ComposeNewMessageActivity",
+        "com.ebay.mobile.settings.notifications.NotificationSubscriptionPreferencesUpdateActivity",
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemChooseInstallerActivity",
+        "com.ebay.mobile.wallet.page.ui.WalletActivity",
+        "com.ebay.mobile.aftersalescancel.ui.view.CancelActivity",
+        "com.ebay.mobile.storeshub.browse.StoresHubActivity",
+        "com.ebay.mobile.viewitem.mediagallery.ui.ViewItemPhotoGalleryActivity",
+        "com.ebay.mobile.myebay.experience.MyEbayDeepLinkActivity",
+        "com.ebay.mobile.myebay.experience.BidsOffersExperienceActivity",
+        "com.ebay.mobile.verticals.picker.PickerActivity",
+        "com.ebay.mobile.activities.ReturnParamsWebViewActivity",
+        "com.ebay.mobile.plus.PlusSignupActivity",
+        "com.ebay.mobile.payments.cobranded.CobrandedMembershipPortalActivity",
+        "com.ebay.mobile.payments.checkout.CheckoutActivity",
+        "com.ebay.mobile.widgetdelivery.fullmodal.WidgetFullModalActivity",
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.feedback.FeedbackActivity",
+        "com.ebay.mobile.connection.address.edit.EditAddressActivity",
+        "com.ebay.mobile.search.internal.SellerItemsActivityImpl",
+        "com.ebay.mobile.connection.idsignin.forgotpassword.ForgotPasswordWebViewActivity",
+        "com.ebay.mobile.activities.MainActivity",
+        "com.ebay.mobile.identity.user.signin.SignInActivity",
+        "com.ebay.mobile.identity.user.auth.pushfirstfactor.notifications.PushFirstFactorDenyApproveActivity",
+        "com.ebay.mobile.connection.idsignin.SignInActivity",
+        "com.ebay.mobile.listing.featurescanner.ui.activity.FeatureScannerActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.DigitalCollectionsActivity",
+        "com.ebay.mobile.ads.gdpr.GdprWebViewActivity",
+        "com.ebay.mobile.aftersales.rtn.view.ReturnActivity",
+        "com.ebay.mobile.viewitem.ViewItemPartDetailsActivity",
+        "com.ebay.mobile.compatibility.CompatibilityBySpecificationActivity",
+        "com.ebay.mobile.viewitem.ItemViewDescriptionActivity",
+        "com.ebay.mobile.coupon.CouponActivity",
+        "com.ebay.mobile.feedback.view.LeaveFeedbackExpActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.MakeOfferActivity",
+        "com.ebay.mobile.settings.general.CountrySettingsActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.SupportingDocumentActivity",
+        "com.ebay.mobile.loyalty.rewards.ui.LoyaltyRewardsDeepLinkHandlerActivity",
+        "com.ebay.mobile.stores.storefront.fallback.StoreFallbackActivity",
+        "com.ebay.mobile.seller.onboarding.c2c.view.OnboardingActivity",
+        "com.ebay.mobile.sell.promotedlistings.PlBasicActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.PayPalIdentityActivity",
+        "com.ebay.mobile.settings.notifications.OcsNotificationsActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.SellerInitiatedOfferActivity",
+        "com.ebay.mobile.seller.refund.landing.view.RefundLandingActivity",
+        "com.ebay.mobile.search.internal.SellerOfferSearchResultActivityImpl",
+        "com.ebay.mobile.connection.idsignin.registration.view.user.RegistrationUserActivity",
+        "com.ebay.mobile.activities.OcsActivity",
+        "com.ebay.mobile.listing.rtbay.RtbayListingLinkActivity",
+        "com.ebay.mobile.reviews.WriteReviewActivity",
+        "com.ebay.mobile.screenshare.session.views.ScreenShareActivity",
+        "com.ebay.mobile.activities.QuickSearchHandler",
+        "com.ebay.mobile.ebayoncampus.chat.CampusChatActivity",
+        "com.ebay.mobile.sellinglists.SellingListSearchActivity",
+        "com.ebay.mobile.listing.rtbay.RtbayListingActivity",
+        "com.ebay.mobile.orderdetails.page.view.OrderDetailsActivity",
+        "com.ebay.mobile.transaction.committobuy.ui.CommitToBuyActivity",
+        "com.ebay.mobile.giftcard.checker.view.GiftCardCheckerActivity",
+        "com.ebay.mobile.user.symban.SymbanActivity",
+        "com.ebay.mobile.paymentinstruments.impl.navigation.DeepLinkActionActivity",
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity",
+        "com.ebay.mobile.bestoffer.v1.experience.ReviewOfferExperienceActivity",
+        "com.ebay.mobile.cameracapture.impl.singlephoto.SinglePhotoCameraActivity",
+        "com.ebay.mobile.listingform.ListingNotSupportedActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.ShippingMethodActivity",
+        "com.ebay.mobile.prelist.PrelistFragmentActivity",
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemChooseAddonActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookLinkAfterSignInActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleLinkAfterSignInActivity",
+        "com.ebay.mobile.viewitem.OrderSummaryInstructionsActivity",
+        "com.ebay.mobile.stores.storefront.presentation.StorePolicyActivity",
+        "com.ebay.mobile.connection.idsignin.twofactor.TwoFactorWebViewActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookLinkSettingsActivity",
+        "com.ebay.mobile.viewitem.ViewItemCouponActivity",
+        "com.ebay.mobile.sell.lists.SellingListActivity",
+        "com.ebay.mobile.selling.sellingvolumepricing.SellerVolumePricingActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.DonationCharityInfoActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.IncentivesActivity",
+        "com.ebay.mobile.payments.checkout.CheckoutFragmentActivity",
+        "com.ebay.mobile.connection.idsignin.registration.view.password.RegistrationPasswordActivity",
+        "com.ebay.mobile.following.BrowseFollowingActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.DonationActivity",
+        "com.ebay.mobile.verticals.motor.MotorTireLearnMoreActivity",
+        "com.ebay.mobile.trust.aftersales.AfterSalesWebViewActivity",
+        "com.ebay.mobile.messages.material.MaterialMessagesActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsWebViewActivity",
+        "com.ebay.mobile.cameracapture.impl.multiphoto.MultiPhotoCameraActivity",
+        "com.ebay.mobile.activities.CustomSearchLandingActivity",
+        "com.ebay.mobile.gifting.GiftingDetailsActivity",
+        "com.ebay.mobile.connection.address.list.EbayAddressListActivity",
+        "com.ebay.mobile.transaction.bid.ui.BidFlowActivity",
+        "com.ebay.mobile.seller.account.view.transaction.view.PaymentAccountActivity",
+        "com.ebay.mobile.stores.storesearchlanding.presentation.StoreSearchLandingActivity",
+        "com.ebay.mobile.digitalcollections.impl.view.search.SuggestionsActivity",
+        "com.ebay.mobile.payments.checkout.storepicker.PudoSelectLogisticsActivity",
+        "com.ebay.mobile.verticals.authenticitynfctag.ui.AuthenticityNfcTagDeepLinkActivity",
+        "com.ebay.mobile.connection.address.add.AddAddressActivity",
+        "com.ebay.mobile.activities.AddEditTrackingInfoActivity",
+        "com.ebay.mobile.viewitem.ViewItemChooseVariationsActivity",
+        "com.ebay.mobile.prelist.common.CategoriesActivity",
+        "com.ebay.mobile.loyalty.ebayplus.ui.PlusActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.PurchaseCompleteActivity",
+        "com.ebay.mobile.shipmenttracking.addedit.view.AddEditShipmentTrackingActivity",
+        "com.ebay.mobile.sell.shippinglabel.downloadablewebview.DownloadCapableWebViewActivity",
+        "com.ebay.mobile.verticals.viewitem.multiaddon.activity.ViewItemInstallationActivity",
+        "com.ebay.mobile.sell.shippinglabel.ShippingLabelActivity",
+        "com.ebay.mobile.qna.SeeAllAnswersActivity",
+        "com.ebay.mobile.shoppingcart.ShoppingCartActivity",
+        "com.ebay.mobile.connection.oauth.OAuthWebViewActivity",
+        "com.ebay.mobile.photomanager.v2.PhotoManagerActivity2",
+        "com.ebay.mobile.seeksurvey.seeksurveyimpl.view.SeekSurveyActivity",
+        "com.ebay.mobile.selling.active.promotedreport.PromotedReportActivity",
+        "com.ebay.mobile.viewitem.MedioMutusViewItemActivity",
+        "com.ebay.mobile.identity.user.settings.profile.ProfileSettingsActivity",
+        "com.ebay.mobile.stores.storefront.presentation.StoreCategoryActivity",
+        "com.ebay.mobile.gifting.GiftingPreviewActivity",
+        "com.ebay.mobile.verticals.verticallanding.ui.VerticalLandingLinkActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookUnlinkActivity",
+        "com.ebay.mobile.events.EventItemsActivity",
+        "com.ebay.mobile.payments.checkout.xoneor.MessageToSellerActivity",
+        "com.ebay.mobile.sellinglists.SellingListDeepLinkActivity",
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleLinkActivity",
+        "com.ebay.mobile.shippinglabels.ui.ShippingLabelsActivity",
+        "com.ebay.mobile.diagnostics.ui.DiagnosticsActivity",
+        "com.ebay.mobile.charity.CharityHubActivity",
+        "com.ebay.mobile.browse.stores.StoresDeepLinkActivity",
+        "com.ebay.mobile.qna.SeeAllQnaActivity",
+        "com.ebay.mobile.sellinsights.socialsharing.SocialSharingInsightsActivity"
+    ],
+    "com/ebay/mobile/decor/CommonNavigationPanelHandler": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity",
+        "com.ebay.mobile.activities.MainActivity",
+        "com.ebay.mobile.activities.UserDetailActivity",
+        "com.ebay.mobile.wallet.page.ui.WalletActivity",
+        "com.ebay.mobile.deals.BrowseDealsActivity",
+        "com.ebay.mobile.settings.SettingsActivity",
+        "com.ebay.mobile.following.BrowseFollowingActivity",
+        "com.ebay.mobile.loyalty.ebayplus.ui.PlusActivity"
+    ],
+    "com/ebay/mobile/decor/CommonActionBarHandler": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/coupon/CouponBannerViewDelegate": [
+        "com.ebay.mobile.coupon.CouponActivity"
+    ],
+    "com/ebay/mobile/deals/CustomSearchIntentBuilderImpl": [
+        "com.ebay.mobile.activities.CustomSearchLandingActivity"
+    ],
+    "com/ebay/mobile/deals/BrowseLinkProcessor": [
+        "com.ebay.mobile.categorybrowser.BrowseCategoriesActivity"
+    ],
+    "com/ebay/mobile/deals/BrowseDealsActivity": [
+        "com.ebay.mobile.deals.DealsSpokeActivity",
+        "com.ebay.mobile.deals.BrowseDealsActivity"
+    ],
+    "com/ebay/mobile/deals/DealsLinkProcessor": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/connection/settings/AuthenticationPreferencesFragment": [
+        "com.ebay.mobile.identity.user.auth.pushfirstfactor.settings.PushFirstFactorSettingsActivity"
+    ],
+    "com/ebay/mobile/connection/oauth/OAuthActivity": [
+        "com.ebay.mobile.connection.oauth.OAuthWebViewActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/connection/address/list/EbayAddressListActivity": [
+        "com.ebay.mobile.connection.address.list.EbayAddressListActivity"
+    ],
+    "com/ebay/mobile/connection/address/add/AddAddressActivity": [
+        "com.ebay.mobile.connection.address.add.AddAddressActivity"
+    ],
+    "com/ebay/mobile/connection/address/edit/EditAddressActivity": [
+        "com.ebay.mobile.connection.address.edit.EditAddressActivity"
+    ],
+    "com/ebay/mobile/connection/address/confirm/EbayAddressConfirmActivity": [
+        "com.ebay.mobile.connection.address.confirm.EbayAddressConfirmActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/ChangePasswordIntentFactory": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/SignInActivity": [
+        "com.ebay.mobile.connection.idsignin.SignInActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/pushtwofactor/Push2faConfirmLinkProcessor": [
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/pushtwofactor/Push2faDenyLinkProcessor": [
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/pushtwofactor/Push2faApproveLinkProcessor": [
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/pushtwofactor/settings/Push2faSettingsActivity": [
+        "com.ebay.mobile.identity.user.verification.VerificationActivity",
+        "com.ebay.mobile.connection.idsignin.pushtwofactor.settings.Push2faSettingsActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/phone/PhoneNumberPasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.phone.PhoneNumberPasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/password/RegistrationBlockedActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.password.RegistrationBlockedActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/password/RegistrationPasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.password.RegistrationPasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/social/RegistrationFacebookReviewActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationFacebookReviewActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/social/RegistrationSocialStartActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationSocialStartActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/social/RegistrationGoogleReviewActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationGoogleReviewActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/social/RegistrationGoogleSignInActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.social.RegistrationGoogleSignInActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/registration/view/user/RegistrationUserActivity": [
+        "com.ebay.mobile.connection.idsignin.registration.view.user.RegistrationUserActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/otp/OtpGenerateActivity": [
+        "com.ebay.mobile.connection.idsignin.otp.OtpGenerateActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/otp/autoretrievesms/AutoRetrieveOtpConfirmAndCodeInputActivity": [
+        "com.ebay.mobile.connection.idsignin.otp.autoretrievesms.AutoRetrieveOtpConfirmAndCodeInputActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/otp/codeinput/OtpCodeInputActivity": [
+        "com.ebay.mobile.connection.idsignin.otp.codeinput.OtpCodeInputActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/otp/confirm/OtpConfirmActivity": [
+        "com.ebay.mobile.connection.idsignin.otp.confirm.OtpConfirmActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/otp/collect/OtpCollectActivity": [
+        "com.ebay.mobile.connection.idsignin.otp.collect.OtpCollectActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/forgotpassword/ForgotPasswordWebViewActivity": [
+        "com.ebay.mobile.connection.idsignin.forgotpassword.ForgotPasswordWebViewActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/forgotpassword/ForgotPassword": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/forgotpassword/view/ForgotPasswordUserActivity": [
+        "com.ebay.mobile.connection.idsignin.forgotpassword.view.ForgotPasswordUserActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/traditional/EmailActivity": [
+        "com.ebay.mobile.connection.idsignin.traditional.EmailActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/traditional/UsernamePasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.traditional.UsernamePasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/traditional/PasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.traditional.PasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/fingerprint/obtain/FingerprintActivity": [
+        "com.ebay.mobile.connection.idsignin.fingerprint.obtain.FingerprintActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/fingerprint/enroll/FingerprintEnrollmentActivity": [
+        "com.ebay.mobile.connection.idsignin.fingerprint.enroll.FingerprintEnrollmentActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/fingerprint/enroll/FingerprintEnrollmentImpl": [
+        "com.ebay.mobile.connection.idsignin.fingerprint.obtain.FingerprintActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/fingerprint/auth/FingerprintAuthActivity": [
+        "com.ebay.mobile.connection.idsignin.fingerprint.auth.FingerprintAuthActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/twofactor/TwoFactorAuthentication": [
+        "com.ebay.mobile.connection.idsignin.twofactor.TwoFactorWebViewActivity",
+        "com.ebay.mobile.identity.user.auth.pushtwofactor.DenyApproveActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/SocialSignInStartActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.SocialSignInStartActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/google/GoogleLinkUsernamePasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleLinkUsernamePasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/google/GoogleLinkActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleLinkActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/google/GoogleSignInActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleSignInActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/google/GoogleLinkAfterSignInActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.google.GoogleLinkAfterSignInActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/facebook/FacebookLinkAfterSignInActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookLinkAfterSignInActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/facebook/FacebookLinkUsernamePasswordActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookLinkUsernamePasswordActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/facebook/FacebookUnlinkActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookUnlinkActivity"
+    ],
+    "com/ebay/mobile/connection/idsignin/social/view/facebook/FacebookLinkSettingsActivity": [
+        "com.ebay.mobile.connection.idsignin.social.view.facebook.FacebookLinkSettingsActivity"
+    ],
+    "com/ebay/mobile/connection/details/UserDetailLinkProcessor": [
+        "com.ebay.mobile.activities.UserDetailActivity"
+    ],
+    "com/ebay/mobile/contentmanagement/page/dagger/ContentManagementPageModule": [
+        "com.ebay.mobile.contentmanagement.page.ui.ContentManagementActivity"
+    ],
+    "com/ebay/mobile/settings/RootPreferencesFragment": [
+        "com.ebay.mobile.screenshare.terms.views.TermsConditionsActivity",
+        "com.ebay.mobile.activities.OcsActivity"
+    ],
+    "com/ebay/mobile/settings/RootViewModel": [
+        "com.ebay.mobile.identity.user.settings.profile.ProfileSettingsActivity",
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/settings/SettingsLinkProcessor": [
+        "com.ebay.mobile.settings.SettingsActivity"
+    ],
+    "com/ebay/mobile/settings/SettingsActivity": [
+        "com.ebay.mobile.activities.MainActivity"
+    ],
+    "com/ebay/mobile/settings/SettingsIntentBuilderImpl": [
+        "com.ebay.mobile.settings.SettingsActivity"
+    ],
+    "com/ebay/mobile/selling/sellermarketing/campaignselection/CampaignSelectionActivity": [
+        "com.ebay.mobile.selling.sellermarketing.campaignselection.CampaignSelectionActivity"
+    ],
+    "com/ebay/mobile/selling/sellermarketing/createcoupon/CreateCouponActivity": [
+        "com.ebay.mobile.selling.sellermarketing.createcoupon.CreateCouponActivity"
+    ],
+    "com/ebay/mobile/sellinsights/SellInsightsBaseLinkProcessor": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsActivity"
+    ],
+    "com/ebay/mobile/sellinsights/SellInsightsBulkLotLinkProcessor": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsActivity"
+    ],
+    "com/ebay/mobile/sellinsights/SellInsightsFragment": [
+        "com.ebay.mobile.sellinsights.SellInsightsWebViewActivity",
+        "com.ebay.mobile.sellinsights.socialsharing.SocialSharingInsightsActivity"
+    ],
+    "com/ebay/mobile/sellinsights/SellInsightsActivity": [
+        "com.ebay.mobile.activities.SellingActivity"
+    ],
+    "com/ebay/mobile/sellinsights/SellInsightsActivityDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsActivity"
+    ],
+    "com/ebay/mobile/sellinglists/BaseSellingListFragment": [
+        "com.ebay.mobile.sellinglists.SellingListSearchActivity"
+    ],
+    "com/ebay/mobile/sellinglists/SellingListDeepLinkActivityIntentHelper": [
+        "com.ebay.mobile.activities.SellingActivity",
+        "com.ebay.mobile.sellinsights.SellInsightsActivity"
+    ],
+    "com/ebay/mobile/sellinglists/SoldSellingListFragment": [
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.viewitem.localpickup.SellerValidateCodeActivity",
+        "com.ebay.mobile.sellinglists.SellerNoteActivity",
+        "com.ebay.mobile.selling.sold.sendcoupon.SendCouponActivity",
+        "com.ebay.mobile.sell.shippinglabel.downloadablewebview.DownloadCapableWebViewActivity"
+    ],
+    "com/ebay/mobile/sellinglists/DraftSellingListFragment": [
+        "com.ebay.mobile.sellinglists.SellingListSearchActivity"
+    ],
+    "com/ebay/mobile/sellinglists/SellingListIntentBuilder": [
+        "com.ebay.mobile.sell.lists.SellingListActivity"
+    ],
+    "com/ebay/mobile/sellinglists/ActiveSellingListFragment": [
+        "com.ebay.mobile.sellinsights.SellInsightsActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity",
+        "com.ebay.mobile.selling.sellingvolumepricing.SellerVolumePricingActivity",
+        "com.ebay.mobile.sellinglists.SellerNoteActivity",
+        "com.ebay.mobile.sellinsights.socialsharing.SocialSharingInsightsActivity"
+    ],
+    "net/glance/android/PresenceVisitor": [
+        "net.glance.android.PresenceVisitorTermsActivity"
+    ],
+    "net/glance/android/PresenceVisitorDialog": [
+        "net.glance.android.PresenceVisitorTermsActivity"
+    ],
+    "net/glance/android/VisitorDialog": [
+        "net.glance.android.VisitorTermsActivity"
+    ],
+    "net/glance/glancevideo/VideoDefaultUI": [
+        "net.glance.glancevideo.LollipopVideoDefaultUIActivity"
+    ],
+    "net/glance/glancevideo/VideoDefaultUIDialog": [
+        "net.glance.android.VisitorTermsActivity"
+    ],
+    "com/ebay/mobile/search/landing/SearchLandingPageActivity": [
+        "com.ebay.mobile.activities.QuickSearchHandler",
+        "com.ebay.mobile.search.landing.SearchLandingPageActivity"
+    ],
+    "com/ebay/mobile/search/landing/SearchLandingPageIntentBuilderImpl": [
+        "com.ebay.mobile.search.landing.SearchLandingPageActivity"
+    ],
+    "com/ebay/mobile/search/result/SearchIntentBuilderImpl": [
+        "com.ebay.mobile.search.internal.SellerItemsActivityImpl",
+        "com.ebay.mobile.search.internal.SellerOfferSearchResultActivityImpl",
+        "com.ebay.mobile.search.internal.DealsSearchResultActivityImpl",
+        "com.ebay.mobile.search.internal.ImageSearchActivity",
+        "com.ebay.mobile.search.internal.SearchResultActivityImpl",
+        "com.ebay.mobile.search.internal.SearchResultStackActivity"
+    ],
+    "com/ebay/mobile/sell/SellIngListActivityDeepLinkIntentHelper": [
+        "com.ebay.mobile.activities.SellingActivity"
+    ],
+    "com/ebay/mobile/sell/lists/SellingListActivity": [
+        "com.ebay.mobile.sell.lists.SellingListActivity"
+    ],
+    "com/ebay/mobile/sell/lists/SellingLinkProcessor": [
+        "com.ebay.mobile.activities.SellingActivity"
+    ],
+    "com/ebay/mobile/sell/promotedlistings/navigation/PlBasicIntentBuilder": [
+        "com.ebay.mobile.sell.promotedlistings.PlBasicActivity",
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/sell/shippinglabel/ShippingLabelActivity": [
+        "com.ebay.mobile.sell.shippinglabel.ShippingLabelActivity"
+    ],
+    "com/ebay/mobile/sell/shippinglabel/ShippingLabelBaseFragment": [
+        "com.ebay.mobile.activities.ShowWebViewActivity"
+    ],
+    "com/ebay/mobile/seeksurvey/seeksurveyimpl/SeekSurveyFactoryImpl": [
+        "com.ebay.mobile.seeksurvey.seeksurveyimpl.view.SeekSurveyActivity"
+    ]
+}

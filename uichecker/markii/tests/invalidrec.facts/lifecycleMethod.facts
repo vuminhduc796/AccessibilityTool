@@ -1,0 +1,2 @@
+com.example.invalidrec.MainActivity	onCreate	&lt;com.example.invalidrec.MainActivity: void onCreate(android.os.Bundle)&gt;
+com.example.invalidrec.MainActivity	onDestroy	&lt;androidx.appcompat.app.AppCompatActivity: void onDestroy()&gt;

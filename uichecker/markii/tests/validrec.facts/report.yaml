@@ -1,0 +1,29 @@
+pre_analysis_time_seconds: 3
+soot_get_classes_size: 3358
+soot_get_application_classes_size: 19
+soot_get_application_classes:
+    - com.example.validrec.R$mipmap
+    - com.example.validrec.R$attr
+    - com.example.validrec.R$anim
+    - com.example.validrec.R$dimen
+    - com.example.validrec.R$string
+    - com.example.validrec.R$color
+    - com.example.validrec.R$styleable
+    - com.example.validrec.R$style
+    - com.example.validrec.R$id
+    - com.example.validrec.R$bool
+    - com.example.validrec.Recorder
+    - com.example.validrec.R$drawable
+    - com.example.validrec.R
+    - com.example.validrec.R$interpolator
+    - com.example.validrec.MyApplication
+    - com.example.validrec.R$layout
+    - com.example.validrec.MainActivity
+    - com.example.validrec.R$integer
+    - com.example.validrec.BuildConfig
+hier_application_activity_classes_size: 1
+hier_application_activity_classes:
+    - com.example.validrec.MainActivity
+ifds_entrypoints_size: 0
+ifds_entrypoints:
+

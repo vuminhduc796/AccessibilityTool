@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+import subprocess
+import re
+
+s = str(subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT), "utf-8")
+version = re.search("version \"([\d\.\_]+)\"", s).group(1)
+
+s_javac = str(subprocess.check_output(["javac", "-version"], stderr=subprocess.STDOUT), "utf-8")
+version_javac = re.search("version \"([\d\.\_]+)\"", s).group(1)
+
+help_msg = "JDK version is not 1.8: %s\n" % version
+help_msg_javac = "JDK version is not 1.8: %s\n" % version_javac
+help_msg += '''See https://github.com/izgzhen/seguard-framework/blob/master/docs/troubleshooting.rst#jdk-version for guide
+about how to install and use JDK8'''
+
+assert version.startswith("1.8."), help_msg
+assert version_javac.startswith("1.8."), help_msg_javac
