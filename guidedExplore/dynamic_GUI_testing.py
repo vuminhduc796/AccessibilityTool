@@ -1,3 +1,4 @@
+import os
 import random
 import json
 import uiautomator2 as u2
@@ -7,13 +8,13 @@ import uiautomator2.exceptions
 from guidedExplore.util import *
 
 from guidedExplore.util import getActivityPackage, saveScreenshot
-from testing_path_planner import PathPlanner
-from hierachySolver import click_points_Solver, bounds2int
-from grantPermissonDetector import dialogSolver
+from guidedExplore.testing_path_planner import PathPlanner
+from guidedExplore.hierachySolver import click_points_Solver, bounds2int
+from guidedExplore.grantPermissonDetector import dialogSolver
 import subprocess
 from datetime import datetime
 from uiautomator2 import Direction
-from activity_launcher import launch_activity_by_deeplinks, launch_activity_by_deeplink
+from guidedExplore.activity_launcher import launch_activity_by_deeplinks, launch_activity_by_deeplink
 
 dynamic_atg = {}
 
@@ -290,16 +291,20 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
     path_planner.log_visited_rate(visited_rate, path=log_save_path)
     return
 
+def check_and_create_dir(dir_name):
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name)
 
-if __name__ == '__main__':
-    deviceId = 'emulator-5554'
-    # deviceId = 'cb8c90f4'
-    # deviceId = 'VEG0220B17010232'
-    apk_path = './data/repackaged_apks/ebay.apk'
-    atg_json = './data/activity_atg/ebay.json'
-    atg_save_dir = './data/activity_atg/ebay_dynamic.json'
-    ss_path = './data/activity_screenshots/ebay/'
-    deeplinks_json = './data/deeplinks_params.json'
-    log = './data/visited_rate/ebay.txt'
+def dynamic_GUI_testing(emulator, app_name):
+    current_directory = os.path.abspath("../../../")
+    output_directory = os.path.abspath("../../../../../output")
+    print(current_directory)
+    apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
+    atg_json = current_directory + "/" + app_name + '/activity_atg/' + app_name + ".json"
+    atg_save_dir = current_directory + app_name + '/activity_atg/' + app_name + '_dynamic.json'
+    ss_path = output_directory + '/activity_screenshots/' + app_name + "/"
+    deeplinks_json = os.path.join(current_directory, app_name, 'deeplinks_params.json')
+    log = current_directory + 'visited_rates/' + app_name + ".txt"
+    check_and_create_dir(ss_path)
 
-    unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log, reinstall=False)
+    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log, reinstall=False)

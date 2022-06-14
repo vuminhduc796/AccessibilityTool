@@ -21,6 +21,7 @@ def connectionAdaptor(phoneDevice, tabletDevice):
 
 
 def installApk(apkPath, device=None, reinstall=True):
+    print(apkPath)
     packageName, mainActivity = getPackageByApk(apkPath)
     # check if installed
     prefixCmd = 'adb '
@@ -137,7 +138,8 @@ def saveScreenshot(d, ss_path, activity_name):
         img.save(ss_path + activity_name + '.png')
         img.close()
         return img
-    except Exception:
+    except Exception as e:
+        print( e.args)
         return None
 
 

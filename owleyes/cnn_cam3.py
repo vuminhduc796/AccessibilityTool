@@ -283,7 +283,7 @@ if __name__ == '__main__':
 
         model = Net()
         model = nn.DataParallel(model)
-        model.load_state_dict(torch.load(model_dir))
+        model.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
 
         grad_cam = GradCam(model=model, target_layer_names=["40"], use_cuda=args.use_cuda)
         img = cv2.imread(image_name, 1)

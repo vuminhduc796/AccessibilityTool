@@ -48,20 +48,27 @@ class ParamGenerator:
     def merge_deeplinks_params(self, deeplink_json,
                                merged_path=r'data/deeplinks_params.json'):
         params = 'params'
-        with open(deeplink_json, 'r', encoding='utf8') as f:
-            deeplinks = json.loads(f.read())
-            for package in deeplinks.keys():
-                activities = deeplinks.get(package)
-                for activity in activities.keys():
-                    params_list = self.get_paras_by_pkg_activity(package, activity)
-                    if params_list is not None:
-                        activities.get(activity).get(params).extend(params_list)
-            with open(merged_path, 'w', encoding='utf8') as save:
-                json.dump(deeplinks, save, indent=4)
+        if os.stat(deeplink_json).st_size != 0:
+            with open(deeplink_json, 'r', encoding='utf8') as f:
+                print(deeplink_json)
+                print(merged_path)
+                deeplinks = json.loads(f.read())
+                for package in deeplinks.keys():
+                    activities = deeplinks.get(package)
+                    for activity in activities.keys():
+                        params_list = self.get_paras_by_pkg_activity(package, activity)
+                        if params_list is not None:
+                            activities.get(activity).get(params).extend(params_list)
+                with open(merged_path, 'w', encoding='utf8') as save:
+                    json.dump(deeplinks, save, indent=4)
 
 
 if __name__ == '__main__':
-    params_path = r'data/intent_para.json'
-    params = ParamGenerator(params_path)
-    deeplinks_json = r'data/deeplinks.json'
-    params.merge_deeplinks_params(deeplinks_json)
+    pass
+    # current_directory = os.path.join(os.getcwd(), "guidedExplore/data")
+    # merged_path = os.path.join( current_directory, app_name, 'deeplinks_params.json')
+    # deeplinks_path = os.path.join( current_directory, app_name, 'deeplinks.json')
+    # params_path = r'data/intent_para.json'
+    # params = ParamGenerator(params_path)
+    # deeplinks_json = r'data/deeplinks.json'
+    # params.merge_deeplinks_params(deeplinks_json)

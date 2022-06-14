@@ -1,10 +1,10 @@
 import os
-from decompile_apk import unit_decpmpile
+from guidedExplore.decompile_apk import unit_decpmpile
 from guidedExplore.instrument_apk import unit_inject
 from guidedExplore.extract_atg import batch_extract, activity_searching
 from guidedExplore.extract_intent_paras import smali_intent_para_extractor
 from guidedExplore.merge_deeplink_params import ParamGenerator
-
+from guidedExplore.dynamic_GUI_testing import dynamic_GUI_testing
 
 def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path):
     # if not os.path.exists(app_save_dir):
@@ -17,6 +17,7 @@ def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplink
 
     # instrument apk
     apk = app_save_dir[app_save_dir.rindex('/') + 1:]
+
     repackage_app_save_apk = os.path.join(repackage_app_save_dir, apk)
     if not os.path.exists(repackage_app_save_apk):
         os.mkdir(repackage_app_save_apk)
@@ -46,15 +47,41 @@ def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplink
     params = ParamGenerator(paras_save_path)
     params.merge_deeplinks_params(deeplinks_path, merged_path)
 
+def check_and_create_dir(dir_name):
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name)
 
-if __name__ == '__main__':
-    print(os. getcwd())
-    app_save_dir = os. getcwd()+r'/data/recompiled_apks/ebay'
-    repackage_app_save_dir = os. getcwd()+r'/data/repackaged_apks'
-    deeplinks_path = os. getcwd()+r'/data/deeplinks.json'
-    save_dir = os. getcwd()+r'/data'
-    app_dir = os. getcwd()+r'/data/apks/ebay.apk'
-    recompiled_apks = os. getcwd()+r'/data/recompiled_apks'
-    merged_path = os. getcwd()+r'/data/deeplinks_params.json'
+def check_and_create_file(file_name):
+    if not os.path.exists(file_name):
+        with open(file_name, 'x') as f:
+            f.close()
+
+def run_deer(apk_file, emulator):
+    print(os.getcwd())
+    if not apk_file.endswith('.apk'):
+        print("filename invalid")
+        return
+
+    app_name = apk_file[:-4]
+    current_directory = os.path.join(os.getcwd(),"guidedExplore/data")
+    app_save_dir = current_directory + "/recompiled_apks/" + app_name
+    repackage_app_save_dir = current_directory + '/repackaged_apks'
+
+    save_dir = current_directory + "/" + app_name
+    app_dir = os.path.join(os.getcwd(), "input", apk_file)
+    recompiled_apks = current_directory + "/recompiled_apks"
+    merged_path = os.path.join( current_directory, app_name, 'deeplinks_params.json')
+    deeplinks_path = os.path.join( current_directory, app_name, 'deeplinks.json')
+
+
+    check_and_create_dir(current_directory)
+    check_and_create_dir(current_directory +"/recompiled_apks")
+    check_and_create_dir(repackage_app_save_dir)
+    check_and_create_dir(current_directory +"/" + app_name)
+    check_and_create_file(merged_path)
+    check_and_create_file(deeplinks_path)
+
     unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path)
-    print("done")
+
+    dynamic_GUI_testing("emulator-5554", app_name)
+    print("----------done------------")

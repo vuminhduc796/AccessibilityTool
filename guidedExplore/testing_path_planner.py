@@ -16,10 +16,11 @@ class PathPlanner:
         self.package = package
         self.atg_list = rank_atg_weight(atg_json)
         self.reverse_atg_dict = reverse_atg(self.atg_list)
-        self.deeplinks = json.load(open(deeplinks_json, 'r', encoding='utf8'))
-        self.total_activity = len(self.deeplinks.get(self.package).keys())
-        for i in self.deeplinks.get(self.package).keys():
-            self.visited_map.setdefault(i, [False, False])
+        if os.stat(deeplinks_json).st_size != 0:
+            self.deeplinks = json.load(open(deeplinks_json, 'r', encoding='utf8'))
+            self.total_activity = len(self.deeplinks.get(self.package).keys())
+            for i in self.deeplinks.get(self.package).keys():
+                self.visited_map.setdefault(i, [False, False])
 
     def pop_next_activity(self):
         pop = None
@@ -77,6 +78,8 @@ class PathPlanner:
         for k, v in self.visited_map.items():
             if v[0]:
                 count = count + 1
+        if self.total_activity == 0:
+            self.total_activity = count
         return count/self.total_activity
 
     def get_deeplinks_by_package_activity(self, package, target_activity):

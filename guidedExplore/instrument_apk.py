@@ -1,5 +1,5 @@
 import os
-import inject_apk
+from guidedExplore import inject_apk
 
 
 def batch_inject(apk_dir, save_dir, re_packaged_dir, deeplinks_path):

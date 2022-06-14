@@ -2,7 +2,7 @@ import time
 
 from guidedExplore.util import *
 import xml.etree.ElementTree as ET
-from hierachySolver import bounds2int
+from guidedExplore.hierachySolver import bounds2int
 
 grantPermissinActivityFieldList = ['grantpermissions', 'grantpermission']
 dialogList = ['android.widget.TextView', 'android.widget.Button']

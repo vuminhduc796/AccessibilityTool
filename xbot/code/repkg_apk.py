@@ -65,8 +65,6 @@ def sign_apk(apk_name, decompileAPKPath, repackagedAppPath):
 
     cmd = "jarsigner -verbose -keystore {0} -signedjar {1} {2} {3}".format(keyPath, sign_apk, repackAppPathZipped, "coolapk")
     cmd1 = "echo '123456\r'|{0} ".format(cmd)
-
-    #returncode = \
     os.system(cmd1)
     #return returncode
 
