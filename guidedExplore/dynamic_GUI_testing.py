@@ -293,7 +293,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
 
 def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
+        # in case multiple directories need to be created. for example /activity_screenshots/appRelease
+        os.makedirs(dir_name)
 
 def dynamic_GUI_testing(emulator, app_name):
     current_directory = os.path.abspath("../../../")
