@@ -18,8 +18,8 @@
         "\"androidx.cardview.widget.CardView\""
     ],
     "com/google/android/material/chip/Chip": [
-        "\"android.widget.CompoundButton\"",
+        "\"android.view.View\"",
         "\"android.widget.Button\"",
-        "\"android.view.View\""
+        "\"android.widget.CompoundButton\""
     ]
 }

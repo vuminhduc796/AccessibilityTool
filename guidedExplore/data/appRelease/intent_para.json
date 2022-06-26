@@ -1,4 +1,44 @@
 {
+    "com.google.android.apps.accessibility.auditor": {
+        "com.google.android.libraries.social.licenses.LicenseMenuActivity": [
+            [
+                "pluginLicensePaths",
+                "getBundleExtra"
+            ]
+        ],
+        "com.google.android.libraries.social.licenses.LicenseActivity": [
+            [
+                "license",
+                "getParcelableExtra"
+            ]
+        ],
+        "com.google.android.libraries.accessibility.utils.screencapture.ScreenshotAuthProxyActivity": [
+            [
+                "com.google.android.libraries.accessibility.utils.screencapture.EXTRA_SCREEN_CAPTURE_INTENT",
+                "getParcelableExtra"
+            ]
+        ],
+        "com.google.android.gms.common.api.GoogleApiActivity": [
+            [
+                "notify_manager",
+                "getBooleanExtra"
+            ],
+            [
+                "failing_client_id",
+                "getIntExtra"
+            ],
+            [
+                "resolution",
+                "getExtras"
+            ]
+        ],
+        "com.google.android.apps.accessibility.auditor.ui.ExecutionDisplayActivity": [
+            [
+                "application/zip",
+                "getExtras"
+            ]
+        ]
+    },
     "com.example.researchtestapp": {
         "ActivityCompat": [
             [

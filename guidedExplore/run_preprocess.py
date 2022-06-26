@@ -56,32 +56,32 @@ def check_and_create_file(file_name):
         with open(file_name, 'x') as f:
             f.close()
 
-def run_deer(apk_file, emulator):
-    print(os.getcwd())
+def run_deer(apk_file, emulator, outmost_directory):
     if not apk_file.endswith('.apk'):
         print("filename invalid")
         return
-
+    print(outmost_directory + " pleaseee")
     app_name = apk_file[:-4]
-    current_directory = os.path.join(os.getcwd(),"guidedExplore/data")
+    current_directory = os.path.join(outmost_directory, "guidedExplore/data")
+
     app_save_dir = current_directory + "/recompiled_apks/" + app_name
     repackage_app_save_dir = current_directory + '/repackaged_apks'
 
     save_dir = current_directory + "/" + app_name
-    app_dir = os.path.join(os.getcwd(), "input", apk_file)
+    app_dir = os.path.join(outmost_directory, "input", apk_file)
     recompiled_apks = current_directory + "/recompiled_apks"
-    merged_path = os.path.join( current_directory, app_name, 'deeplinks_params.json')
-    deeplinks_path = os.path.join( current_directory, app_name, 'deeplinks.json')
-
+    merged_path = os.path.join(current_directory, app_name, 'deeplinks_params.json')
+    deeplinks_path = os.path.join(current_directory, app_name, 'deeplinks.json')
 
     check_and_create_dir(current_directory)
-    check_and_create_dir(current_directory +"/recompiled_apks")
+    check_and_create_dir(current_directory + "/recompiled_apks")
     check_and_create_dir(repackage_app_save_dir)
-    check_and_create_dir(current_directory +"/" + app_name)
+    check_and_create_dir(current_directory + "/" + app_name)
     check_and_create_file(merged_path)
     check_and_create_file(deeplinks_path)
 
-    unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path)
+    unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks,
+                        merged_path)
 
-    dynamic_GUI_testing("emulator-5554", app_name)
+    dynamic_GUI_testing(emulator, app_name,outmost_directory)
     print("----------done------------")

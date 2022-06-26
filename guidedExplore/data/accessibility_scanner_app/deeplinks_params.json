@@ -1,0 +1,141 @@
+{
+    "com.google.android.apps.accessibility.auditor": {
+        "com.google.android.apps.accessibility.auditor.ui.MainActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.MainActivity1",
+                    "android.intent.action.MAIN"
+                ],
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.MainActivity2",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.ExecutionDisplayActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ExecutionDisplayActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": [
+                "--es application/zip extras_string"
+            ]
+        },
+        "com.google.android.apps.accessibility.auditor.ui.ExecutionFailedDialogActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ExecutionFailedDialogActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.DeviceConfigurationErrorDialogActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.DeviceConfigurationErrorDialogActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.ActivationInstructionalDialogActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ActivationInstructionalDialogActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.libraries.accessibility.utils.screencapture.ScreenshotAuthProxyActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.libraries.accessibility.utils.screencapture.ScreenshotAuthProxyActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": [
+                "--es extra_key other"
+            ]
+        },
+        "com.google.android.apps.accessibility.auditor.ui.DrawOverlaysNoticeDialogActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.DrawOverlaysNoticeDialogActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.ScreenCaptureNoticeDialogActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ScreenCaptureNoticeDialogActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.WarmWelcomeActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.WarmWelcomeActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.apps.accessibility.auditor.ui.ScannerSettingsActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ScannerSettingsActivity1",
+                    "android.intent.action.MAIN"
+                ],
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.apps.accessibility.auditor.ui.ScannerSettingsActivity2",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": []
+        },
+        "com.google.android.libraries.social.licenses.LicenseMenuActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.libraries.social.licenses.LicenseMenuActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": [
+                "--es extra_key other"
+            ]
+        },
+        "com.google.android.libraries.social.licenses.LicenseActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.libraries.social.licenses.LicenseActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": [
+                "--es extra_key other"
+            ]
+        },
+        "com.google.android.gms.common.api.GoogleApiActivity": {
+            "deeplinks": [
+                [
+                    "com_google_android_apps_accessibility_auditor://com.google.android.gms.common.api.GoogleApiActivity1",
+                    "android.intent.action.VIEW"
+                ]
+            ],
+            "params": [
+                "--ez notify_manager True",
+                "--ei failing_client_id 1",
+                "--es resolution extras_string"
+            ]
+        }
+    }
+}
