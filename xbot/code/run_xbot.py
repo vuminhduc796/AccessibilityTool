@@ -189,7 +189,8 @@ def run_xbot(list_of_devices):
 
                 apk_path = os.path.join(apkPath, apk)  # Get apk path
 
-                apk_name = apk.rstrip('.apk')  # Get apk name
+                #apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
+                apk_name = apk.removesuffix('.apk')
                 pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg
 
                 print('======= Starting ' + apk_name + ' =========')

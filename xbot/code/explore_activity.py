@@ -6,7 +6,7 @@ import os, shutil
 import subprocess
 import time, csv
 
-adb = '/usr/bin/adb'
+adb = 'adb'
 #adb = "adb -s %s"%(run_rpk_explore_apk.emulator)
 #folder_name = run.folder_name
 #tmp_dir = run_rpk_explore_apk.tmp_file
@@ -298,10 +298,12 @@ def check_current_screen_new(activity, appname, results_outputs):
     layout_path = os.path.join(results_outputs, appname, pressLocations.get(adb[-13:]).get("name"), 'layouts')
     if not os.path.exists(layout_path):
         os.makedirs(layout_path)
+    print("====== dump =======")
     os.system(adb + ' shell uiautomator dump /sdcard/%s.xml' % activity)
+    print("====== pull xml =======")
     pull_xml = adb + ' pull /sdcard/%s.xml %s' % (activity, layout_path)
     os.system(pull_xml)
-
+    print("====== clean xml =======")
     clean_xml = adb + ' shell rm /sdcard/%s.xml' % activity
     os.system(clean_xml)
 
@@ -546,10 +548,10 @@ def get_pkgname(apk_path):
     global defined_pkg_name
     global used_pkg_name
     #changed
-    cmd = "/usr/bin/aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
+    cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
     defined_pkg_name = subprocess.getoutput(cmd)
 
-    launcher = subprocess.getoutput(r"/usr/bin/aapt dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
+    launcher = subprocess.getoutput(r"aapt dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
     if launcher.startswith(".") or defined_pkg_name in launcher or launcher == '':
         used_pkg_name = defined_pkg_name
     else:
@@ -571,7 +573,7 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
 
     global adb
     #change
-    adb = "/usr/bin/adb -s %s"%(emulator)
+    adb = "adb -s %s"%(emulator)
 
     global tmp_dir
     tmp_dir = tmp_file
