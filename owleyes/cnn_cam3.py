@@ -4,15 +4,15 @@ import numpy as np
 import torch
 from torch.autograd import Function, Variable
 from PIL import Image,ImageFile
+
+from owleyes import getdata
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from network import Net
+from owleyes.network import Net
 import torch.nn as nn
-import getdata
 import os
 import matplotlib.pyplot as plt
 
-image_dir = './examples/'
-model_dir = './4model.pth'
 
 class FeatureExtractor():
     """ Class for extracting activations and
@@ -59,66 +59,62 @@ class ModelOutputs():
 
 
 def preprocess_image(image_file):
+    imgs_data = []
+    img = Image.open(image_file)
+    img_data = getdata.dataTransform(img)
 
-    imgs_data = [] 
-    img = Image.open(image_file)  
-    img_data = getdata.dataTransform(img)  
-
-    imgs_data.append(img_data)  
-    imgs_data = torch.stack(imgs_data)  
-    input = Variable(imgs_data, requires_grad = True)
+    imgs_data.append(img_data)
+    imgs_data = torch.stack(imgs_data)
+    input = Variable(imgs_data, requires_grad=True)
     return input
 
 
-
-def show_cam_on_image(img, mask,image_num):
-
+def show_cam_on_image(img, mask, image_num, output_file_path):
     heatmap = cv2.applyColorMap(np.uint8(255 * mask), cv2.COLORMAP_JET)
     heatmap = np.float32(heatmap) / 255
     cam = heatmap + np.float32(img)
     cam = cam / np.max(cam)
-    cv2.imwrite("{0}cam.jpg".format(image_num), np.uint8(255 * cam))
+    cv2.imwrite(output_file_path + "cam.jpg", np.uint8(255 * cam))
 
-    txtpath = './outputtxt2/{0}.txt'.format(image_num)
-    IMGpath = './examples/{0}.png'.format(image_num)
-    im = Image.open(IMGpath)
-    print(im.size[0])
-    x_num = im.size[0] / 448
-    y_num = im.size[1] / 768
+    # txtpath = './outputtxt2/{0}.txt'.format(image_num)
+    # IMGpath = './examples/{0}.png'.format(image_num)
+    # im = Image.open(IMGpath)
+    # print(im.size[0])
+    # x_num = im.size[0] / 448
+    # y_num = im.size[1] / 768
 
-    gray = cv2.cvtColor(cam,cv2.COLOR_BGR2GRAY)
-    image = gray * 255
-    ret, thresh = cv2.threshold(image, 230, 255, cv2.THRESH_BINARY)
-    cv2.imwrite("0.jpg",thresh)
-    thresh = cv2.imread("0.jpg",cv2.IMREAD_GRAYSCALE)
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # gray = cv2.cvtColor(cam,cv2.COLOR_BGR2GRAY)
+    # image = gray * 255
+    # ret, thresh = cv2.threshold(image, 230, 255, cv2.THRESH_BINARY)
+    # cv2.imwrite("0.jpg",thresh)
+    # thresh = cv2.imread("0.jpg",cv2.IMREAD_GRAYSCALE)
+    # contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #
+    #
+    # for i in range(0, len(contours)):
+    #     x, y, w, h = cv2.boundingRect(contours[i])
+    #     if w<10 or h <10:
+    #         nnnnn =1
+    #     else:
+    #         cv2.rectangle(img, (x, y), (x + w, y + h), (153, 153, 0), 1)
+    #
+    #         xmin = x * x_num
+    #         ymin = y * y_num
+    #         xmax = (x + w) * x_num
+    #         ymax = (y + h) * y_num
+    #         with open(txtpath, "a") as ms:
+    #             ms.write("component occlusion" + "\n")
+    #             ms.write(str(int(xmin)) + "\n")
+    #             ms.write(str(int(ymin)) + "\n")
+    #             ms.write(str(int(xmax)) + "\n")
+    #             ms.write(str(int(ymax)) + "\n")
 
+    # # cv2.imshow("gray1", img)
+    # cv2.waitKey(0)
+    # cv2.drawContours(img, contours, -1, (0, 0, 255), 1)
+    # # cv2.imshow("gray1", img)
+    # cv2.waitKey(0)
 
-    for i in range(0, len(contours)):
-        x, y, w, h = cv2.boundingRect(contours[i])
-        if w<10 or h <10:
-            nnnnn =1
-        else:
-            cv2.rectangle(img, (x, y), (x + w, y + h), (153, 153, 0), 1)
-
-            xmin = x * x_num
-            ymin = y * y_num
-            xmax = (x + w) * x_num
-            ymax = (y + h) * y_num
-            with open(txtpath, "a") as ms:
-                ms.write("component occlusion" + "\n")
-                ms.write(str(int(xmin)) + "\n")
-                ms.write(str(int(ymin)) + "\n")
-                ms.write(str(int(xmax)) + "\n")
-                ms.write(str(int(ymax)) + "\n")
-
-
-    cv2.imshow("gray1", img)
-    cv2.waitKey(0)
-    cv2.drawContours(img, contours, -1, (0, 0, 255), 1)
-    cv2.imshow("gray1", img)
-    cv2.waitKey(0)
- 
 
 class GradCam:
     def __init__(self, model, target_layer_names, use_cuda):
@@ -207,11 +203,10 @@ class GuidedBackpropReLUModel:
                 self.model.module.features._modules[idx] = GuidedBackpropReLU.apply
 
     def forward(self, input):
-        res=self.model.module(input)
-        print(res)
-        print('forward get res')
+        res = self.model.module(input)
+        # print(res)
+        # print('forward get res')
         return res
-
 
     def __call__(self, input, index=None):
         if self.cuda:
@@ -245,12 +240,13 @@ def get_args():
                         help='Input image path')
     args = parser.parse_args()
     args.use_cuda = args.use_cuda and torch.cuda.is_available()
-    if args.use_cuda:
-        print("Using GPU for acceleration")
-    else:
-        print("Using CPU for computation")
+    # if args.use_cuda:
+    #     print("Using GPU for acceleration")
+    # else:
+    #     print("Using CPU for computation")
 
     return args
+
 
 def deprocess_image(img):
     """ see https://github.com/jacobgil/keras-grad-cam/blob/master/grad-cam.py#L65 """
@@ -259,10 +255,10 @@ def deprocess_image(img):
     img = img * 0.1
     img = img + 0.5
     img = np.clip(img, 0, 1)
-    return np.uint8(img*255)
+    return np.uint8(img * 255)
 
 
-if __name__ == '__main__':
+def owleyes_scan(app_name, parent_folder):
     """ python grad_cam.py <path_to_image>
     1. Loads an image with opencv.
     2. Preprocesses it for VGG19 and converts to a pytorch variable.
@@ -270,38 +266,48 @@ if __name__ == '__main__':
     and computes intermediate activations.
     Makes the visualization. """
 
+    image_folder = os.path.join(parent_folder, "output/activity_screenshots", app_name)
+    output_folder = os.path.join(parent_folder, "output/ui_issue_cam", app_name)
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
 
-
-    files = os.listdir(image_dir)
-
+    files = os.listdir(image_folder)
     for file in files:
-        print(file)
         (filename, extension) = os.path.splitext(file)
         image_num = filename
-        image_name = image_dir + file
+
+        image_name = image_folder + "/" + file
         args = get_args()
 
         model = Net()
         model = nn.DataParallel(model)
-        model.load_state_dict(torch.load(model_dir, map_location=torch.device('cpu')))
+        model_dir = os.path.join(parent_folder, "owleyes")
+        # mps for m1 chip
+        model.load_state_dict(torch.load(model_dir + "/4model.pth", map_location=torch.device("mps" if torch.backends.mps.is_available() else "cpu")))
+
+        output_file_path = output_folder + "/" + image_num + "/"
+        if not os.path.exists(output_file_path):
+            os.mkdir(output_file_path)
 
         grad_cam = GradCam(model=model, target_layer_names=["40"], use_cuda=args.use_cuda)
+
         img = cv2.imread(image_name, 1)
-        img = np.float32(cv2.resize(img, (448, 768))) /255
+        img = np.float32(cv2.resize(img, (448, 768))) / 255
 
         input = preprocess_image(image_name)
 
         target_index = None
         mask = grad_cam(input, target_index)
-        show_cam_on_image(img, mask, image_num)
-        gb_model = GuidedBackpropReLUModel(model=model, use_cuda=args.use_cuda)
+        show_cam_on_image(img, mask, image_num, output_file_path)
+        gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
         gb = gb_model(input, index=target_index)
 
         gb = gb.transpose((1, 2, 0))
 
         cam_mask = cv2.merge([mask, mask, mask])
-        cam_gb = deprocess_image(cam_mask*gb)
+        cam_gb = deprocess_image(cam_mask * gb)
         gb = deprocess_image(gb)
 
-        cv2.imwrite('{0}gb.jpg'.format(image_num), gb)
-        cv2.imwrite('{0}cam_gb.jpg'.format(image_num), cam_gb)
+        cv2.imwrite(output_file_path + "gb.jpg", gb)
+        cv2.imwrite(output_file_path + "cam_gb.jpg", cam_gb)
+        print("done: " + output_file_path)
