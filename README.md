@@ -2,7 +2,7 @@
 
 ## Usage
 
-![image-20220628153731444](./images/tool help.png)
+![image-20220628153731444](./images/toolhelp.png)
 
 ```bash
 # help
@@ -26,7 +26,7 @@ python accessibility_tool.py detect --device emulator-5554
 python accessibility_tool.py detect --intput ./input --device emulator-5554
 ```
 
-![image-20220628154039539](./images/detect help.png)
+![image-20220628154039539](./images/detecthelp.png)
 
 --input: the directory where apps are
 
@@ -60,7 +60,7 @@ python accessibility_tool.py config --add java_home_path /Library/Java/JavaVirtu
 
 **config/config.yml**
 
-![image-20220628154125686](./images/config yaml file.png)
+![image-20220628154125686](./images/configyamlfile.png)
 
 # Other Issues
 
