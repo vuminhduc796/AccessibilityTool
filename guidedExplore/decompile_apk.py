@@ -26,6 +26,7 @@ def batch_decompile(apk_dir, save_dir, re_packaged_dir):
 def unit_decpmpile(apk_path, app_save_dir):
     print('Start apktool')
     cmd1 = 'apktool d ' + apk_path + ' -f -o ' + app_save_dir
+
     os.system(cmd1)
 
 
