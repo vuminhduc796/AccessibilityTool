@@ -152,7 +152,7 @@ def run_xbot(list_of_devices,apkPath):
     for device in list_of_devices:
         # TO DO: check if the emulator is running
         if device in sys_config.config_content['emulators']:
-            emulator_name=sys_config.config_content['emulators'][device]
+            emulator_name=sys_config.config_content['emulators'][device]["name"]
             emulators.append(emulator_name)
         else:
             emulators.append(device)
