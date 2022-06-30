@@ -1,0 +1,8 @@
+.idea
+*.iml
+__pycache__/
+output/
+recompiled_apks/
+repackaged_apks/
+visited_rates/
+4model.pth

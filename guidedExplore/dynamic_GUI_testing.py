@@ -293,18 +293,21 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
 
 def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
+        # in case multiple directories need to be created. for example /activity_screenshots/appRelease
+        os.makedirs(dir_name)
 
-def dynamic_GUI_testing(emulator, app_name):
-    current_directory = os.path.abspath("../../../")
-    output_directory = os.path.abspath("../../../../../output")
-    print(current_directory)
+def dynamic_GUI_testing(emulator, app_name, outmost_directory):
+    current_directory = outmost_directory + "/guidedExplore/data"
+    output_directory = outmost_directory + "/output"
     apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
+
     atg_json = current_directory + "/" + app_name + '/activity_atg/' + app_name + ".json"
     atg_save_dir = current_directory + app_name + '/activity_atg/' + app_name + '_dynamic.json'
+    #atg_json = current_directory + "/" + app_name + '/activity_atg.json'
+    #atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
     ss_path = output_directory + '/activity_screenshots/' + app_name + "/"
     deeplinks_json = os.path.join(current_directory, app_name, 'deeplinks_params.json')
-    log = current_directory + 'visited_rates/' + app_name + ".txt"
+    log = current_directory + '/visited_rates/' + app_name + ".txt"
     check_and_create_dir(ss_path)
-
+    check_and_create_dir(current_directory + '/visited_rates/')
     unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log, reinstall=False)

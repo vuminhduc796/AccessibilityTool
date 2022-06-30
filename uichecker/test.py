@@ -1,7 +1,7 @@
 from path import Path
 import os
 
-from .src.uichecker.common import get_successful_results
+from src.uichecker.common import get_successful_results
 
 with Path("markii/tests/test01"):
     os.system("./gradlew assembleDebug")

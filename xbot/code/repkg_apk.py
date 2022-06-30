@@ -6,7 +6,7 @@ output: a repackaged apk
 
 import os
 import shutil
-
+import config.config as sys_config
 #keyPath = os.path.join(os.path.split(os.path.realpath(__file__))[0], "coolapk.keystore")  # pwd: 123456, private key path
 import subprocess
 
@@ -72,8 +72,10 @@ def sign_apk(apk_name, decompileAPKPath, repackagedAppPath):
 def unit_sign_APK(apk_path):
     print('sign ' + apk_path)
     #cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    cmd3 = '/home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    sdk_platform_path = '/home/chunyangchen/Android/Sdk'  # For Macbook
+    #cmd3 = '/home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+    cmd3 = sys_config.config_content["apk_signer"]+' sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+
+    #sdk_platform_path = '/Users/leih/Library/Android/Sdk'  # For Macbook
     os.system(cmd3)
 
 def rename(apkname, repackagedAppPath):

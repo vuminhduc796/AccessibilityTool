@@ -24,8 +24,10 @@ else:
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 uicheck_start_time = time.time()
-
+os.system("pwd")
 apk = sys.argv[1]
+# temp
+
 assert os.path.exists(apk) and apk.endswith(".apk"), f"Invalid APK path: {apk}"
 apk = os.path.realpath(apk)
 ic3_model = apk.replace(".apk", "_ic3.txt")
