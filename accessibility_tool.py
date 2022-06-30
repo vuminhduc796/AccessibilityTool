@@ -40,7 +40,7 @@ def detect_file_availability_issues(
             ##deer
             typer.secho("========Start running deer========",fg=typer.colors.MAGENTA)
             if list_of_devices[0] in sys_config.config_content['emulators']:
-                emulator_name = sys_config.config_content['emulators'][device]["name"]
+                emulator_name = sys_config.config_content['emulators'][list_of_devices[0]]["name"]
             else:
                 emulator_name=list_of_devices[0]
             run_deer(apk,emulator_name,current_directory)
