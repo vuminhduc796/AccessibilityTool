@@ -35,11 +35,15 @@ def detect_file_availability_issues(
             # ui checker
             os.system("export ANDROID_SDK_ROOT="+sys_config.config_content["sdk_platform_path"])
             os.system("export ANDROID_SDK="+sys_config.config_content["sdk_platform_path"])
-            os.system("./uichecker/uicheck " + str(apk_path.absolute())+"/"+apk + " ./uichecker/rules/input.dl")
+            #os.system("./uichecker/uicheck " + str(apk_path.absolute())+"/"+apk + " ./uichecker/rules/input.dl")
             typer.secho("========UI checker Finished========",fg=typer.colors.MAGENTA)
             ##deer
             typer.secho("========Start running deer========",fg=typer.colors.MAGENTA)
-            run_deer(apk,list_of_devices[0],current_directory)
+            if list_of_devices[0] in sys_config.config_content['emulators']:
+                emulator_name = sys_config.config_content['emulators'][device]["name"]
+            else:
+                emulator_name=list_of_devices[0]
+            run_deer(apk,emulator_name,current_directory)
             typer.secho("========Deer Finished========",fg=typer.colors.MAGENTA)
             typer.secho("========Start running owleye========",fg=typer.colors.MAGENTA)
             # owleye
