@@ -5,6 +5,8 @@ import csv
 import os
 import subprocess
 
+import typer
+
 import xbot.code.repkg_apk as repkg_apk
 import xbot.code.explore_activity as explore_activity
 import shutil
@@ -149,13 +151,14 @@ def remove_folder(apkname, decompilePath):
 
 
 def run_xbot(list_of_devices,apkPath):
-    for device in list_of_devices:
-        # TO DO: check if the emulator is running
-        if device in sys_config.config_content['emulators']:
-            emulator_name=sys_config.config_content['emulators'][device]["name"]
-            emulators.append(emulator_name)
-        else:
-            emulators.append(device)
+    emulators = list_of_devices
+    # for device in list_of_devices:
+    #     # TO DO: check if the emulator is running
+    #     if device in sys_config.config_content['emulators']:
+    #         emulator_name=sys_config.config_content['emulators'][device]["name"]
+    #         emulators.append(emulator_name)
+    #     else:
+    #         emulators.append(device)
     # os.system("adb -s emulator-5556 emu kill")
     # os.system("adb -s emulator-5558 emu kill")
     # os.system("adb -s emulator-5560 emu kill")
@@ -191,12 +194,15 @@ def run_xbot(list_of_devices,apkPath):
     if not os.path.exists(out_csv):
         csv.writer(open(out_csv, 'a')).writerow(('apk_name', 'pkg_name', 'all_act_num', 'launched_act_num',
                                                  'act_not_launched', 'act_num_with_issue'))
-    print(os.path.abspath(apkPath))
+    # print(os.path.abspath(apkPath))
     for apk in os.listdir(apkPath):  # Run the apk one by one
         for emulator in emulators:
             if not 'apks' in apk and 'apk' in apk:
                 root = 'adb -s %s root' % (emulator)  # root the emulator before running
-                print(subprocess.getstatusoutput(root))
+                result = subprocess.getstatusoutput(root)
+                if "not found" in result[1]:
+                    typer.secho("The emulator "+emulator+" does not exist, please check your device.",fg=typer.colors.MAGENTA)
+                    sys.exit()
                 apk_path = os.path.join(apkPath, apk)  # Get apk path
                 #apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
                 apk_name = apk.removesuffix('.apk')
