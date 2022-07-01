@@ -31,7 +31,7 @@ def detect_file_availability_issues(
                                                     "--d", help="Uses device to test accessibility issues"),
         xbot: bool = typer.Option(False, "--xbot", "--x", help="Uses Xbot"),
         uichecker: bool = typer.Option(False, "--uichecker", "--u", help="Uses UI Checker"),
-        deer: bool = typer.Option(False, "--deer", "--d", help="Uses Deer"),
+        deer: bool = typer.Option(False, "--deer", "--dr", help="Uses Deer"),
         owleye: bool = typer.Option(False, "--owleye", "--o", help="Uses OwlEye"),
         complete: bool = typer.Option(False, "--complete", "--c", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                        "OwlEye)")
@@ -88,7 +88,7 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
                                                                         help="Format:[alias], delete an [alias]")
                     ):
     for emulator in add_emulator:
-        if (not ':' in emulator):
+        if not ':' in emulator:
             typer.secho("incorrect format:[alias:name]", fg=typer.colors.MAGENTA)
         else:
             emulator_key_value = emulator.split(':')

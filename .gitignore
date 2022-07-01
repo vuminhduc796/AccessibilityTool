@@ -13,3 +13,4 @@ xbot/output/
 guidedExplore/data/
 4model.pth
 *.apk
+data/repackaged_apks/
