@@ -27,7 +27,7 @@ python accessibility_tool.py detect --intput ./input --device emulator-5554 --xb
 python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot --uichecker
 ```
 
-![image-20220701224352948](/Users/leih/Desktop/monash/research/AccessibilityTool/images/detecthelp.png)
+![image-20220701224352948](./images/detecthelp.png)
 
 
 
