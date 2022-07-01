@@ -79,7 +79,7 @@ python accessibility_tool.py config auto-login --d apk-release
 
 You can manually modify **config.yml**.
 
-![image-20220628154125686](./images/configyamlfile.png)
+![image-20220701222244218](/Users/leih/Desktop/monash/research/AccessibilityTool/images/configyamlfile.png)
 
 ## TODO: Replay Accessibility issues
 

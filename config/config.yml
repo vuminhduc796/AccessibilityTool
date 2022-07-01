@@ -3,6 +3,9 @@ auto-login:
   default:
     password: '123456'
     username: '123456'
+  app-release:
+    username: '123456'
+    password: '123456'
 emulators:
   alias:
     phone: emulator-5554
