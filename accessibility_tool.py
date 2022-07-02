@@ -43,7 +43,14 @@ def detect_file_availability_issues(
                 emulator_name = sys_config.config_content['emulators'][list_of_devices[0]]["name"]
             else:
                 emulator_name=list_of_devices[0]
-            run_deer(apk,emulator_name,current_directory)
+            hasLogin = sys_config.config_content["haslogin"]
+            if hasLogin:
+                username = sys_config.config_content["username"]
+                password = sys_config.config_content["password"]
+                activityName = sys_config.config_content["activityName"]
+                run_deer(apk, emulator_name, current_directory,  {'hasLogin': hasLogin,'username': username, 'password': password,'activityName': activityName})
+            else:
+                run_deer(apk, emulator_name, current_directory, {'hasLogin': hasLogin})
             typer.secho("========Deer Finished========",fg=typer.colors.MAGENTA)
             typer.secho("========Start running owleye========",fg=typer.colors.MAGENTA)
             # owleye
