@@ -295,6 +295,7 @@ def check_current_screen_new(activity, appname, results_outputs):
     keywords = ['has stopped', 'isn\'t responding', 'keeps stopping']
 
     '''dump xml and check'''
+    print(adb)
     layout_path = os.path.join(results_outputs, appname, pressLocations.get(adb[-13:]).get("name"), 'layouts')
     if not os.path.exists(layout_path):
         os.makedirs(layout_path)
@@ -575,6 +576,8 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
     #change
     adb = "adb -s %s"%(emulator)
 
+    print("sss")
+    print(adb)
     global tmp_dir
     tmp_dir = tmp_file
 

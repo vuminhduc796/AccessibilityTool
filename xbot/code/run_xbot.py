@@ -95,8 +95,8 @@ def execute(apk_path, apk_name):
         # if 'Xbot' in results_folder:
         ### Xbot, note that the para is results_folder instead of accessibility_folder
         for emulator in emulators:
-            tmp_file = os.path.join(results_folder, emulator)  # tmp file for parallel execution
-            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, paras_path)
+            tmp_file = os.path.join(results_folder, emulator["name"])  # tmp file for parallel execution
+            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator["name"], tmp_file, paras_path)
         # else:
         #     ### UICrawler, note that the para is results_folder instead of accessibility_folder
         #     exploreAct_uicrawler.exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, paras_path)
@@ -149,16 +149,24 @@ def remove_folder(apkname, decompilePath):
 
 
 def run_xbot(list_of_devices,apkPath):
+    os.system("adb -s emulator-5556 emu kill")
+    os.system("adb -s emulator-5558 emu kill")
+    os.system("adb -s emulator-5560 emu kill")
+    os.system("adb -s emulator-5554 emu kill")
     for device in list_of_devices:
-        # TO DO: check if the emulator is running
+
         if device in sys_config.config_content['emulators']:
+
             emulator_name=sys_config.config_content['emulators'][device]
             emulators.append(emulator_name)
+            port_number = emulator_name[-4:]
+            subprocess.Popen(['emulator',"-port", port_number, '-avd', emulator_name])
         else:
             emulators.append(device)
-    # os.system("adb -s emulator-5556 emu kill")
-    # os.system("adb -s emulator-5558 emu kill")
-    # os.system("adb -s emulator-5560 emu kill")
+            port_number = device[-4:]
+            subprocess.Popen(['emulator',"-port", port_number, '-avd', device])
+
+
     # for arg in sys.argv:
     #     if arg == "phone-vertical":
     #         emulators.append("emulator-5554")

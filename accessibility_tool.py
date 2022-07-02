@@ -2,10 +2,12 @@
 This is an entry for Accessibility Tool
 """
 import os
+import threading
 from os.path import isfile, join
 import typer
 from pathlib import Path
 import config.config as sys_config
+import subprocess
 from guidedExplore.run_preprocess import run_deer
 from owleyes.cnn_cam3 import owleyes_scan
 from xbot.code.run_xbot import run_xbot
@@ -52,4 +54,5 @@ def replay():
 def config():
     pass
 if __name__ == '__main__':
-    app()
+
+    run_xbot(["phone-vertical"], "./input")
