@@ -240,6 +240,13 @@ def search_elements_from_XMLElement(source, target):
         if target.lower() in node_text:
             return node.attrib['resource-id']
     # print('not found')
+    # seach for unclickable if not found
+    for node in root.iter('node'):
+        if node.attrib['clickable'] == 'false':
+            node_text = node.attrib['text'].lower()
+            if target.lower() in node_text:
+                return node.attrib['resource-id']
+
     return None
 
 def search_input_from_XMLElement(source, target):
@@ -247,9 +254,11 @@ def search_input_from_XMLElement(source, target):
     for node in root.iter('node'):
         # print(node.attrib['text'])
         if node.attrib['class'] != 'android.widget.EditText':
-            continue
+            if not ('Text' in node.attrib['class'] and node.attrib['focusable'] == 'true' and node.attrib['clickable'] == 'true'):
+                continue
         node_text = node.attrib['text'].lower()
-        if target.lower() in node_text:
+        id_text = node.attrib['resource-id'].lower()
+        if target.lower() in node_text or target.lower() in id_text:
             return node.attrib['resource-id']
     return None
 

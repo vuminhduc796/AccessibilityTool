@@ -95,8 +95,9 @@ if __name__ == "__main__":
     # login_options = "--
 
     login_options = {'hasLogin': True, 'username': '', 'password': '',
-                     'activityName': '.ui.authentication.mediaauth.AuthActivity', 'packageName': 'com.alltrails.alltrails'}
-    apk_file = 'alltrails.apk'
+                     'activityName': '.login.main.activities.Login', 'packageName': 'com.groupon',
+                     'facebookLogin': False}
+    apk_file = 'groupon.apk'
     emulator = '08221FDD4004DF'
     outmost_directory = os.getcwd().replace('/guidedExplore','')
 

@@ -199,16 +199,65 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
             # after clicking all clickable widgets, begin to randomly click and test
             random_status = True
 
+def login_with_facebook(d, login_options):
+    # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
+    try :
+
+        d.app_start(login_options['packageName'], login_options['activityName'])
+        time.sleep(3)
+
+        xml = d.dump_hierarchy()
+
+        # check facebookLogin
+        elementId = search_elements_from_XMLElement(xml, 'facebook')
+        if elementId is None:
+            return False
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+
+    # #     try to input username and password
+    #     xml = d.dump_hierarchy()
+    #     usernameTextEditId = search_input_from_XMLElement(xml, 'email')
+    #     if usernameTextEditId is None:
+    #         usernameTextEditId = search_input_from_XMLElement(xml, 'username')
+    #     if usernameTextEditId is not None:
+    #         d.implicitly_wait(20.0)
+    #         d(resourceId=usernameTextEditId).set_text(login_options['username'])
+    #
+    #     passwordTextEditId = search_input_from_XMLElement(xml, 'password')
+    #     if passwordTextEditId is not None:
+    #         d.implicitly_wait(20.0)
+    #         d(resourceId=passwordTextEditId).set_text(login_options['password'])
+
+        # click continue button
+        xml = d.dump_hierarchy()
+        elementId = search_elements_from_XMLElement(xml, 'continue')
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+
+
+    except Exception as e:
+
+        print('Failed to start {} because {}'.format(login_options['activityName'], e))
+        return False
+
+    return True
+
 def try_login(d, login_options):
     # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
     try :
         d.app_start(login_options['packageName'], login_options['activityName'])
+        time.sleep(3)
         xml = d.dump_hierarchy()
 
         # check if need an extra move
         elementId = search_elements_from_XMLElement(xml, 'already have an account')
         if elementId is None:
             elementId = search_elements_from_XMLElement(xml, 'log in')
+        if elementId is None:
+            elementId = search_elements_from_XMLElement(xml, 'sign in')
         if elementId is not None:
             d.implicitly_wait(20.0)
             d(resourceId=elementId).click()
@@ -231,6 +280,8 @@ def try_login(d, login_options):
         d.press("back")
         xml = d.dump_hierarchy()
         elementId = search_elements_from_XMLElement(xml, 'log in')
+        if elementId is None:
+            elementId = search_elements_from_XMLElement(xml, 'sign in')
         if elementId is not None:
             d.implicitly_wait(20.0)
             d(resourceId=elementId).click()
@@ -266,9 +317,11 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
     if login_options['hasLogin']:
         try_login(d, login_options)
         d.sleep(3)
-        dialogSolver(d)
 
-    return
+
+    if login_options['facebookLogin']:
+        login_with_facebook(d, login_options)
+        d.sleep(3)
 
     # get the screenshot of the first activity
     main_screenshot = saveScreenshot(d, ss_path, mainActivity)
