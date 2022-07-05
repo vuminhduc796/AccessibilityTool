@@ -54,5 +54,8 @@ def replay():
 def config():
     pass
 if __name__ == '__main__':
-
-    run_xbot(["phone-vertical"], "./input")
+#,"phone-horizontal","tablet-vertical","tablet-horizontal"
+    is_dark_mode = True
+    # font size can be ["small", "normal", "large", "extra_large"]
+    fontsize = "extra_large"
+    run_xbot(["phone-vertical"], "./input", is_dark_mode, fontsize)

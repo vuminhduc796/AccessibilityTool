@@ -4,6 +4,7 @@ Authors: Sen Chen and Lingling Fan
 import csv
 import os
 import subprocess
+import time
 
 import xbot.code.repkg_apk as repkg_apk
 import xbot.code.explore_activity as explore_activity
@@ -27,14 +28,14 @@ emulators = []
 # java_home_path = '/home/dell/tools/jdk1.8.0_45'
 # java_home_path = '/home/chunyangchen/android-studio/jre/'  # For Ubuntu
 # java_home_path = '/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home/' # For Macbook
-#java_home_path = '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home/' # For Macbook
+# java_home_path = '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home/' # For Macbook
 java_home_path = sys_config.config_content['java_home_path']
 # sdk_platform_path = '/home/dell/Tools/Xbot/config/libs/android-platforms/'
 # sdk_platform_path = '/home/senchen/Tools/xbot/config/libs/android-platforms/' # For Ubuntu (NTU-Computer)
 # sdk_platform_path = '/home/senchen/Engines/Xbot/main-folder/config/libs/android-platforms/' # For Ubuntu (TJU-Computer)
 # sdk_platform_path = '~/main-folder/config/libs/android-platforms/' # For Macbook
 # sdk_platform_path = '/home/chunyangchen/Android/Sdk'  # For Macbook
-#sdk_platform_path = '/Users/leih/Library/Android/sdk'  # For Macbook
+# sdk_platform_path = '/Users/leih/Library/Android/sdk'  # For Macbook
 sdk_platform_path = sys_config.config_content['sdk_platform_path']
 # lib_home_path = '/home/dell/Tools/Xbot/config/libs/'
 # lib_home_path = '/home/chunyangchen/Tools/libs/' # For Ubuntu (NTU-Computer)
@@ -81,7 +82,7 @@ def createOutputFolder():
         os.makedirs(results_outputs)
 
 
-def execute(apk_path, apk_name):
+def execute(apk_path, apk_name, is_dark_mode=False, fontsize="normal"):
     # Repackge app
     if not os.path.exists(os.path.join(repackagedAppPath, apk_name + '.apk')):
         r = repkg_apk.startRepkg(apk_path, apk_name, results_folder, config_folder)
@@ -96,7 +97,8 @@ def execute(apk_path, apk_name):
         ### Xbot, note that the para is results_folder instead of accessibility_folder
         for emulator in emulators:
             tmp_file = os.path.join(results_folder, emulator["name"])  # tmp file for parallel execution
-            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator["name"], tmp_file, paras_path)
+            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator["name"], tmp_file,
+                                             paras_path, is_dark_mode, fontsize)
         # else:
         #     ### UICrawler, note that the para is results_folder instead of accessibility_folder
         #     exploreAct_uicrawler.exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, paras_path)
@@ -148,24 +150,26 @@ def remove_folder(apkname, decompilePath):
                 os.remove(rm_path)
 
 
-def run_xbot(list_of_devices,apkPath):
+def run_xbot(list_of_devices, apkPath, is_dark_mode=False, fontsize="normal"):
     os.system("adb -s emulator-5556 emu kill")
     os.system("adb -s emulator-5558 emu kill")
     os.system("adb -s emulator-5560 emu kill")
     os.system("adb -s emulator-5554 emu kill")
+    time.sleep(2)
     for device in list_of_devices:
 
         if device in sys_config.config_content['emulators']:
 
-            emulator_name=sys_config.config_content['emulators'][device]
+            emulator_name = sys_config.config_content['emulators'][device]
             emulators.append(emulator_name)
-            port_number = emulator_name[-4:]
-            subprocess.Popen(['emulator',"-port", port_number, '-avd', emulator_name])
+            print(emulator_name["name"])
+            port_number = emulator_name["name"][-4:]
+            print(port_number, emulator_name["name"])
+            subprocess.Popen(['emulator', "-port", port_number, '-avd', device])
         else:
             emulators.append(device)
             port_number = device[-4:]
-            subprocess.Popen(['emulator',"-port", port_number, '-avd', device])
-
+            subprocess.Popen(['emulator', "-port", port_number, '-avd', device])
 
     # for arg in sys.argv:
     #     if arg == "phone-vertical":
@@ -179,7 +183,6 @@ def run_xbot(list_of_devices,apkPath):
     #     elif arg == "tablet-horizontal":
     #
     #         emulators.append("emulator-5556")
-
 
     # for device in list_of_devices:
     #     print(device)
@@ -206,9 +209,9 @@ def run_xbot(list_of_devices,apkPath):
                 root = 'adb -s %s root' % (emulator)  # root the emulator before running
                 print(subprocess.getstatusoutput(root))
                 apk_path = os.path.join(apkPath, apk)  # Get apk path
-                #apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
+                # apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
                 apk_name = apk.removesuffix('.apk')
-                pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg
+                #                pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg
                 print('======= Starting ' + apk_name + ' =========')
 
                 '''
@@ -229,7 +232,7 @@ def run_xbot(list_of_devices,apkPath):
                 '''
                 Core
                 '''
-                execute(apk_path, apk_name)
+                execute(apk_path, apk_name, is_dark_mode, fontsize)
                 # if os.path.exists(apk_path):
                 #    os.remove(apk_path)  # Delete the apk
 
