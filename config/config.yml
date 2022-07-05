@@ -1,11 +1,12 @@
 apk_signer: /Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner
+zip_align: /Users/leih/Library/Android/sdk/build-tools/29.0.2/zipalign
 auto-login:
-  default:
-    password: '123456'
-    username: '123456'
-  app-release:
-    username: '123456'
-    password: '123456'
+  activity: .ui.authentication.mediaauth.AuthActivity
+  method: facebook
+  packageName: com.Alltrails.alltrails
+default_facebook:
+  password: '1234'
+  username: '912345'
 emulators:
   alias:
     phone: emulator-5554

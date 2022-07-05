@@ -1,6 +1,6 @@
 import os
 from guidedExplore import inject_apk
-
+import config.config as sys_config
 
 def batch_inject(apk_dir, save_dir, re_packaged_dir, deeplinks_path):
     for root, dirs, files in os.walk(apk_dir):
@@ -46,7 +46,7 @@ def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path):
 
     print("zip apk")
 
-    zip_cmd = "zipalign -f -p 4 " + temp_apk + " " + re_packaged_apk
+    zip_cmd = sys_config.config_content['zip_align']+" -f -p 4 " + temp_apk + " " + re_packaged_apk
     os.system(zip_cmd)
 
     print('sign apk')
@@ -57,9 +57,9 @@ def unit_sign_APK(apk_path):
     print('sign ' + apk_path)
     #cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
     #cmd3 = '/home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    cmd3 = '/Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+    cmd3 = sys_config.config_content['apk_signer']+' sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
 
-    sdk_platform_path = '/Users/leih/Android/Sdk'  # For Macbook
+    sdk_platform_path = sys_config.config_content['sdk_platform_path']  # For Macbook
     os.system(cmd3)
 
 
