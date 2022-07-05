@@ -27,7 +27,9 @@ python accessibility_tool.py detect --intput ./input --device emulator-5554 --xb
 python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot --uichecker
 ```
 
-![image-20220701212854343](./images/toolhelp.png)
+![image-20220701224352948](./images/detecthelp.png)
+
+
 
 **--input**: the directory where apps are
 
@@ -35,7 +37,7 @@ python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot 
 
 - for example, `python accessibility_tool.py detect --device emulator-5554 --device phone-vertical`
 
-choose a tool to detect: **--xbot, --uichecker, --deer, --owleye**
+**choose a tool to detect**: `--xbot, --uichecker, --deer, --owleye`
 
 **--complete**: use all the tools at one time.
 
@@ -82,7 +84,7 @@ python accessibility_tool.py config auto-login --d
 You can manually modify **config.yml**.
 
 ![img.png](images/config.png)
-
+=======
 ## TODO: Replay Accessibility issues
 
 ```bash
