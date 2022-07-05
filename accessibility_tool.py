@@ -17,6 +17,11 @@ app.add_typer(config_app, name="config")
 current_directory = os.getcwd()
 
 
+def delete_auto_login_config(remove_auto_login: bool):
+    if remove_auto_login:
+        sys_config.remove_auto_login_config()
+
+
 @app.command("detect")
 def detect_file_availability_issues(
         apk_path: Path = typer.Option('./input', "--input", "--i",
@@ -29,11 +34,12 @@ def detect_file_availability_issues(
                                       ),
         devices: Optional[List[str]] = typer.Option(sys_config.config_content["emulators"]["default"], "--device",
                                                     "--d", help="Uses device to test accessibility issues"),
-        xbot: bool = typer.Option(False, "--xbot", "--x", help="Uses Xbot"),
-        uichecker: bool = typer.Option(False, "--uichecker", "--u", help="Uses UI Checker"),
-        deer: bool = typer.Option(False, "--deer", "--dr", help="Uses Deer"),
-        owleye: bool = typer.Option(False, "--owleye", "--o", help="Uses OwlEye"),
-        complete: bool = typer.Option(False, "--complete", "--c", help="Uses all the tools(Xbot, UI checker, deer and "
+        xbot: bool = typer.Option(False, "--scan", help="Uses Xbot to scan to generate screenshots."),
+        uichecker: bool = typer.Option(False, "--ui", "--u", help="Uses UI Checker to generate accessibility "
+                                                                         "report of UI in json format"),
+        deer: bool = typer.Option(False, "--graph", "--g", help="Uses Deer to form transition graphs"),
+        owleye: bool = typer.Option(False, "--screenshot", "--s", help="Uses OwlEye to generate screenshots of errors"),
+        complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                        "OwlEye)")
 ):
     # check options
@@ -88,7 +94,7 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
                                                                         help="Format:[alias], delete an [alias]")
                     ):
     for emulator in add_emulator:
-        if not ':' in emulator:
+        if (not ':' in emulator):
             typer.secho("incorrect format:[alias:name]", fg=typer.colors.MAGENTA)
         else:
             emulator_key_value = emulator.split(':')
@@ -100,22 +106,40 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
 
 
 @config_app.command("auto_login")
-def auto_login(add_auto_login: Optional[List[str]] = typer.Option(None, "--add",
-                                                                  "--a",
-                                                                  help="Format:[apk_name:username:password], set up ["
-                                                                       "username] "
-                                                                       "and [password] for the apk [apk_name]"),
-               remove_auto_login: Optional[List[str]] = typer.Option(None, "--delete",
-                                                                     "--d",
-                                                                     help="Format:[apk_name], delete username and "
-                                                                          "passwords for [apk_name]")
-               ):
-    for user_pass in add_auto_login:
-        formatted_user_pass = user_pass.split(":")
-        sys_config.add_auto_login_config(formatted_user_pass[0], formatted_user_pass[1], formatted_user_pass[2])
-    for username in remove_auto_login:
-        sys_config.remove_auto_login_config(username)
+def auto_login(pass_login: str = typer.Option(None, "--pass",
+                                              "--p",
+                                              help="Format:[username:password:activity"
+                                                   ":package_name], set up [ "
+                                                   "username] "
+                                                   ", [password], [activity] and [package_name] "
+                                                   "for the apk"),
+               facebook_login: str = typer.Option(None, "--facebook",
+                                                  "--f",
+                                                  help="Format:[activity"
+                                                       ":package_name], set up [activity] and [package_name] "
+                                                       "for the apk"),
+               default_facebook_user_pass: str = typer.Option(None, "--setting",
+                                                              help="Format:[username"
+                                                                   ":password], set up default [username] and ["
+                                                                   "password] "
+                                                                   "for loging into the facebook"),
 
+               remove_auto_login: Optional[bool] = typer.Option(
+                   None, "--delete", '--d', callback=delete_auto_login_config,
+                   help="Deletes auto-login configuration"),
+
+               ):
+    if pass_login:
+        formatted_user_pass = pass_login.split(":")
+        sys_config.add_auto_login_pass_config(formatted_user_pass[0], formatted_user_pass[1], formatted_user_pass[2],
+                                              formatted_user_pass[3])
+    if facebook_login:
+        formatted_facebook_config = facebook_login.split(":")
+        sys_config.add_auto_login_facebook_config(formatted_facebook_config[0], formatted_facebook_config[1])
+    if default_facebook_user_pass:
+        formatted_facebook_default_config = default_facebook_user_pass.split(":")
+        sys_config.add_auto_login_facebook_default_config(formatted_facebook_default_config[0],
+                                                          formatted_facebook_default_config[1])
 
 if __name__ == '__main__':
     app()

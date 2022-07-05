@@ -1,6 +1,9 @@
 import os
 import random
 import json
+
+import adbutils
+import typer
 import uiautomator2 as u2
 import requests
 import uiautomator2.exceptions
@@ -18,8 +21,8 @@ from guidedExplore.activity_launcher import launch_activity_by_deeplinks, launch
 
 dynamic_atg = {}
 
-def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=False):
 
+def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=False):
     d_activity, d_package, isLauncher = getActivityPackage(d)
     start_time = datetime.now()
     random_status = False
@@ -55,13 +58,12 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                                                                                         full_cur_activity)
             status = launch_activity_by_deeplinks(deviceId, deeplinks, actions, params)
             if status:
-                #get the screenshot
+                # get the screenshot
                 if full_cur_activity not in visited_activities:
                     visited_activities.append(full_cur_activity)
                     screenshot = saveScreenshot(d, ss_path, full_cur_activity)
                     if screenshot is None:
                         print('Failed to save screenshot of  {}'.format(full_cur_activity))
-
 
         # random testing, click clickable pixel on the screen randomly
         if random_status:
@@ -91,7 +93,7 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
             #     continue
             action_point = random.choice(leaves)
             d.click((action_point[0] + action_point[2]) / 2, (action_point[1] + action_point[3]) / 2)
-            #clicked_bounds.append(action_point)
+            # clicked_bounds.append(action_point)
             try:
                 xml2 = d.dump_hierarchy(compressed=True)
             except uiautomator2.exceptions.JSONRPCError as e:
@@ -200,7 +202,8 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
             random_status = True
 
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log_save_path, test_time=1200, reinstall=False):
+def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log_save_path,
+                         test_time=1200, reinstall=False):
     visited_rate = []
     visited_activities = []
     installed1, packageName, mainActivity = installApk(apk_path, device=deviceId, reinstall=reinstall)
@@ -208,6 +211,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
         print('install ' + apk_path + ' fail.')
         return
     try:
+        check_arch = "adb -s " + deviceId + " shell getprop ro.product.cpu.abi"
+        res = subprocess.getoutput(check_arch)
+        if 'arm64' in res:
+            connect_arm64(deviceId)
         d = u2.connect(deviceId)
     except requests.exceptions.ConnectionError:
         print('requests.exceptions.ConnectionError')
@@ -277,7 +284,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
                                 if screenshot is None:
                                     print('Failed to save screenshot of  {}'.format(activity))
 
-                            random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=True)
+                            random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60,
+                                               swipe=True)
                             break
 
         cur_test_time = datetime.now()
@@ -286,15 +294,16 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
     with open(atg_save_dir, 'w') as f:
         json.dump(dynamic_atg, f)
 
-
     print('visited rate:%s in %s seconds' % (path_planner.get_visited_rate(), test_time))
     path_planner.log_visited_rate(visited_rate, path=log_save_path)
     return
+
 
 def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
         # in case multiple directories need to be created. for example /activity_screenshots/appRelease
         os.makedirs(dir_name)
+
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory):
     current_directory = outmost_directory + "/guidedExplore/data"
@@ -303,11 +312,39 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory):
 
     atg_json = current_directory + "/" + app_name + '/activity_atg/' + app_name + ".json"
     atg_save_dir = current_directory + app_name + '/activity_atg/' + app_name + '_dynamic.json'
-    #atg_json = current_directory + "/" + app_name + '/activity_atg.json'
-    #atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
+    # atg_json = current_directory + "/" + app_name + '/activity_atg.json'
+    # atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
     ss_path = output_directory + '/activity_screenshots/' + app_name + "/"
     deeplinks_json = os.path.join(current_directory, app_name, 'deeplinks_params.json')
     log = current_directory + '/visited_rates/' + app_name + ".txt"
     check_and_create_dir(ss_path)
     check_and_create_dir(current_directory + '/visited_rates/')
     unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log, reinstall=False)
+
+
+def connect_arm64(deviceId):
+    atx_agent_filename = 'atx-agent_0.10.0_linux_arm64.tar.gz'
+    atx_agent_url = 'https://github.com/openatx/atx-agent/releases/download/0.10.0/' + atx_agent_filename
+    temp_dir = '../../../tmp_atx-agent/arm64/'
+    # download atx_agent
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    elif not os.path.exists(temp_dir + "atx-agent"):
+        typer.secho("Start downloading atx-agent...", fg=typer.colors.MAGENTA)
+        command = 'curl -LJ ' + atx_agent_url + ' > ' + temp_dir + atx_agent_filename
+        typer.secho(subprocess.getoutput(command), fg=typer.colors.MAGENTA)
+        # unzip tar.gz
+        command = 'tar zxvf ' + temp_dir + atx_agent_filename + ' -C ' + temp_dir
+        typer.secho(subprocess.getoutput(command), fg=typer.colors.MAGENTA)
+    else:
+        typer.secho("Use cache", fg=typer.colors.MAGENTA)
+    # chmod
+    chmod_command = 'adb -s ' + deviceId + ' shell chmod 755 /data/local/tmp/*'
+    typer.secho(subprocess.getoutput(chmod_command), fg=typer.colors.MAGENTA)
+    # push atx_agent to the device
+    push_command = 'adb -s ' + deviceId + ' push ' + temp_dir + 'atx-agent /data/local/tmp/atx_arm'
+    typer.secho(subprocess.getoutput(push_command), fg=typer.colors.MAGENTA)
+    # execute atx_agent
+    launch_command = 'adb -s ' + deviceId + ' shell /data/local/tmp/atx_arm server --nouia -d --addr ' \
+                                            '127.0.0.1:7912'
+    typer.secho(subprocess.getoutput(launch_command), fg=typer.colors.MAGENTA)

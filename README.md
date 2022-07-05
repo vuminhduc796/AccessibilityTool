@@ -63,26 +63,28 @@ python accessibility_tool.py config emulator add
 
 **auto-login**
 
-- **--add, --a**
+- **--facebook, --a**
+- **--pass, --p**
 - **--delete, --d**
-
-![image-20220701213924455](./images/autologin.png)
+![img.png](images/autologin.png)
 
 ```sh
 python accessibility_tool.py config auto-login --help
-python accessibility_tool.py config auto-login --add apk-release:123456:123456 
-python accessibility_tool.py config auto-login --add apk-release:123456:123456 -add video_app:123456:123456
+python accessibility_tool.py config auto-login --facebook MainActivity:package_name 
+python accessibility_tool.py config auto-login --pass 123456:123456:MainActivity:package_name
+python accessibility_tool.py config auto-login --setting 123456:123456 # default username and password for facebook
+
 #remove
-python accessibility_tool.py config auto-login --delete testapk
-python accessibility_tool.py config auto-login --d apk-release
+python accessibility_tool.py config auto-login --delete
+python accessibility_tool.py config auto-login --d
 ```
 
 **config/config.yml**
 
 You can manually modify **config.yml**.
 
-![image-20220701222244218](./images/configyamlfile.png)
-
+![img.png](images/config.png)
+=======
 ## TODO: Replay Accessibility issues
 
 ```bash
