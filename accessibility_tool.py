@@ -111,15 +111,36 @@ def detect_file_availability_issues(
             os.system("./uichecker/uicheck " + str(apk_path.absolute()) + "/" + apk + " ./uichecker/rules/input.dl")
             # typer.secho("========UI checker Finished========", fg=typer.colors.MAGENTA)
 
-        if deer or screenshot_issue or complete:
 
-            # do inject first
-            run_deer(apk, current_directory)
+        if deer or screenshot_issue or complete:
+            # deer
+            # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
+            # init login config
+            login_options = {}
+            if sys_config.config_content["auto_login"]['method'] == 'facebook':
+                login_options = {
+                    'username': sys_config.config_content["default_facebook"]['username'],
+                    'password': sys_config.config_content["default_facebook"]['password'],
+                    'activityName': sys_config.config_content["auto_login"]['activity'],
+                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'hasLogin': False,
+                    'facebookLogin': True
+                }
+            else:
+                login_options = {
+                    'username': sys_config.config_content["auto_login"]['username'],
+                    'password': sys_config.config_content["auto_login"]['password'],
+                    'activityName': sys_config.config_content["auto_login"]['activity'],
+                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'hasLogin': True,
+                    'facebookLogin': False
+                }
+            run_deer(apk, current_directory, login_options)
             # run for each device
             for device in devices_names:
                 # get device name from number
                 emulator_name_android_studio = device_name_alias[device]["alias"]
-                dynamic_GUI_testing(device, apk[:-4], current_directory, emulator_name_android_studio, current_setting)
+                dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio, current_setting)
                 # deer
                 # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
 

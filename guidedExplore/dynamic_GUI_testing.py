@@ -202,8 +202,114 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
             random_status = True
 
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log_save_path,
-                         test_time=1200, reinstall=False):
+def login_with_facebook(d, login_options):
+    # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
+    try :
+
+        d.app_start(login_options['packageName'], login_options['activityName'])
+        time.sleep(3)
+
+        xml = d.dump_hierarchy()
+
+        # check facebookLogin
+        elementId = search_elements_from_XMLElement(xml, 'facebook')
+        if elementId is None:
+            return False
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+            time.sleep(3)
+
+    #     try to input username and password
+        xml = d.dump_hierarchy()
+
+    #
+        passwordTextEditId = search_input_from_XMLElement(xml, 'password')
+        if passwordTextEditId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=passwordTextEditId).set_text(login_options['password'])
+
+
+            usernameTextEditId = search_input_from_XMLElement(xml, 'email')
+            if usernameTextEditId is None:
+                usernameTextEditId = search_input_from_XMLElement(xml, 'username')
+            if usernameTextEditId is not None:
+                d.implicitly_wait(20.0)
+                d(resourceId=usernameTextEditId).set_text(login_options['username'])
+                d.press("back")
+                xml = d.dump_hierarchy()
+                elementId = search_elements_from_XMLElement(xml, 'log in')
+                if elementId is not None:
+                    d.implicitly_wait(20.0)
+                    d(resourceId=elementId).click()
+                    time.sleep(3)
+
+        # click continue button
+        xml = d.dump_hierarchy()
+        elementId = search_elements_from_XMLElement(xml, 'continue')
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+
+
+    except Exception as e:
+
+        print('Failed to start {} because {}'.format(login_options['activityName'], e))
+        return False
+
+    return True
+
+def try_login(d, login_options):
+    # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
+    try :
+        d.app_start(login_options['packageName'], login_options['activityName'])
+        time.sleep(3)
+        xml = d.dump_hierarchy()
+
+        # check if need an extra move
+        elementId = search_elements_from_XMLElement(xml, 'already have an account')
+        if elementId is None:
+            elementId = search_elements_from_XMLElement(xml, 'log in')
+        if elementId is None:
+            elementId = search_elements_from_XMLElement(xml, 'sign in')
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+
+    #     try to input username and password
+        xml = d.dump_hierarchy()
+        usernameTextEditId = search_input_from_XMLElement(xml, 'email')
+        if usernameTextEditId is None:
+            usernameTextEditId = search_input_from_XMLElement(xml, 'username')
+        if usernameTextEditId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=usernameTextEditId).set_text(login_options['username'])
+
+        passwordTextEditId = search_input_from_XMLElement(xml, 'password')
+        if passwordTextEditId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=passwordTextEditId).set_text(login_options['password'])
+
+        # click login button
+        d.press("back")
+        xml = d.dump_hierarchy()
+        elementId = search_elements_from_XMLElement(xml, 'log in')
+        if elementId is None:
+            elementId = search_elements_from_XMLElement(xml, 'sign in')
+        if elementId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=elementId).click()
+
+
+    except Exception as e:
+
+        print('Failed to start {} because {}'.format(login_options['activityName'], e))
+        return False
+
+    return True
+
+def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options, log_save_path , test_time=1200, reinstall=False):
+
     visited_rate = []
     visited_activities = []
     installed1, packageName, mainActivity = installApk(apk_path, device=deviceId, reinstall=reinstall)
@@ -226,6 +332,15 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
     d.app_start(packageName)
     d.sleep(3)
     dialogSolver(d)
+
+    if login_options['hasLogin']:
+        try_login(d, login_options)
+        d.sleep(3)
+
+
+    if login_options['facebookLogin']:
+        login_with_facebook(d, login_options)
+        d.sleep(3)
 
     # get the screenshot of the first activity
     main_screenshot = saveScreenshot(d, ss_path, mainActivity)
@@ -305,7 +420,8 @@ def check_and_create_dir(dir_name):
         os.makedirs(dir_name)
 
 
-def dynamic_GUI_testing(emulator, app_name, outmost_directory, android_device, current_setting):
+def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
+
     current_directory = outmost_directory + "/guidedExplore/data"
     output_directory = outmost_directory + "/output/" + app_name + "/" + android_device + "/" + current_setting
     apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
@@ -319,7 +435,8 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, android_device, c
     log = current_directory + '/visited_rates/' + app_name + ".txt"
     check_and_create_dir(ss_path)
     check_and_create_dir(current_directory + '/visited_rates/')
-    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, log, reinstall=False)
+
+    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options, log, reinstall=False)
 
 
 def connect_arm64(deviceId):
@@ -348,3 +465,4 @@ def connect_arm64(deviceId):
     launch_command = 'adb -s ' + deviceId + ' shell /data/local/tmp/atx_arm server --nouia -d --addr ' \
                                             '127.0.0.1:7912'
     typer.secho(subprocess.getoutput(launch_command), fg=typer.colors.MAGENTA)
+

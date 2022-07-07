@@ -231,6 +231,36 @@ def uninstallApks_single(apk_dir, deviceId):
                         apks[file] = 4
                         f.write(file + delimiter + '4' + '\n')
 
+def search_elements_from_XMLElement(source, target):
+    root = ET.fromstring(source)
+    for node in root.iter('node'):
+        if node.attrib['clickable'] == 'false':
+            continue
+        node_text = node.attrib['text'].lower()
+        if target.lower() in node_text:
+            return node.attrib['resource-id']
+    # print('not found')
+    # seach for unclickable if not found
+    for node in root.iter('node'):
+        if node.attrib['clickable'] == 'false':
+            node_text = node.attrib['text'].lower()
+            if target.lower() in node_text:
+                return node.attrib['resource-id']
+
+    return None
+
+def search_input_from_XMLElement(source, target):
+    root = ET.fromstring(source)
+    for node in root.iter('node'):
+        # print(node.attrib['text'])
+        if node.attrib['class'] != 'android.widget.EditText':
+            if not ('Text' in node.attrib['class'] and node.attrib['focusable'] == 'true' and node.attrib['clickable'] == 'true'):
+                continue
+        node_text = node.attrib['text'].lower()
+        id_text = node.attrib['resource-id'].lower()
+        if target.lower() in node_text or target.lower() in id_text:
+            return node.attrib['resource-id']
+    return None
 
 if __name__ =='__main__':
     saveDir = r'/Users/hhuu0025/PycharmProjects/uiautomator2/googleplay/apks'
