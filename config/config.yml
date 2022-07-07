@@ -1,5 +1,12 @@
-apk_signer: /Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner
-zip_align: /Users/leih/Library/Android/sdk/build-tools/29.0.2/zipalign
+apk_signer:
+# /home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner
+# /Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner
+# cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+  /home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android
+
+zip_align: /home/chunyangchen/Android/Sdk/build-tools/30.0.3/zipalign
+  #/Users/leih/Library/Android/sdk/build-tools/29.0.2/zipalign
+
 auto-login:
   activity: .ui.authentication.mediaauth.AuthActivity
   method: facebook
@@ -17,5 +24,30 @@ emulators:
   default:
   - phone-vertical
   - phone-horizontal
-java_home_path: /Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home/
-sdk_platform_path: /Users/leih/Library/Android/sdk
+  #alias of emulators
+  phone-vertical:
+    name:
+      emulator-5554
+  phone-horizontal:
+    name:
+      emulator-5558
+  tablet-vertical:
+    name:
+      emulator-5560
+  tablet-horizontal:
+    name:
+      emulator-5556
+java_home_path:
+  # /Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home/ # For Macbook
+  # java_home_path = '/home/dell/tools/jdk1.8.0_45'
+  /home/chunyangchen/android-studio/jre/  # For Ubuntu
+  # java_home_path = '/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home/' # For Macbook
+sdk_platform_path:
+  # /Users/leih/Library/Android/sdk
+  # sdk_platform_path = '/home/dell/Tools/Xbot/config/libs/android-platforms/'
+  # sdk_platform_path = '/home/senchen/Tools/xbot/config/libs/android-platforms/' # For Ubuntu (NTU-Computer)
+  # sdk_platform_path = '/home/senchen/Engines/Xbot/main-folder/config/libs/android-platforms/' # For Ubuntu (TJU-Computer)
+  # sdk_platform_path = '~/main-folder/config/libs/android-platforms/' # For Macbook
+  /home/chunyangchen/Android/Sdk  # For Macbook
+font_size: "normal"
+dark_mode: "false"

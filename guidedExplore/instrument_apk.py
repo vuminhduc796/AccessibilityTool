@@ -38,9 +38,11 @@ def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path):
     print('run inject apk')
     inject_apk.injectApk(app_save_dir, deeplinks_path)
 
-    temp_apk = "./data/repackaged_apks/temp.apk"
+    temp_apk = os.getcwd() + "/guidedExplore/data/repackaged_apks/temp.apk"
 
     print('repackage apk')
+    print(app_save_dir)
+    print(os.getcwd())
     cmd2 = 'apktool b ' + app_save_dir + ' --use-aapt2 -o ' + temp_apk
     os.system(cmd2)
 
@@ -55,9 +57,13 @@ def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path):
 
 def unit_sign_APK(apk_path):
     print('sign ' + apk_path)
+
     #cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
     #cmd3 = '/home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    cmd3 = sys_config.config_content['apk_signer']+' sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+    cmd3 = sys_config.config_content['apk_signer']+' '+apk_path
+
+    # cmd3 = sys_config.config_content['apk_signer']+' sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+
 
     sdk_platform_path = sys_config.config_content['sdk_platform_path']  # For Macbook
     os.system(cmd3)

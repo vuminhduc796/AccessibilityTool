@@ -56,11 +56,12 @@ def check_and_create_file(file_name):
         with open(file_name, 'x') as f:
             f.close()
 
+
 def run_deer(apk_file, emulator, outmost_directory):
+
     if not apk_file.endswith('.apk'):
         print("filename invalid")
         return
-    print(outmost_directory + " pleaseee")
     app_name = apk_file[:-4]
     current_directory = os.path.join(outmost_directory, "guidedExplore/data")
 
@@ -80,8 +81,24 @@ def run_deer(apk_file, emulator, outmost_directory):
     check_and_create_file(merged_path)
     check_and_create_file(deeplinks_path)
 
-    unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks,
-                        merged_path)
+    # unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks,
+    #                     merged_path)
 
-    dynamic_GUI_testing(emulator, app_name,outmost_directory)
-    print("----------done------------")
+    print("----------done modifying------------")
+
+# add this for testing purposes
+if __name__ == "__main__":
+    # apk_file = "com.google.android.apps.maps.apk"
+    # emulator = "emulator-5554"
+    # outmost_directory = "/Users/yuhang/Desktop/guidedExplore"
+    # login_options = "--
+
+    login_options = {'hasLogin': True, 'username': '', 'password': '',
+                     'activityName': '.login.main.activities.Login', 'packageName': 'com.groupon',
+                     'facebookLogin': False}
+    apk_file = 'groupon.apk'
+    emulator = '08221FDD4004DF'
+    outmost_directory = os.getcwd().replace('/guidedExplore','')
+
+    run_deer(apk_file, emulator, outmost_directory)
+
