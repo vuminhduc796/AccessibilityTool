@@ -5,4 +5,12 @@ output/
 recompiled_apks/
 repackaged_apks/
 visited_rates/
+uichecker/output_markii/
+uichecker/tmp_markii/
+xbot/storydroid/outputs/
+data/
+xbot/output/
+guidedExplore/data/
 4model.pth
+*.apk
+data/repackaged_apks/

@@ -35,7 +35,7 @@ def activity_mapping(abs_path, folders, available_activity_dict, save_dir=r'acti
                     # print(fullpath)
                     try:
                         with open(fullpath, 'r') as f:
-                            print("!!!!!!!!!!!!!")
+                            #print("!!!!!!!!!!!!!")
                             # print(file)
                             lines = f.readlines()
                             # print(lines)
