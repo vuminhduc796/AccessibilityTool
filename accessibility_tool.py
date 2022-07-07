@@ -71,7 +71,27 @@ def detect_file_availability_issues(
         if deer or complete:
             # deer
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
-            run_deer(apk, devices_names[0], current_directory)
+            # init login config
+            login_options = {}
+            if sys_config.config_content["auto_login"]['method'] == 'facebook':
+                login_options = {
+                    'username': sys_config.config_content["default_facebook"]['username'],
+                    'password': sys_config.config_content["default_facebook"]['password'],
+                    'activityName': sys_config.config_content["auto_login"]['activity'],
+                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'hasLogin': False,
+                    'facebookLogin': True
+                }
+            else:
+                login_options = {
+                    'username': sys_config.config_content["auto_login"]['username'],
+                    'password': sys_config.config_content["auto_login"]['password'],
+                    'activityName': sys_config.config_content["auto_login"]['activity'],
+                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'hasLogin': True,
+                    'facebookLogin': False
+                }
+            run_deer(apk, devices_names[0], current_directory, login_options)
             # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
         if owleye or complete:
             # typer.secho("========Start running owleye========", fg=typer.colors.MAGENTA)
