@@ -215,20 +215,31 @@ def login_with_facebook(d, login_options):
         if elementId is not None:
             d.implicitly_wait(20.0)
             d(resourceId=elementId).click()
+            time.sleep(3)
 
-    # #     try to input username and password
-    #     xml = d.dump_hierarchy()
-    #     usernameTextEditId = search_input_from_XMLElement(xml, 'email')
-    #     if usernameTextEditId is None:
-    #         usernameTextEditId = search_input_from_XMLElement(xml, 'username')
-    #     if usernameTextEditId is not None:
-    #         d.implicitly_wait(20.0)
-    #         d(resourceId=usernameTextEditId).set_text(login_options['username'])
+    #     try to input username and password
+        xml = d.dump_hierarchy()
+
     #
-    #     passwordTextEditId = search_input_from_XMLElement(xml, 'password')
-    #     if passwordTextEditId is not None:
-    #         d.implicitly_wait(20.0)
-    #         d(resourceId=passwordTextEditId).set_text(login_options['password'])
+        passwordTextEditId = search_input_from_XMLElement(xml, 'password')
+        if passwordTextEditId is not None:
+            d.implicitly_wait(20.0)
+            d(resourceId=passwordTextEditId).set_text(login_options['password'])
+
+
+            usernameTextEditId = search_input_from_XMLElement(xml, 'email')
+            if usernameTextEditId is None:
+                usernameTextEditId = search_input_from_XMLElement(xml, 'username')
+            if usernameTextEditId is not None:
+                d.implicitly_wait(20.0)
+                d(resourceId=usernameTextEditId).set_text(login_options['username'])
+                d.press("back")
+                xml = d.dump_hierarchy()
+                elementId = search_elements_from_XMLElement(xml, 'log in')
+                if elementId is not None:
+                    d.implicitly_wait(20.0)
+                    d(resourceId=elementId).click()
+                    time.sleep(3)
 
         # click continue button
         xml = d.dump_hierarchy()
