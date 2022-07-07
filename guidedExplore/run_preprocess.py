@@ -56,11 +56,10 @@ def check_and_create_file(file_name):
         with open(file_name, 'x') as f:
             f.close()
 
-def run_deer(apk_file, emulator, outmost_directory):
+def run_deer(apk_file, outmost_directory):
     if not apk_file.endswith('.apk'):
         print("filename invalid")
         return
-    print(outmost_directory + " pleaseee")
     app_name = apk_file[:-4]
     current_directory = os.path.join(outmost_directory, "guidedExplore/data")
 
@@ -83,5 +82,5 @@ def run_deer(apk_file, emulator, outmost_directory):
     unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks,
                         merged_path)
 
-    dynamic_GUI_testing(emulator, app_name,outmost_directory)
-    print("----------done------------")
+
+    print("----------done modifying------------")

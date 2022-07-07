@@ -1,6 +1,0 @@
-The following is a list of opportunities to improve the accessibility of DomainLogo. Each item corresponds to an outlined area on the attached screenshot.
-
-Touch target
-com.fit2081.domainlogo:id/domain_id
-This item's height is 46dp. Consider making the height of this touch target 48dp or larger.
-

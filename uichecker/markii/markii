@@ -63,7 +63,7 @@ def analyze(args, unknown):
             print('...... target API level is below 10. Force to use 10.')
             target_level = 10
     if not args.sdkpath:
-        args.sdkpath = os.environ['ANDROID_SDK']
+        args.sdkpath = os.environ['ANDROID_SDK_ROOT']
     print('...... resource decoded to %s' % apktool_dir)
     cmd = ['java', '-Xmx8G',
            '-cp', jar, 'presto.android.Main',

@@ -21,7 +21,7 @@ current_dark_mode = "light_mode"
 used_pkg_name = ''
 pressLocations = {
     "emulator-5554": {
-        "name": "VerticalPhone",
+        "name": "phone-vertical",
         "check": {
             "x": 200,
             "y": 200
@@ -33,7 +33,7 @@ pressLocations = {
 
     },
     "emulator-5558": {
-        "name": "HorizontalPhone",
+        "name": "phone-horizontal",
         "check": {
             "x": 200,
             "y": 200
@@ -44,7 +44,7 @@ pressLocations = {
         },
     },
     "emulator-5556": {
-        "name": "HorizontalTablet",
+        "name": "tablet-horizontal",
         "check": {
             "x": 200,
             "y": 200
@@ -55,7 +55,7 @@ pressLocations = {
         },
     },
     "emulator-5560": {
-        "name": "VerticalTablet",
+        "name": "tablet-vertical",
         "check": {
             "x": 200,
             "y": 200
@@ -132,7 +132,12 @@ def scan_and_return():
     time.sleep(2)
 
     screensize = get_screen_size()
-    os.system(adb + ' shell input tap ' + str(int(screensize) - 170) + " " + str(170))
+    #horizontal phone need higher cut in cuz more pixel
+    if current_emulator == "emulator-5558":
+        print("shhudd")
+        os.system(adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
+    else:
+        os.system(adb + ' shell input tap ' + str(int(screensize) - 170) + " " + str(170))
     time.sleep(3)
     # cancel and back
     os.system(adb + ' shell input keyevent 4')
@@ -184,8 +189,7 @@ def collect_results(activity, appname, accessbility_folder, results_outputs):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    issue_path = os.path.join(results_outputs, appname, pressLocations.get(adb[-13:]).get(
-        "name"), 'issues', current_font_size + "_" + current_dark_mode)
+    issue_path = os.path.join(results_outputs, 'issues')
     if not os.path.exists(issue_path):
         os.makedirs(issue_path)
     pull_results = adb + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
@@ -242,7 +246,7 @@ def check_current_screen_new(activity, appname, results_outputs):
 
     '''dump xml and check'''
     print(adb)
-    layout_path = os.path.join(results_outputs, appname, pressLocations.get(adb[-13:]).get("name"), 'layouts')
+    layout_path = os.path.join(results_outputs, 'layouts')
     if not os.path.exists(layout_path):
         os.makedirs(layout_path)
     print("====== dump =======")
@@ -489,23 +493,6 @@ def parseManifest(new_apkpath, apk_name, results_folder, decompilePath, results_
 
         # without action and category
         startAct(component, '', '', apk_name, results_folder, results_outputs)
-    print("Parsing2 " + apk_name)
-    if not os.path.exists(
-            results_outputs + '/' + apk_name + "/" + pressLocations.get(adb[-13:]).get("name") + '/screenshots'):
-        return
-    print("Parsing3 " + apk_name)
-    # Get statistics
-    launched_act_num = int(
-        subprocess.getoutput('ls %s | wc -l' % (
-                    results_outputs + '/' + apk_name + '/' + pressLocations.get(adb[-13:]).get(
-                "name") + '/screenshots')).split('\n')[0])
-    act_not_launched = int(all_activity_num - launched_act_num)
-    act_num_with_issue = int(
-        subprocess.getoutput('ls %s | wc -l' % (
-                    results_outputs + '/' + apk_name + '/' + pressLocations.get(adb[-13:]).get(
-                "name") + '/issues')).split('\n')[0])
-    save_activity_to_csv(results_folder, apk_name, all_activity_num, launched_act_num, act_not_launched,
-                         act_num_with_issue)
 
 
 def get_pkgname(apk_path):
@@ -535,40 +522,22 @@ def remove_folder(apkname, decompilePath):
                 os.remove(rm_path)
 
 
-def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, storydroid, is_dark_mode=False,
+def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, storydroid, dark_mode = "light_mode",
                     fontsize="normal"):
     global adb, current_font_size, current_dark_mode
     # change
-    os.system("adb root")
-    adb = "adb -s %s" % (emulator)
-
-    # setting dark mode
-    if is_dark_mode:
-        os.system(adb + " shell settings put secure ui_night_mode 2")
-        current_dark_mode = "dark_mode"
-    else:
-        os.system(adb + " shell settings put secure ui_night_mode 1")
-        current_dark_mode = "light_mode"
-
-    # setting font size
     current_font_size = fontsize
-    if fontsize == "small":
-        os.system(adb + " shell settings put system font_scale 0.85")
-    elif fontsize == "normal":
-        os.system(adb + " shell settings put system font_scale 1.0")
-    elif fontsize == "large":
-        os.system(adb + " shell settings put system font_scale 1.15")
-    elif fontsize == "extra_large":
-        os.system(adb + " shell settings put system font_scale 1.30")
+    current_dark_mode = dark_mode
+    adb = "adb -s %s" % (emulator)
 
     global tmp_dir
     tmp_dir = tmp_file
 
     global act_paras_file
     act_paras_file = storydroid
-
+    current_setting = current_font_size + "_" + current_dark_mode
     decompilePath = os.path.join(results_folder, "apktool")  # Decompiled app path (apktool handled)
-    results_outputs = "output/googleScanner"
+    results_outputs = "output/" + apk_name + "/" + pressLocations.get(adb[-13:]).get("name") + "/" + current_setting + "/googleScanner"
     installErrorAppPath = os.path.join(results_folder, "install-error-apks")
 
     if not os.path.exists(decompilePath):

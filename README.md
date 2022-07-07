@@ -2,65 +2,100 @@
 
 ## Usage
 
-![image-20220628153731444](./images/toolhelp.png)
+![image-20220701214621933](./images/toolhelp.png)
 
 ```bash
 # help
 python accessibility_tool.py --help
 ```
 
-Three arguments are available
+Three commands are available
 
-- config
-- detect
-- replay
+- **config**
+- **detect**
+- **replay**
 
 ## Detect Accessibility issues
 
 ```bash
 # help
 python accessibility_tool.py detect --help
-
-python accessibility_tool.py detect --intput ./input
-python accessibility_tool.py detect --device emulator-5554
-python accessibility_tool.py detect --intput ./input --device emulator-5554
+# detect
+python accessibility_tool.py detect --intput ./input --complete
+python accessibility_tool.py detect --device emulator-5554 --xbot
+python accessibility_tool.py detect --intput ./input --device emulator-5554 --xbot --uichecker
+python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot --uichecker
 ```
 
-![image-20220628154039539](./images/detecthelp.png)
+![image-20220701224352948](./images/detecthelp.png)
 
---input: the directory where apps are
 
---device: the device to test apps(currently only one device **allowed** in the command, but **default devices** can be modified in the **config.yml** and it supports multiple devices )
 
-**TODO**: --output: directory where the results files will be generated
+**--input**: the directory where apps are
 
+**--device**: the device to test apps, multiple devices are supported.
+
+- for example, `python accessibility_tool.py detect --device emulator-5554 --device phone-vertical`
+
+**choose a tool to detect**: `--xbot, --uichecker, --deer, --owleye`
+
+**--complete**: use all the tools at one time.
+
+## Edit Configuration
+
+![image-20220701213555066](./images/confighelp.png)
+
+```sh
+python accessibility_tool.py config --help
+```
+
+**emulator**
+
+- **--add, --a**
+- **--delete, --d**
+
+````sh
+python accessibility_tool.py config emulator --help
+python accessibility_tool.py config emulator add 
+````
+
+![image-20220701214506128](./images/emulatorhelp.png)
+
+**auto-login**
+
+- **--facebook, --a**
+- **--pass, --p**
+- **--delete, --d**
+![img.png](images/autologin.png)
+
+```sh
+python accessibility_tool.py config auto-login --help
+python accessibility_tool.py config auto-login --facebook MainActivity:package_name 
+python accessibility_tool.py config auto-login --pass 123456:123456:MainActivity:package_name
+python accessibility_tool.py config auto-login --setting 123456:123456 # default username and password for facebook
+
+#remove
+python accessibility_tool.py config auto-login --delete
+python accessibility_tool.py config auto-login --d
+```
+
+**config/config.yml**
+
+You can manually modify **config.yml**.
+
+![img.png](images/config.png)
+=======
 ## TODO: Replay Accessibility issues
 
 ```bash
 python accessibility_tool.py replay --help
 ```
 
---video --v : video file name
+**--video --v** : video file name
 
---utg --u: GUI transition graph in json format depicting the screenshots transitions
+**--utg --u**: GUI transition graph in json format depicting the screenshots transitions
 
---artifact -a: screenshots in UTG
-
---output -o: output filename
-
-## TBD: Edit Configuration
-
-```bash
-python accessibility_tool.py config --help
-
-python accessibility_tool.py config --add java_home_path /Library/Java/JavaVirtualMachines/xxx.xx/Home
-```
-
---add: add an key-value pair to the **config.yml**
-
-**config/config.yml**
-
-![image-20220628154125686](./images/configyamlfile.png)
+**--artifact -a**: screenshots in UTG
 
 # Other Issues
 

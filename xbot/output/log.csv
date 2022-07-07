@@ -51,3 +51,7 @@ testapp,com.example.testapp,1,0,1,0
 testapp,com.example.testapp,1,0,1,0
 testapp,com.example.testapp,1,1,0,1
 testapp,com.example.testapp,1,1,0,2
+testapp,com.example.testapp,1,1,0,2
+testapp,com.example.testapp,1,0,1,1
+testapp,com.example.testapp,1,1,0,2
+testapp,com.example.testapp,1,0,1,1

@@ -258,7 +258,7 @@ def deprocess_image(img):
     return np.uint8(img * 255)
 
 
-def owleyes_scan(app_name, parent_folder):
+def owleyes_scan(current_folder, parent_folder):
     """ python grad_cam.py <path_to_image>
     1. Loads an image with opencv.
     2. Preprocesses it for VGG19 and converts to a pytorch variable.
@@ -266,8 +266,8 @@ def owleyes_scan(app_name, parent_folder):
     and computes intermediate activations.
     Makes the visualization. """
 
-    image_folder = os.path.join(parent_folder, "output/activity_screenshots", app_name)
-    output_folder = os.path.join(parent_folder, "output/ui_issue_cam", app_name)
+    image_folder = os.path.join(current_folder, "activity_screenshots")
+    output_folder = os.path.join(current_folder, "ui_issue_cam")
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
 
@@ -277,19 +277,19 @@ def owleyes_scan(app_name, parent_folder):
         image_num = filename
 
         image_name = image_folder + "/" + file
-        args = get_args()
 
         model = Net()
         model = nn.DataParallel(model)
         model_dir = os.path.join(parent_folder, "owleyes")
         # mps for m1 chip
-        model.load_state_dict(torch.load(model_dir + "/4model.pth", map_location=torch.device("mps" if torch.backends.mps.is_available() else "cpu")))
+        # "mps" if torch.backends.mps.is_available() else
+        model.load_state_dict(torch.load(model_dir + "/4model.pth", map_location=torch.device("cpu")))
 
         output_file_path = output_folder + "/" + image_num + "/"
         if not os.path.exists(output_file_path):
             os.mkdir(output_file_path)
 
-        grad_cam = GradCam(model=model, target_layer_names=["40"], use_cuda=args.use_cuda)
+        grad_cam = GradCam(model=model, target_layer_names=["40"], use_cuda=False)
 
         img = cv2.imread(image_name, 1)
         img = np.float32(cv2.resize(img, (448, 768))) / 255

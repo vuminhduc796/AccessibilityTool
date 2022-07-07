@@ -183,11 +183,11 @@ def startRepkg(apk_path, apkname, results_folder, config_folder):
 
     if not builtApk:
         # Copy original app to repackage folder
-        copy_org_apk = "mv %s %s"%(apk_path, repackagedAppPath)
+        copy_org_apk = "cp %s %s"%(apk_path, repackagedAppPath)
         subprocess.getoutput(copy_org_apk)
 
         # Copy original app to build-error-apks
-        copy_org_apk = "mv %s %s"%(apk_path, buildErrorAppPath)
+        copy_org_apk = "cp %s %s"%(apk_path, buildErrorAppPath)
         subprocess.getoutput(copy_org_apk)
 
         return 'build error'

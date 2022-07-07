@@ -1,7 +1,29 @@
+apk_signer:
+# /home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner
+# /Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner
+# cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+  /home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android
+
+zip_align: /home/chunyangchen/Android/Sdk/build-tools/30.0.3/zipalign
+  #/Users/leih/Library/Android/sdk/build-tools/29.0.2/zipalign
+
+auto-login:
+  activity: .ui.authentication.mediaauth.AuthActivity
+  method: facebook
+  packageName: com.Alltrails.alltrails
+default_facebook:
+  password: '1234'
+  username: '912345'
 emulators:
-  #default emulators that would be used to test apps
+  alias:
+    phone: emulator-5554
+    phone-horizontal: emulator-5558
+    phone-vertical: emulator-5554
+    tablet-horizontal: emulator-5556
+    tablet-vertical: emulator-5560
   default:
-    phone-vertical
+  - phone-vertical
+  - phone-horizontal
   #alias of emulators
   phone-vertical:
     name:
@@ -27,7 +49,5 @@ sdk_platform_path:
   # sdk_platform_path = '/home/senchen/Engines/Xbot/main-folder/config/libs/android-platforms/' # For Ubuntu (TJU-Computer)
   # sdk_platform_path = '~/main-folder/config/libs/android-platforms/' # For Macbook
   /home/chunyangchen/Android/Sdk  # For Macbook
-apk_signer:
-  # /Users/leih/Library/Android/sdk/build-tools/29.0.2/apksigner
-  # cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-  /home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
+font_size: "normal"
+dark_mode: "false"

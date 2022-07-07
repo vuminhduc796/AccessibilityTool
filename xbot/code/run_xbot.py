@@ -6,6 +6,8 @@ import os
 import subprocess
 import time
 
+import typer
+
 import xbot.code.repkg_apk as repkg_apk
 import xbot.code.explore_activity as explore_activity
 import shutil
@@ -82,7 +84,7 @@ def createOutputFolder():
         os.makedirs(results_outputs)
 
 
-def execute(apk_path, apk_name, is_dark_mode=False, fontsize="normal"):
+def execute(apk_path, apk_name, dark_mode="light_mode", fontsize="normal"):
     # Repackge app
     if not os.path.exists(os.path.join(repackagedAppPath, apk_name + '.apk')):
         r = repkg_apk.startRepkg(apk_path, apk_name, results_folder, config_folder)
@@ -96,9 +98,10 @@ def execute(apk_path, apk_name, is_dark_mode=False, fontsize="normal"):
         # if 'Xbot' in results_folder:
         ### Xbot, note that the para is results_folder instead of accessibility_folder
         for emulator in emulators:
-            tmp_file = os.path.join(results_folder, emulator["name"])  # tmp file for parallel execution
-            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator["name"], tmp_file,
-                                             paras_path, is_dark_mode, fontsize)
+            print(emulator)
+            tmp_file = os.path.join(results_folder, emulator)  # tmp file for parallel execution
+            explore_activity.exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file,
+                                             paras_path, dark_mode, fontsize)
         # else:
         #     ### UICrawler, note that the para is results_folder instead of accessibility_folder
         #     exploreAct_uicrawler.exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, paras_path)
@@ -149,28 +152,10 @@ def remove_folder(apkname, decompilePath):
             else:
                 os.remove(rm_path)
 
+def run_xbot(pass_in_emulators, apk, darkmode="light_mode", fontsize="normal"):
 
-def run_xbot(list_of_devices, apkPath, is_dark_mode=False, fontsize="normal"):
-    os.system("adb -s emulator-5556 emu kill")
-    os.system("adb -s emulator-5558 emu kill")
-    os.system("adb -s emulator-5560 emu kill")
-    os.system("adb -s emulator-5554 emu kill")
-    time.sleep(2)
-    for device in list_of_devices:
-
-        if device in sys_config.config_content['emulators']:
-
-            emulator_name = sys_config.config_content['emulators'][device]
-            emulators.append(emulator_name)
-            print(emulator_name["name"])
-            port_number = emulator_name["name"][-4:]
-            print(port_number, emulator_name["name"])
-            subprocess.Popen(['emulator', "-port", port_number, '-avd', device])
-        else:
-            emulators.append(device)
-            port_number = device[-4:]
-            subprocess.Popen(['emulator', "-port", port_number, '-avd', device])
-
+    global emulators
+    emulators = pass_in_emulators
     # for arg in sys.argv:
     #     if arg == "phone-vertical":
     #         emulators.append("emulator-5554")
@@ -202,45 +187,47 @@ def run_xbot(list_of_devices, apkPath, is_dark_mode=False, fontsize="normal"):
     if not os.path.exists(out_csv):
         csv.writer(open(out_csv, 'a')).writerow(('apk_name', 'pkg_name', 'all_act_num', 'launched_act_num',
                                                  'act_not_launched', 'act_num_with_issue'))
-    print(os.path.abspath(apkPath))
-    for apk in os.listdir(apkPath):  # Run the apk one by one
-        for emulator in emulators:
-            if not 'apks' in apk and 'apk' in apk:
-                root = 'adb -s %s root' % (emulator)  # root the emulator before running
-                print(subprocess.getstatusoutput(root))
-                apk_path = os.path.join(apkPath, apk)  # Get apk path
-                # apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
-                apk_name = apk.removesuffix('.apk')
-                #                pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg
-                print('======= Starting ' + apk_name + ' =========')
+    # print(os.path.abspath(apkPath))
+    for emulator in emulators:
+        if not 'apks' in apk and 'apk' in apk:
+            root = 'adb -s %s root' % (emulator)  # root the emulator before running
+            result = subprocess.getstatusoutput(root)
+            if "not found" in result[1]:
+                typer.secho("The emulator "+emulator+" does not exist, please check your device.",fg=typer.colors.MAGENTA)
+                sys.exit()
+            apk_path = os.path.join("./input", apk)  # Get apk path
+            # apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
+            apk_name = apk.removesuffix('.apk')
+            #                pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg
+            print('======= Starting ' + apk_name + ' =========')
 
-                '''
-                Get Bundle Data
-                Trade off by users, open or close
-                '''
-                # run_soot(apk_path, pkg) # get intent parameters
+            '''
+            Get Bundle Data
+            Trade off by users, open or close
+            '''
+            # run_soot(apk_path, pkg) # get intent parameters
 
-                global paras_path
-                paras_path = storydroid_folder + '/outputs/' + apk_name + '/activity_paras.txt'
+            global paras_path
+            paras_path = storydroid_folder + '/outputs/' + apk_name + '/activity_paras.txt'
 
-                if not os.path.exists(storydroid_folder + '/outputs/' + apk_name):
-                    os.makedirs(storydroid_folder + '/outputs/' + apk_name)
-                if not os.path.exists(paras_path):
-                    ## os.mknod(paras_path) # It is not avaiable for macbook
-                    open(paras_path, 'w').close()
+            if not os.path.exists(storydroid_folder + '/outputs/' + apk_name):
+                os.makedirs(storydroid_folder + '/outputs/' + apk_name)
+            if not os.path.exists(paras_path):
+                ## os.mknod(paras_path) # It is not avaiable for macbook
+                open(paras_path, 'w').close()
 
-                '''
-                Core
-                '''
-                execute(apk_path, apk_name, is_dark_mode, fontsize)
-                # if os.path.exists(apk_path):
-                #    os.remove(apk_path)  # Delete the apk
+            '''
+            Core
+            '''
+            execute(apk_path, apk_name, darkmode, fontsize)
+            # if os.path.exists(apk_path):
+            #    os.remove(apk_path)  # Delete the apk
 
-                if os.path.exists(os.path.join(repackagedAppPath, apk_name + '.apk')):
-                    os.remove(os.path.join(repackagedAppPath, apk_name + '.apk'))
+            if os.path.exists(os.path.join(repackagedAppPath, apk_name + '.apk')):
+                os.remove(os.path.join(repackagedAppPath, apk_name + '.apk'))
 
-                # Remove the decompiled and modified resources
-                remove_folder(apk_name, decompilePath)
+            # Remove the decompiled and modified resources
+            remove_folder(apk_name, decompilePath)
 
 # execute('/home/senchen/Desktop/storydroid_plus/apks/org.liberty.android.fantastischmemo_223.apk','org.liberty.android.fantastischmemo_223',
 #        '/home/senchen/Desktop/storydroid_plus/outputs/org.liberty.android.fantastischmemo_223')

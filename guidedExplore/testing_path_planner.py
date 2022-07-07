@@ -79,7 +79,7 @@ class PathPlanner:
             if v[0]:
                 count = count + 1
         if self.total_activity == 0:
-            self.total_activity = count
+            self.total_activity = 1
         return count/self.total_activity
 
     def get_deeplinks_by_package_activity(self, package, target_activity):
