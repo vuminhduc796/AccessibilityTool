@@ -245,7 +245,7 @@ def set_up_devices(device_name_alias):
         port_number = device[-4:]
 
         subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio])
-    time.sleep(4)
+    time.sleep(10)
 
     for emulator in emulators:
         adb = "adb -s %s" % (emulator)
