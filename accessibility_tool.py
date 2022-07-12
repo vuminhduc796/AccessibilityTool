@@ -16,9 +16,9 @@ from owleyes.cnn_cam3 import owleyes_scan
 from xbot.code.run_xbot import run_xbot
 from typing import List, Optional
 
-app = typer.Typer(help="Android Accessibility Tool")
+app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
 config_app = typer.Typer()
-app.add_typer(config_app, name="config")
+app.add_typer(config_app, name="config",help="Manage config.",no_args_is_help=True)
 current_directory = os.getcwd()
 
 
@@ -51,6 +51,9 @@ def detect_file_availability_issues(
         complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                   "OwlEye)")
 ):
+    """
+    Detect Accessibility issues.
+    """
     # check options
     if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
         typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
@@ -157,6 +160,9 @@ def detect_file_availability_issues(
 
 @app.command("replay")
 def replay():
+    """
+    Replay bugs.
+    """
     pass
 
 
@@ -169,6 +175,9 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
                                                                         "--d",
                                                                         help="Format:[alias], delete an [alias]")
                     ):
+    """
+    Set up Android emulators for testing App Accessibility.
+    """
     for emulator in add_emulator:
         if (not ':' in emulator):
             typer.secho("incorrect format:[alias:name]", fg=typer.colors.MAGENTA)
@@ -185,26 +194,28 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
 def auto_login(pass_login: str = typer.Option(None, "--pass",
                                               "--p",
                                               help="Format:[username:password:activity"
-                                                   ":package_name], set up [ "
+                                                   ":package_name], set up ["
                                                    "username] "
                                                    ", [password], [activity] and [package_name] "
-                                                   "for the apk"),
+                                                   "for the apk in the config file."),
                facebook_login: str = typer.Option(None, "--facebook",
                                                   "--f",
                                                   help="Format:[activity"
                                                        ":package_name], set up [activity] and [package_name] "
-                                                       "for the apk"),
+                                                       "for the apk in the config file."),
                default_facebook_user_pass: str = typer.Option(None, "--setting",
                                                               help="Format:[username"
                                                                    ":password], set up default [username] and ["
                                                                    "password] "
-                                                                   "for loging into the facebook"),
+                                                                   "for loging in to the facebook."),
 
                remove_auto_login: Optional[bool] = typer.Option(
                    None, "--delete", '--d', callback=delete_auto_login_config,
-                   help="Deletes auto-login configuration"),
-
+                   help="Deletes auto-login configs."),
                ):
+    """
+    Set up User credentials and apk information for auto login.
+    """
     if pass_login:
         formatted_user_pass = pass_login.split(":")
         sys_config.add_auto_login_pass_config(formatted_user_pass[0], formatted_user_pass[1], formatted_user_pass[2],
@@ -234,7 +245,7 @@ def set_up_devices(device_name_alias):
         port_number = device[-4:]
 
         subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio])
-    time.sleep(4)
+    time.sleep(10)
 
     for emulator in emulators:
         adb = "adb -s %s" % (emulator)
