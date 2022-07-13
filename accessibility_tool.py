@@ -120,25 +120,26 @@ def detect_file_availability_issues(
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
             # init login config
             login_options = {}
-            if sys_config.config_content["auto_login"]['method'] == 'facebook':
+            if sys_config.config_content["auto-login"]['method'] == 'facebook':
                 login_options = {
                     'username': sys_config.config_content["default_facebook"]['username'],
                     'password': sys_config.config_content["default_facebook"]['password'],
-                    'activityName': sys_config.config_content["auto_login"]['activity'],
-                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
                     'hasLogin': False,
                     'facebookLogin': True
                 }
             else:
                 login_options = {
-                    'username': sys_config.config_content["auto_login"]['username'],
-                    'password': sys_config.config_content["auto_login"]['password'],
-                    'activityName': sys_config.config_content["auto_login"]['activity'],
-                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'username': sys_config.config_content["auto-login"]['username'],
+                    'password': sys_config.config_content["auto-login"]['password'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
                     'hasLogin': True,
                     'facebookLogin': False
                 }
-            run_deer(apk, current_directory, login_options)
+            # run_deer(apk, current_directory, login_options)
+            run_deer(apk, "",current_directory)
             # run for each device
             for device in devices_names:
                 # get device name from number

@@ -1,7 +1,7 @@
 import os
 import random
 import json
-
+import config.config as sys_config
 import adbutils
 import typer
 import uiautomator2 as u2
@@ -317,9 +317,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
         print('install ' + apk_path + ' fail.')
         return
     try:
-        check_arch = "adb -s " + deviceId + " shell getprop ro.product.cpu.abi"
-        res = subprocess.getoutput(check_arch)
-        if 'arm64' in res:
+        # check_arch = "adb -s " + deviceId + " shell getprop ro.product.cpu.abi"
+        # res = subprocess.getoutput(check_arch)
+
+        if sys_config.config_content['arm64'] == "true":
             connect_arm64(deviceId)
         d = u2.connect(deviceId)
     except requests.exceptions.ConnectionError:
@@ -446,7 +447,7 @@ def connect_arm64(deviceId):
     # download atx_agent
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
-    elif not os.path.exists(temp_dir + "atx-agent"):
+    if not os.path.exists(temp_dir + "atx-agent"):
         typer.secho("Start downloading atx-agent...", fg=typer.colors.MAGENTA)
         command = 'curl -LJ ' + atx_agent_url + ' > ' + temp_dir + atx_agent_filename
         typer.secho(subprocess.getoutput(command), fg=typer.colors.MAGENTA)
