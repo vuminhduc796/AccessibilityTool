@@ -133,15 +133,16 @@ def scan_and_return():
 
     os.system(local_variables.adb + ' shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
-    time.sleep(2)
+    time.sleep(3)
 
     screensize = get_screen_size()
     #horizontal phone need higher cut in cuz more pixel
     if current_emulator == "emulator-5558":
-        print("shhudd")
+
         os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
     else:
-        os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 170) + " " + str(170))
+        os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 150) + " " + str(150))
+
     time.sleep(3)
     # cancel and back
     os.system(local_variables.adb + ' shell input keyevent 4')
@@ -564,7 +565,7 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
 
     parseManifest(new_apkpath, apk_name, results_folder, decompilePath, results_outputs)
     print("%s parsing fininshed!" % new_apkpath)
-    print("cannot uninstall")
+
     uninstallApp(defined_pkg_name)
 
     # Remove the decompiled and modified resources

@@ -21,7 +21,6 @@ import config.config as sys_config
 emulators = []
 
 # apkPath = sys.argv[2] # APK folder
-# apkPath = "./input/"  # APK folder
 # apkPath = "/home/senchen/Desktop/xbot/apks-101/"  # Store the original app
 # apkPath = "/Users/chensen/Tools/xbot/icse-mulapks/"
 # apkPath = "/home/senchen/Desktop/uicrawler/apks/"  # Store the original app
@@ -144,7 +143,7 @@ def remove_folder(apkname, decompilePath):
             else:
                 os.remove(rm_path)
 
-def run_xbot(pass_in_emulators, apk, darkmode="light_mode", fontsize="normal"):
+def run_xbot(pass_in_emulators, apk, home_directory, darkmode="light_mode", fontsize="normal"):
 
     global emulators
     emulators = pass_in_emulators
@@ -180,8 +179,9 @@ def run_xbot(pass_in_emulators, apk, darkmode="light_mode", fontsize="normal"):
         csv.writer(open(out_csv, 'a')).writerow(('apk_name', 'pkg_name', 'all_act_num', 'launched_act_num',
                                                  'act_not_launched', 'act_num_with_issue'))
     # print(os.path.abspath(apkPath))
+
     if not 'apks' in apk and 'apk' in apk:
-        apk_path = os.path.join("./input", apk)  # Get apk path
+        apk_path = os.path.join(home_directory,"input", apk) # Get apk path
         # apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
         apk_name = apk.removesuffix('.apk')
         global paras_path

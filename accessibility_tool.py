@@ -29,7 +29,7 @@ def delete_auto_login_config(remove_auto_login: bool):
 
 @app.command("detect")
 def detect_file_availability_issues(
-        apk_path: Path = typer.Option('./input', "--input", "--i",
+        apk_path: Path = typer.Option(current_directory + '/input', "--input", "--i",
                                       exists=True,
                                       file_okay=False,
                                       dir_okay=True,
@@ -72,27 +72,38 @@ def detect_file_availability_issues(
     os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"])
     os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
 
-    # set up emulators
-    if deer or screenshot_issue or complete or xbot:
-        android_studio_devices, current_dark_mode, current_font_size = set_up_devices(device_name_alias)
-    else:
-        current_font_size = sys_config.config_content["font_size"]
-        if sys_config.config_content["dark_mode"] == "true":
-            current_dark_mode = "dark_mode"
-        else:
-            current_dark_mode = "light_mode"
-    # for naming output folder
-    current_setting = current_font_size + "_" + current_dark_mode
-    apks = [f for f in os.listdir(apk_path) if isfile(join("./input", f))]
-    for apk in apks:
-        apk_output_folder = current_directory + "/output/" + apk[:-4]
 
+    apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
+    for apk in apks:
+
+
+        apk_output_folder = current_directory + "/output/" + apk[:-4]
+        # set up emulators
+        if deer or screenshot_issue or complete or xbot:
+            android_studio_devices, current_dark_mode, current_font_size = set_up_devices(device_name_alias)
+        else:
+            current_font_size = sys_config.config_content["font_size"]
+            if sys_config.config_content["dark_mode"] == "true":
+                current_dark_mode = "dark_mode"
+            else:
+                current_dark_mode = "light_mode"
+        # for naming output folder
+        current_setting = current_font_size + "_" + current_dark_mode
         # create output folder
         if not os.path.exists(apk_output_folder):
             os.makedirs(apk_output_folder)
 
         for device in device_name_alias:
+
             emulator_name_android_studio = device_name_alias[device]["alias"]
+
+            #delete app
+            cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % (
+                        current_directory + "/input/ " + apk)
+            defined_pkg_name = subprocess.getoutput(cmd)
+            cmd = "adb -s " + device + " uninstall " + defined_pkg_name
+            os.system(cmd)
+
             current_folder_device = apk_output_folder + "/" +  emulator_name_android_studio
             if not os.path.exists(current_folder_device):
                 os.makedirs(current_folder_device)
@@ -100,18 +111,18 @@ def detect_file_availability_issues(
             current_folder_setting = current_folder_device + "/" + current_setting
             if not os.path.exists(current_folder_setting):
                 os.makedirs(current_folder_setting)
-        print("the fuck")
+
         if xbot or complete:
             # output folder for xbot
             if not os.path.exists(apk_output_folder):
                 os.makedirs(apk_output_folder)
             # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
-            run_xbot(android_studio_devices, apk, current_dark_mode, current_font_size)
+            run_xbot(android_studio_devices, apk,current_directory, current_dark_mode, current_font_size)
             # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
 
         if uichecker or complete:
             # typer.secho("========Start running UI checker========", fg=typer.colors.MAGENTA)
-            os.system("./uichecker/uicheck " + str(apk_path.absolute()) + "/" + apk + " ./uichecker/rules/input.dl")
+            os.system(current_directory + "/uichecker/uicheck " + str(apk_path.absolute()) + "/" + apk + " " + current_directory + "/uichecker/rules/input.dl")
             # typer.secho("========UI checker Finished========", fg=typer.colors.MAGENTA)
 
 
@@ -138,6 +149,7 @@ def detect_file_availability_issues(
                     'hasLogin': True,
                     'facebookLogin': False
                 }
+
             # run_deer(apk, current_directory, login_options)
             run_deer(apk, "",current_directory)
             # run for each device
@@ -231,6 +243,8 @@ def auto_login(pass_login: str = typer.Option(None, "--pass",
 
 
 def set_up_devices(device_name_alias):
+    os.system("adb kill-server")
+    os.system("adb start-server")
     os.system("adb -s emulator-5556 emu kill")
     os.system("adb -s emulator-5558 emu kill")
     os.system("adb -s emulator-5560 emu kill")
@@ -245,7 +259,8 @@ def set_up_devices(device_name_alias):
         emulators.append(device)
         port_number = device[-4:]
 
-        subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio])
+        subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
+
     time.sleep(10)
 
     for emulator in emulators:
