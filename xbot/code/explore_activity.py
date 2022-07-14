@@ -7,7 +7,11 @@ import re
 import subprocess
 import time, csv
 
-adb = 'adb'
+import typer
+import threading
+local_variables = threading.local()
+# local_variables.adb = 'adb'
+local_variables.adb = 'adb'
 # adb = "adb -s %s"%(run_rpk_explore_apk.emulator)
 # folder_name = run.folder_name
 # tmp_dir = run_rpk_explore_apk.tmp_file
@@ -72,7 +76,7 @@ def installAPP(new_apkpath, apk_name, results_folder):
     appPath = new_apkpath
     get_pkgname(appPath)
 
-    cmd = adb + " install -r " + appPath
+    cmd = local_variables.adb + " install -r " + appPath
 
     out = subprocess.getoutput(cmd)
     for o in out.split('\n'):
@@ -88,7 +92,7 @@ def installAPP(new_apkpath, apk_name, results_folder):
 
 
 def uninstallApp(package):
-    cmd = adb + " uninstall " + package
+    cmd = local_variables.adb + " uninstall " + package
     os.system(cmd)
 
 
@@ -104,7 +108,7 @@ def uninstallApp(package):
 #     os.chdir(path)
 
 def get_screen_size():
-    cmd = adb + " shell wm size"
+    cmd = local_variables.adb + " shell wm size"
     print(cmd)
     process = os.popen(cmd)
     output = process.read()
@@ -124,24 +128,26 @@ def scan_and_return():
 
     # os.system(adb + ' shell input tap 720 826')
     time.sleep(1)
-    current_emulator = adb[-13:]
+    current_emulator = local_variables.adb[-13:]
     print(pressLocations.get(current_emulator))
 
-    os.system(adb + ' shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
+    os.system(local_variables.adb + ' shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
     time.sleep(3)
 
     screensize = get_screen_size()
     #horizontal phone need higher cut in cuz more pixel
     if current_emulator == "emulator-5558":
-        os.system(adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
+
+        os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
     else:
-        os.system(adb + ' shell input tap ' + str(int(screensize) - 150) + " " + str(150))
+        os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 150) + " " + str(150))
+
     time.sleep(3)
     # cancel and back
-    os.system(adb + ' shell input keyevent 4')
+    os.system(local_variables.adb + ' shell input keyevent 4')
     time.sleep(1)
-    os.system(adb + ' shell input keyevent 3')
+    os.system(local_variables.adb + ' shell input keyevent 3')
     time.sleep(1)
 
 
@@ -178,7 +184,7 @@ def unzip(zipfile, activity):
 
 
 def collect_results(activity, appname, accessbility_folder, results_outputs):
-    print("collectResultFunc")
+    #print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
     print('Collecting scan results from device...')
 
@@ -191,7 +197,7 @@ def collect_results(activity, appname, accessbility_folder, results_outputs):
     issue_path = os.path.join(results_outputs, 'issues')
     if not os.path.exists(issue_path):
         os.makedirs(issue_path)
-    pull_results = adb + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
+    pull_results = local_variables.adb + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
     # pull_results = adb + " pull /data/data/ %s" % ("./testhere")
     os.system(pull_results)
 
@@ -218,17 +224,17 @@ def collect_results(activity, appname, accessbility_folder, results_outputs):
     #         os.system('mv "%s/%s" "%s/%s"'%(tmp_folder,png,screenshot_path,activity))
     clean_tmp_folder(tmp_folder)
 
-    clean_results = adb + ' shell rm -rf /data/data/%s/cache/export/' % (scanner_pkg)
+    clean_results = local_variables.adb + ' shell rm -rf /data/data/%s/cache/export/' % (scanner_pkg)
     os.system(clean_results)
 
-    clean_screenshots = adb + ' shell rm -rf /data/data/%s/files/screenshots' % (scanner_pkg)
+    clean_screenshots = local_variables.adb + ' shell rm -rf /data/data/%s/files/screenshots' % (scanner_pkg)
     os.system(clean_screenshots)
 
 
 def check_current_screen():
-    cmd = adb + " shell dumpsys activity activities | grep mResumedActivity"
-    cmd1 = adb + " logcat -t 100 | grep Error"
-    cmd2 = adb + " logcat -t 100 | grep Exception"
+    cmd = local_variables.adb + " shell dumpsys activity activities | grep mResumedActivity"
+    cmd1 = local_variables.adb + " logcat -t 100 | grep Error"
+    cmd2 = local_variables.adb + " logcat -t 100 | grep Exception"
     # if pkg in commands.getoutput(cmd).split('\n')[0] and (not 'Exception' in commands.getoutput(cmd2)):
     if (not 'Error:' in subprocess.getoutput(cmd1)) and (not 'Exception:' in subprocess.getoutput(cmd2)) \
             and (not 'com.android.launcher3' in subprocess.getoutput(cmd)):
@@ -244,17 +250,17 @@ def check_current_screen_new(activity, appname, results_outputs):
     keywords = ['has stopped', 'isn\'t responding', 'keeps stopping']
 
     '''dump xml and check'''
-    print(adb)
+    #print(local_variables.adb)
     layout_path = os.path.join(results_outputs, 'layouts')
     if not os.path.exists(layout_path):
         os.makedirs(layout_path)
-    print("====== dump =======")
-    os.system(adb + ' shell uiautomator dump /sdcard/%s.xml' % activity)
-    print("====== pull xml =======")
-    pull_xml = adb + ' pull /sdcard/%s.xml %s' % (activity, layout_path)
+    #print("====== dump =======")
+    os.system(local_variables.adb + ' shell uiautomator dump /sdcard/%s.xml' % activity)
+    #print("====== pull xml =======")
+    pull_xml = local_variables.adb + '  pull /sdcard/%s.xml %s' % (activity, layout_path)
     os.system(pull_xml)
-    print("====== clean xml =======")
-    clean_xml = adb + ' shell rm /sdcard/%s.xml' % activity
+    #print("====== clean xml =======")
+    clean_xml = local_variables.adb + ' shell rm /sdcard/%s.xml' % activity
     os.system(clean_xml)
 
     # check whether it crashes
@@ -268,11 +274,11 @@ def check_current_screen_new(activity, appname, results_outputs):
     # check whether it is a permission dialog
     if not subprocess.getoutput('grep -i "ALLOW" %s' % (layout_path)) == '' and not subprocess.getoutput(
             'grep -i "DENY" %s' % (layout_path)) == '':
-        os.system(adb + ' shell input tap 780 1080')  # tap ALLOW
-        print("hehe")
+        os.system(local_variables.adb + ' shell input tap 780 1080')  # tap ALLOW
+        #print("hehe")
         time.sleep(1)
-        cmd = adb + " shell dumpsys activity activities | grep mResumedActivity"
-        cmdd = adb + " shell dumpsys activity activities | grep mFocusedActivity"
+        cmd = local_variables.adb + " shell dumpsys activity activities | grep mResumedActivity"
+        cmdd = local_variables.adb + " shell dumpsys activity activities | grep mFocusedActivity"
         if not 'com.android.launcher3' in subprocess.getoutput(
                 cmd) and not 'com.android.launcher3' in subprocess.getoutput(cmdd):
             return 'normal'
@@ -280,8 +286,8 @@ def check_current_screen_new(activity, appname, results_outputs):
             os.system('rm %s' % layout_path)
             return 'abnormal'
 
-    cmd = adb + " shell dumpsys activity activities | grep mResumedActivity"
-    cmdd = adb + " shell dumpsys activity activities | grep mFocusedActivity"
+    cmd = local_variables.adb + " shell dumpsys activity activities | grep mResumedActivity"
+    cmdd = local_variables.adb + " shell dumpsys activity activities | grep mFocusedActivity"
     if not 'com.android.launcher3' in subprocess.getoutput(cmd) and not 'com.android.launcher3' in subprocess.getoutput(
             cmdd):
         return 'normal'
@@ -293,10 +299,10 @@ def check_current_screen_new(activity, appname, results_outputs):
 def explore(activity, appname, results_folder, results_outputs):
     print("exploreFunc")
     current = check_current_screen_new(activity, appname, results_outputs)
-    print(current)
+    #print(current)
     if current == 'abnormal':
         # click home and click 'ok' if crashes (two kinds of 'ok's)
-        os.system(adb + ' shell input tap 540 1855')
+        os.system(local_variables.adb+' shell input tap 540 1855')
         time.sleep(1)
 
         # os.system(adb + ' shell input tap 899 1005')
@@ -313,7 +319,7 @@ def explore(activity, appname, results_folder, results_outputs):
 
 
 def clean_logcat():
-    cmd_clean = adb + ' logcat -c'
+    cmd_clean = local_variables.adb + ' logcat -c'
     subprocess.getoutput(cmd_clean)
 
 
@@ -423,7 +429,7 @@ def get_act_extra_paras(activity):
 def startAct(component, action, cate, appname, results_folder, results_outputs):
     print("startAct")
     clean_logcat()
-    cmd = adb + ' shell am start -S -n %s' % component
+    cmd = local_variables.adb + ' shell am start -S -n %s' % component
     if not action == '':
         cmd = cmd + ' -a ' + action
     if not cate == '':
@@ -523,12 +529,11 @@ def remove_folder(apkname, decompilePath):
 
 def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, storydroid, dark_mode = "light_mode",
                     fontsize="normal"):
-    global adb, current_font_size, current_dark_mode
+    global current_font_size, current_dark_mode
     # change
     current_font_size = fontsize
     current_dark_mode = dark_mode
-    adb = "adb -s %s" % (emulator)
-
+    local_variables.adb = "adb -s %s" % (emulator)
     global tmp_dir
     tmp_dir = tmp_file
 
@@ -536,7 +541,7 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
     act_paras_file = storydroid
     current_setting = current_font_size + "_" + current_dark_mode
     decompilePath = os.path.join(results_folder, "apktool")  # Decompiled app path (apktool handled)
-    results_outputs = "output/" + apk_name + "/" + pressLocations.get(adb[-13:]).get("name") + "/" + current_setting + "/googleScanner"
+    results_outputs = "output/" + apk_name + "/" + pressLocations.get(emulator).get("name") + "/" + current_setting + "/googleScanner"
     installErrorAppPath = os.path.join(results_folder, "install-error-apks")
 
     if not os.path.exists(decompilePath):
@@ -560,7 +565,7 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
 
     parseManifest(new_apkpath, apk_name, results_folder, decompilePath, results_outputs)
     print("%s parsing fininshed!" % new_apkpath)
-    print("cannot uninstall")
+
     uninstallApp(defined_pkg_name)
 
     # Remove the decompiled and modified resources

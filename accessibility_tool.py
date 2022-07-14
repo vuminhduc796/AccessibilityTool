@@ -16,9 +16,9 @@ from owleyes.cnn_cam3 import owleyes_scan
 from xbot.code.run_xbot import run_xbot
 from typing import List, Optional
 
-app = typer.Typer(help="Android Accessibility Tool")
+app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
 config_app = typer.Typer()
-app.add_typer(config_app, name="config")
+app.add_typer(config_app, name="config",help="Manage config.",no_args_is_help=True)
 current_directory = os.getcwd()
 
 
@@ -51,6 +51,9 @@ def detect_file_availability_issues(
         complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                   "OwlEye)")
 ):
+    """
+    Detect Accessibility issues.
+    """
     # check options
     if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
         typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
@@ -72,6 +75,8 @@ def detect_file_availability_issues(
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
     for apk in apks:
+
+
         apk_output_folder = current_directory + "/output/" + apk[:-4]
         # set up emulators
         if deer or screenshot_issue or complete or xbot:
@@ -89,7 +94,16 @@ def detect_file_availability_issues(
             os.makedirs(apk_output_folder)
 
         for device in device_name_alias:
+
             emulator_name_android_studio = device_name_alias[device]["alias"]
+
+            #delete app
+            cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % (
+                        current_directory + "/input/ " + apk)
+            defined_pkg_name = subprocess.getoutput(cmd)
+            cmd = "adb -s " + device + " uninstall " + defined_pkg_name
+            os.system(cmd)
+
             current_folder_device = apk_output_folder + "/" +  emulator_name_android_studio
             if not os.path.exists(current_folder_device):
                 os.makedirs(current_folder_device)
@@ -117,26 +131,27 @@ def detect_file_availability_issues(
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
             # init login config
             login_options = {}
-            if sys_config.config_content["auto_login"]['method'] == 'facebook':
+            if sys_config.config_content["auto-login"]['method'] == 'facebook':
                 login_options = {
                     'username': sys_config.config_content["default_facebook"]['username'],
                     'password': sys_config.config_content["default_facebook"]['password'],
-                    'activityName': sys_config.config_content["auto_login"]['activity'],
-                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
                     'hasLogin': False,
                     'facebookLogin': True
                 }
             else:
                 login_options = {
-                    'username': sys_config.config_content["auto_login"]['username'],
-                    'password': sys_config.config_content["auto_login"]['password'],
-                    'activityName': sys_config.config_content["auto_login"]['activity'],
-                    'packageName': sys_config.config_content["auto_login"]['packageName'],
+                    'username': sys_config.config_content["auto-login"]['username'],
+                    'password': sys_config.config_content["auto-login"]['password'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
                     'hasLogin': True,
                     'facebookLogin': False
                 }
 
-            run_deer(apk, current_directory)
+            # run_deer(apk, current_directory, login_options)
+            run_deer(apk, "",current_directory)
             # run for each device
             for device in devices_names:
                 # get device name from number
@@ -158,6 +173,9 @@ def detect_file_availability_issues(
 
 @app.command("replay")
 def replay():
+    """
+    Replay bugs.
+    """
     pass
 
 
@@ -170,6 +188,9 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
                                                                         "--d",
                                                                         help="Format:[alias], delete an [alias]")
                     ):
+    """
+    Set up Android emulators for testing App Accessibility.
+    """
     for emulator in add_emulator:
         if (not ':' in emulator):
             typer.secho("incorrect format:[alias:name]", fg=typer.colors.MAGENTA)
@@ -186,26 +207,28 @@ def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--ad
 def auto_login(pass_login: str = typer.Option(None, "--pass",
                                               "--p",
                                               help="Format:[username:password:activity"
-                                                   ":package_name], set up [ "
+                                                   ":package_name], set up ["
                                                    "username] "
                                                    ", [password], [activity] and [package_name] "
-                                                   "for the apk"),
+                                                   "for the apk in the config file."),
                facebook_login: str = typer.Option(None, "--facebook",
                                                   "--f",
                                                   help="Format:[activity"
                                                        ":package_name], set up [activity] and [package_name] "
-                                                       "for the apk"),
+                                                       "for the apk in the config file."),
                default_facebook_user_pass: str = typer.Option(None, "--setting",
                                                               help="Format:[username"
                                                                    ":password], set up default [username] and ["
                                                                    "password] "
-                                                                   "for loging into the facebook"),
+                                                                   "for loging in to the facebook."),
 
                remove_auto_login: Optional[bool] = typer.Option(
                    None, "--delete", '--d', callback=delete_auto_login_config,
-                   help="Deletes auto-login configuration"),
-
+                   help="Deletes auto-login configs."),
                ):
+    """
+    Set up User credentials and apk information for auto login.
+    """
     if pass_login:
         formatted_user_pass = pass_login.split(":")
         sys_config.add_auto_login_pass_config(formatted_user_pass[0], formatted_user_pass[1], formatted_user_pass[2],
@@ -237,6 +260,7 @@ def set_up_devices(device_name_alias):
         port_number = device[-4:]
 
         subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
+
     time.sleep(10)
 
     for emulator in emulators:
