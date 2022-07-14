@@ -7,7 +7,7 @@ apk_signer:
 zip_align: /home/chunyangchen/Android/Sdk/build-tools/30.0.3/zipalign
   #/Users/leih/Library/Android/sdk/build-tools/29.0.2/zipalign
 
-auto-login:
+auto_login:
   activity: .ui.authentication.mediaauth.AuthActivity
   method: facebook
   packageName: com.Alltrails.alltrails

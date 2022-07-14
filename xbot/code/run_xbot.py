@@ -20,7 +20,6 @@ import config.config as sys_config
 emulators = []
 
 # apkPath = sys.argv[2] # APK folder
-# apkPath = "./input/"  # APK folder
 # apkPath = "/home/senchen/Desktop/xbot/apks-101/"  # Store the original app
 # apkPath = "/Users/chensen/Tools/xbot/icse-mulapks/"
 # apkPath = "/home/senchen/Desktop/uicrawler/apks/"  # Store the original app
@@ -152,7 +151,7 @@ def remove_folder(apkname, decompilePath):
             else:
                 os.remove(rm_path)
 
-def run_xbot(pass_in_emulators, apk, darkmode="light_mode", fontsize="normal"):
+def run_xbot(pass_in_emulators, apk, home_directory, darkmode="light_mode", fontsize="normal"):
 
     global emulators
     emulators = pass_in_emulators
@@ -195,7 +194,7 @@ def run_xbot(pass_in_emulators, apk, darkmode="light_mode", fontsize="normal"):
             if "not found" in result[1]:
                 typer.secho("The emulator "+emulator+" does not exist, please check your device.",fg=typer.colors.MAGENTA)
                 sys.exit()
-            apk_path = os.path.join("./input", apk)  # Get apk path
+            apk_path = os.path.join(home_directory,"input", apk)  # Get apk path
             # apk_name = apk.rstrip('.apk')  # if file is app.apk, rstrip will not work
             apk_name = apk.removesuffix('.apk')
             #                pkg = get_pkg(apk_path)  # Get pkg, this version has a problem about pkg, may inconsist to the real pkg

@@ -1,4 +1,6 @@
 import os
+import shutil
+
 from guidedExplore.decompile_apk import unit_decpmpile
 from guidedExplore.instrument_apk import unit_inject
 from guidedExplore.extract_atg import batch_extract, activity_searching
@@ -6,7 +8,7 @@ from guidedExplore.extract_intent_paras import smali_intent_para_extractor
 from guidedExplore.merge_deeplink_params import ParamGenerator
 from guidedExplore.dynamic_GUI_testing import dynamic_GUI_testing
 
-def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path):
+def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path,outmost_directory):
     # if not os.path.exists(app_save_dir):
     #     print(app_save_dir, 'not found')
     #     return
@@ -21,7 +23,7 @@ def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplink
     repackage_app_save_apk = os.path.join(repackage_app_save_dir, apk)
     if not os.path.exists(repackage_app_save_apk):
         os.mkdir(repackage_app_save_apk)
-    unit_inject(app_save_dir, repackage_app_save_apk + '.apk', deeplinks_path)
+    unit_inject(app_save_dir, repackage_app_save_apk + '.apk', deeplinks_path,outmost_directory)
 
     # extract atg
     folders = os.listdir(recompiled_apks)
@@ -56,13 +58,25 @@ def check_and_create_file(file_name):
         with open(file_name, 'x') as f:
             f.close()
 
+def clean_up_tmp(folder):
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-def run_deer(apk_file, emulator, outmost_directory):
+
+def run_deer(apk_file, outmost_directory):
 
     if not apk_file.endswith('.apk'):
         print("filename invalid")
         return
     app_name = apk_file[:-4]
+    print(outmost_directory)
     current_directory = os.path.join(outmost_directory, "guidedExplore/data")
 
     app_save_dir = current_directory + "/recompiled_apks/" + app_name
@@ -80,9 +94,9 @@ def run_deer(apk_file, emulator, outmost_directory):
     check_and_create_dir(current_directory + "/" + app_name)
     check_and_create_file(merged_path)
     check_and_create_file(deeplinks_path)
-
-    # unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks,
-    #                     merged_path)
+    clean_up_tmp(repackage_app_save_dir)
+    clean_up_tmp(recompiled_apks)
+    unit_run_preprocess(app_dir, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path, outmost_directory)
 
     print("----------done modifying------------")
 

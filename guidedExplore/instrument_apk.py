@@ -30,7 +30,7 @@ def batch_sign_apks(re_packaged_apks):
 # huu0025/PycharmProjects/uiautomator2/activityMining/re_apks/youtube.apk
 
 
-def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path):
+def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path, outmost_directory):
     # print('Start apktool')
     # cmd1 = 'apktool d ' + apk_path + ' -f -o ' + app_save_dir
     # # os.system(cmd1)
@@ -38,11 +38,9 @@ def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path):
     print('run inject apk')
     inject_apk.injectApk(app_save_dir, deeplinks_path)
 
-    temp_apk = os.getcwd() + "/guidedExplore/data/repackaged_apks/temp.apk"
+    temp_apk = outmost_directory+ "/guidedExplore/data/repackaged_apks/temp.apk"
 
     print('repackage apk')
-    print(app_save_dir)
-    print(os.getcwd())
     cmd2 = 'apktool b ' + app_save_dir + ' --use-aapt2 -o ' + temp_apk
     os.system(cmd2)
 

@@ -129,15 +129,14 @@ def scan_and_return():
 
     os.system(adb + ' shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
-    time.sleep(2)
+    time.sleep(3)
 
     screensize = get_screen_size()
     #horizontal phone need higher cut in cuz more pixel
     if current_emulator == "emulator-5558":
-        print("shhudd")
         os.system(adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
     else:
-        os.system(adb + ' shell input tap ' + str(int(screensize) - 170) + " " + str(170))
+        os.system(adb + ' shell input tap ' + str(int(screensize) - 150) + " " + str(150))
     time.sleep(3)
     # cancel and back
     os.system(adb + ' shell input keyevent 4')

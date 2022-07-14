@@ -427,7 +427,7 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
     check_and_create_dir(output_directory)
     atg_json = current_directory + "/" + app_name + '/activity_atg/' + app_name + ".json"
-    atg_save_dir = current_directory + app_name + '/activity_atg/' + app_name + '_dynamic.json'
+    atg_save_dir = current_directory + "/" + app_name + '/activity_atg/' + app_name + '_dynamic.json'
     # atg_json = current_directory + "/" + app_name + '/activity_atg.json'
     # atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
     ss_path = output_directory + '/activity_screenshots/'
