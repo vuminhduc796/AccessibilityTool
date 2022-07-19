@@ -7,6 +7,7 @@ import os
 from pyaxmlparser import APK
 import subprocess
 import xml.etree.ElementTree as ET
+from config.config import inform_update_deer
 
 
 def connectionAdaptor(phoneDevice, tabletDevice):
@@ -137,6 +138,7 @@ def saveScreenshot(d, ss_path, activity_name):
         img = d.screenshot()
         img.save(ss_path + activity_name + '.png')
         img.close()
+        inform_update_deer()
         return img
     except Exception as e:
         print( e.args)

@@ -20,7 +20,7 @@ app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
 config_app = typer.Typer()
 app.add_typer(config_app, name="config",help="Manage config.",no_args_is_help=True)
 current_directory = os.getcwd()
-
+cond = threading.Condition()
 
 def delete_auto_login_config(remove_auto_login: bool):
     if remove_auto_login:
@@ -112,65 +112,91 @@ def detect_file_availability_issues(
             if not os.path.exists(current_folder_setting):
                 os.makedirs(current_folder_setting)
 
+        # start threads
+        thread_list = []
         if xbot or complete:
-            # output folder for xbot
-            if not os.path.exists(apk_output_folder):
-                os.makedirs(apk_output_folder)
-            # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
-            run_xbot(android_studio_devices, apk,current_directory, current_dark_mode, current_font_size)
-            # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
+            xbot_thread = threading.Thread(target=xbot_thread_run, args=(
+                apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
+            thread_list.append(xbot_thread)
 
         if uichecker or complete:
-            # typer.secho("========Start running UI checker========", fg=typer.colors.MAGENTA)
-            os.system(current_directory + "/uichecker/uicheck " + str(apk_path.absolute()) + "/" + apk + " " + current_directory + "/uichecker/rules/input.dl")
-            # typer.secho("========UI checker Finished========", fg=typer.colors.MAGENTA)
-
+            ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
+            thread_list.append(ui_checker_thread)
 
         if deer or screenshot_issue or complete:
-            # deer
-            # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
-            # init login config
-            login_options = {}
-            if sys_config.config_content["auto-login"]['method'] == 'facebook':
-                login_options = {
-                    'username': sys_config.config_content["default_facebook"]['username'],
-                    'password': sys_config.config_content["default_facebook"]['password'],
-                    'activityName': sys_config.config_content["auto-login"]['activity'],
-                    'packageName': sys_config.config_content["auto-login"]['packageName'],
-                    'hasLogin': False,
-                    'facebookLogin': True
-                }
-            else:
-                login_options = {
-                    'username': sys_config.config_content["auto-login"]['username'],
-                    'password': sys_config.config_content["auto-login"]['password'],
-                    'activityName': sys_config.config_content["auto-login"]['activity'],
-                    'packageName': sys_config.config_content["auto-login"]['packageName'],
-                    'hasLogin': True,
-                    'facebookLogin': False
-                }
-
-            # run_deer(apk, current_directory, login_options)
-            run_deer(apk, "",current_directory)
-            # run for each device
-            for device in devices_names:
-                # get device name from number
-                emulator_name_android_studio = device_name_alias[device]["alias"]
-                dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio, current_setting)
-                # deer
-                # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
-
-                # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
+            deer_thread = threading.Thread(target=deer_thread_run,
+                                           args=(apk, devices_names, device_name_alias, current_setting))
+            thread_list.append(deer_thread)
 
         if gcam or screenshot_issue or complete:
-            for device in devices_names:
-                emulator_name_android_studio = device_name_alias[device]["alias"]
-                # typer.secho("========Start running owleye========", fg=typer.colors.MAGENTA)
-                path = os.path.join(apk_output_folder,emulator_name_android_studio,current_setting)
-                owleyes_scan(path ,current_directory)
-                # typer.secho("========OwlEye Finished========", fg=typer.colors.MAGENTA)
+            owleyes_thread = threading.Thread(target=owleyes_thread_run, args=(
+                devices_names, device_name_alias, apk_output_folder, current_setting))
+            thread_list.append(owleyes_thread)
 
+        for thread in thread_list:
+            thread.start()
+        for thread in thread_list:
+            thread.join()
 
+def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
+    # output folder for xbot
+    with cond:
+        # typer.secho("========Xbot========", fg=typer.colors.MAGENTA)
+        if not os.path.exists(apk_output_folder):
+            os.makedirs(apk_output_folder)
+        # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
+        run_xbot(android_studio_devices, apk, current_directory, current_dark_mode, current_font_size)
+        # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
+def ui_checker_thread_run(apk_path,apk):
+    # typer.secho("========UI checker========", fg=typer.colors.MAGENTA)
+    os.system(current_directory + "/uichecker/uicheck " + str(
+        apk_path.absolute()) + "/" + apk + " " + current_directory + "/uichecker/rules/input.dl")
+    # typer.secho("========UI checker Finished========", fg=typer.colors.MAGENTA)
+def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
+    # deer
+    # init login config
+    with cond:
+        # typer.secho("========deer========", fg=typer.colors.MAGENTA)
+        login_options = {}
+        if sys_config.config_content["auto-login"]['method'] == 'facebook':
+            login_options = {
+                'username': sys_config.config_content["default_facebook"]['username'],
+                'password': sys_config.config_content["default_facebook"]['password'],
+                'activityName': sys_config.config_content["auto-login"]['activity'],
+                'packageName': sys_config.config_content["auto-login"]['packageName'],
+                'hasLogin': False,
+                'facebookLogin': True
+            }
+        else:
+            login_options = {
+                'username': sys_config.config_content["auto-login"]['username'],
+                'password': sys_config.config_content["auto-login"]['password'],
+                'activityName': sys_config.config_content["auto-login"]['activity'],
+                'packageName': sys_config.config_content["auto-login"]['packageName'],
+                'hasLogin': True,
+                'facebookLogin': False
+            }
+
+        # run_deer(apk, current_directory, login_options)
+        run_deer(apk, current_directory)
+        # run for each device
+        for device in devices_names:
+            # get device name from number
+            emulator_name_android_studio = device_name_alias[device]["alias"]
+            dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio,
+                                current_setting)
+            # deer
+            # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
+        sys_config.inform_finish_deer()
+            # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
+def owleyes_thread_run(devices_names, device_name_alias, apk_output_folder, current_setting):
+    with cond:
+        for device in devices_names:
+            emulator_name_android_studio = device_name_alias[device]["alias"]
+            # typer.secho("========Start running owleye========", fg=typer.colors.MAGENTA)
+            path = os.path.join(apk_output_folder, emulator_name_android_studio, current_setting)
+            owleyes_scan(path, current_directory)
+            # typer.secho("========OwlEye Finished========", fg=typer.colors.MAGENTA)
 @app.command("replay")
 def replay():
     """
