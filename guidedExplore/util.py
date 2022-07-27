@@ -133,12 +133,12 @@ def xmlScreenSaver_single(saveDir, xml1, img1, activity1):
         img1.save(img1Path)
 
 
-def saveScreenshot(d, ss_path, activity_name):
+def saveScreenshot(d, ss_path, activity_name,current_emulator,current_apk):
     try:
         img = d.screenshot()
         img.save(ss_path + activity_name + '.png')
         img.close()
-        inform_update_deer()
+        inform_update_deer(current_emulator, current_apk,activity_name)
         return img
     except Exception as e:
         print( e.args)

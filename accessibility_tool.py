@@ -180,14 +180,19 @@ def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
         # run_deer(apk, current_directory, login_options)
         run_deer(apk, current_directory)
         # run for each device
+        sys_config.dictionary['mode'] = current_setting
         for device in devices_names:
             # get device name from number
             emulator_name_android_studio = device_name_alias[device]["alias"]
-            dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio,
-                                current_setting)
+            sys_config.initilize_config_for_deer(emulator_name_android_studio,apk[:-4])
+            try:
+                dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio,current_setting)
+            except Exception as e:
+                print(e)
+            sys_config.inform_finish_deer(emulator_name_android_studio,apk[:-4])
             # deer
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
-        sys_config.inform_finish_deer()
+
             # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
 def owleyes_thread_run(devices_names, device_name_alias, apk_output_folder, current_setting):
     with cond:

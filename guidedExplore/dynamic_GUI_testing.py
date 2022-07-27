@@ -20,7 +20,8 @@ from uiautomator2 import Direction
 from guidedExplore.activity_launcher import launch_activity_by_deeplinks, launch_activity_by_deeplink
 
 dynamic_atg = {}
-
+current_emulator=''
+current_app_name=''
 
 def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=False):
     d_activity, d_package, isLauncher = getActivityPackage(d)
@@ -61,7 +62,7 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                 # get the screenshot
                 if full_cur_activity not in visited_activities:
                     visited_activities.append(full_cur_activity)
-                    screenshot = saveScreenshot(d, ss_path, full_cur_activity)
+                    screenshot = saveScreenshot(d, ss_path, full_cur_activity,current_emulator,current_app_name)
                     if screenshot is None:
                         print('Failed to save screenshot of  {}'.format(full_cur_activity))
 
@@ -112,7 +113,7 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
             # get the screenshot
             if d2_activity not in visited_activities:
                 visited_activities.append(d2_activity)
-                screenshot = saveScreenshot(d, ss_path, d2_activity)
+                screenshot = saveScreenshot(d, ss_path, d2_activity,current_emulator,current_app_name)
                 if screenshot is None:
                     print('Failed to save screenshot of  {}'.format(d2_activity))
 
@@ -152,7 +153,7 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                     # get the screenshot
                     if d2_activity not in visited_activities:
                         visited_activities.append(d2_activity)
-                        screenshot = saveScreenshot(d, ss_path, d2_activity)
+                        screenshot = saveScreenshot(d, ss_path, d2_activity,current_emulator,current_app_name)
                         if screenshot is None:
                             print('Failed to save screenshot of  {}'.format(d2_activity))
                     testing_candidate_bounds_list.append(leaf)
@@ -183,7 +184,7 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                         # get the screenshot
                         if d2_activity not in visited_activities:
                             visited_activities.append(d2_activity)
-                            screenshot = saveScreenshot(d, ss_path, d2_activity)
+                            screenshot = saveScreenshot(d, ss_path, d2_activity,current_emulator,current_app_name)
                             if screenshot is None:
                                 print('Failed to save screenshot of  {}'.format(d2_activity))
 
@@ -344,7 +345,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
         d.sleep(3)
 
     # get the screenshot of the first activity
-    main_screenshot = saveScreenshot(d, ss_path, mainActivity)
+    main_screenshot = saveScreenshot(d, ss_path, mainActivity,current_emulator,current_app_name)
     visited_activities.append(mainActivity)
     if main_screenshot is None:
         print('Failed to save screenshot of  {}'.format(mainActivity))
@@ -370,7 +371,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
 
                     # save the screenshot of the current activity
                     if next_activity not in visited_activities:
-                        screenshot = saveScreenshot(d, ss_path, next_activity)
+                        screenshot = saveScreenshot(d, ss_path, next_activity,current_emulator,current_app_name)
                         visited_activities.append(next_activity)
                         if screenshot is None:
                             print('Failed to save screenshot of  {}'.format(next_activity))
@@ -395,7 +396,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
                         if status:
                             path_planner.set_visited(activity)
                             if activity not in visited_activities:
-                                screenshot = saveScreenshot(d, ss_path, activity)
+                                screenshot = saveScreenshot(d, ss_path, activity,current_emulator,current_app_name)
                                 visited_activities.append(activity)
                                 if screenshot is None:
                                     print('Failed to save screenshot of  {}'.format(activity))
@@ -422,7 +423,10 @@ def check_and_create_dir(dir_name):
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
-
+    global current_emulator
+    current_emulator=android_device
+    global current_app_name
+    current_app_name=app_name
     current_directory = outmost_directory + "/guidedExplore/data"
     output_directory = outmost_directory + "/output/" + app_name + "/" + android_device + "/" + current_setting
     apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
