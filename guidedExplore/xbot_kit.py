@@ -129,21 +129,19 @@ def scan_and_return(deviceId):
     time.sleep(1)
 
 
-def collect_results(activity, appname, accessbility_folder, results_outputs, saved_dir, deviceId):
+def collect_results(activity, accessbility_folder, deviceId, appName):
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
     print('Collecting scan results from device...')
 
-    tmp_dir = os.path.join(saved_dir, deviceId)
-
     # To save issues and screenshot temporarily in order to rename.
-    tmp_folder = os.path.join(accessbility_folder, tmp_dir)
+    tmp_folder = os.path.join(accessbility_folder, deviceId)
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    issue_path = os.path.join(results_outputs, 'issues')
+    issue_path = os.path.join(accessbility_folder, appName, 'issues')
     if not os.path.exists(issue_path):
         os.makedirs(issue_path)
     pull_results = "adb pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)

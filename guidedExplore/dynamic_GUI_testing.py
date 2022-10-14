@@ -9,7 +9,7 @@ import requests
 import uiautomator2.exceptions
 
 from guidedExplore.util import *
-
+from guidedExplore.xbot_kit import scan_and_return, collect_results
 from guidedExplore.util import getActivityPackage, saveScreenshot
 from guidedExplore.testing_path_planner import PathPlanner
 from guidedExplore.hierachySolver import click_points_Solver, bounds2int
@@ -21,8 +21,13 @@ from guidedExplore.activity_launcher import launch_activity_by_deeplinks, launch
 
 dynamic_atg = {}
 
+def run_xbot_check(activity, accessibility_path, deviceId, appName):
 
-def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=False):
+    scan_and_return(deviceId)
+    collect_results(activity, accessibility_path, deviceId, appName)
+
+
+def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, accessibility_path, timeout=60, swipe=False):
     d_activity, d_package, isLauncher = getActivityPackage(d)
     start_time = datetime.now()
     random_status = False
@@ -64,6 +69,8 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                     screenshot = saveScreenshot(d, ss_path, full_cur_activity)
                     if screenshot is None:
                         print('Failed to save screenshot of  {}'.format(full_cur_activity))
+                # run xbot_kit
+                run_xbot_check(full_cur_activity, accessibility_path, deviceId, d_package)
 
         # random testing, click clickable pixel on the screen randomly
         if random_status:
@@ -115,6 +122,8 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                 screenshot = saveScreenshot(d, ss_path, d2_activity)
                 if screenshot is None:
                     print('Failed to save screenshot of  {}'.format(d2_activity))
+                # run xbot_kit
+                run_xbot_check(d2_activity, accessibility_path, deviceId, d_package)
 
             if d2_activity != d_activity:
                 if d_activity not in dynamic_atg.keys():
@@ -155,6 +164,8 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                         screenshot = saveScreenshot(d, ss_path, d2_activity)
                         if screenshot is None:
                             print('Failed to save screenshot of  {}'.format(d2_activity))
+                        # run xbot_kit
+                        run_xbot_check(d2_activity, accessibility_path, deviceId, d_package)
                     testing_candidate_bounds_list.append(leaf)
                     path_planner.set_visited(d2_activity)
                     # d.press('back')
@@ -186,7 +197,8 @@ def random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, t
                             screenshot = saveScreenshot(d, ss_path, d2_activity)
                             if screenshot is None:
                                 print('Failed to save screenshot of  {}'.format(d2_activity))
-
+                        # run xbot_kit
+                        run_xbot_check(d2_activity, accessibility_path, deviceId, d_package)
                         testing_candidate_bounds_list.append(leaf)
                         path_planner.set_visited(d2_activity)
                         # d.press('back')
@@ -308,7 +320,7 @@ def try_login(d, login_options):
 
     return True
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options, log_save_path , test_time=1200, reinstall=False):
+def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, accessibility_path, deeplinks_json, atg_save_dir, login_options, log_save_path , test_time=1200, reinstall=False):
 
     visited_rate = []
     visited_activities = []
@@ -400,7 +412,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
                                 if screenshot is None:
                                     print('Failed to save screenshot of  {}'.format(activity))
 
-                            random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60,
+                            random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, accessibility_path, timeout=60,
                                                swipe=True)
                             break
 
@@ -432,12 +444,13 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     # atg_json = current_directory + "/" + app_name + '/activity_atg.json'
     # atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
     ss_path = output_directory + '/activity_screenshots/'
+    accessibility_path = output_directory + '/accessibility/'
     deeplinks_json = os.path.join(current_directory, app_name, 'deeplinks_params.json')
     log = current_directory + '/visited_rates/' + app_name + ".txt"
     check_and_create_dir(ss_path)
     check_and_create_dir(current_directory + '/visited_rates/')
 
-    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options, log, reinstall=False)
+    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, accessibility_path, deeplinks_json, atg_save_dir, login_options, log, reinstall=False)
 
 
 def connect_arm64(deviceId):
