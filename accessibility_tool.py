@@ -13,7 +13,7 @@ import subprocess
 from guidedExplore.dynamic_GUI_testing import dynamic_GUI_testing
 from guidedExplore.run_preprocess import run_deer
 from owleyes.cnn_cam3 import owleyes_scan
-from xbot.code.run_xbot import run_xbot
+# from xbot.code.run_xbot import run_xbot
 from typing import List, Optional
 
 app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
@@ -39,7 +39,7 @@ def detect_file_availability_issues(
                                       ),
         devices: Optional[List[str]] = typer.Option(sys_config.config_content["emulators"]["default"], "--device",
                                                     "--d", help="Uses device to test accessibility issues"),
-        xbot: bool = typer.Option(False, "--scan", help="Uses Xbot to scan to generate screenshots."),
+        # xbot: bool = typer.Option(False, "--scan", help="Uses Xbot to scan to generate screenshots."),
         uichecker: bool = typer.Option(False, "--ui", "--u", help="Uses UI Checker to generate accessibility "
                                                                   "report of UI in json format"),
         # deer: bool = typer.Option(False, "--graph", "--g", help="Uses Deer to form transition graphs"),
@@ -48,14 +48,14 @@ def detect_file_availability_issues(
                                               help="Uses OwlEye to generate screenshots of errors"),
         gcam: bool = typer.Option(False, "--gcam", "--gc",
                                               help="Uses OwlEye to generate screenshots of errors"),
-        complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
+        complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(UI checker, deer and "
                                                                   "OwlEye)")
 ):
     """
     Detect Accessibility issues.
     """
     # check options
-    if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
+    if not complete and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
         typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
         exit()
     # replace devices with their real names
@@ -79,7 +79,7 @@ def detect_file_availability_issues(
 
         apk_output_folder = current_directory + "/output/" + apk[:-4]
         # set up emulators
-        if deer or screenshot_issue or complete or xbot:
+        if deer or screenshot_issue or complete:
             android_studio_devices, current_dark_mode, current_font_size = set_up_devices(device_name_alias)
         else:
             current_font_size = sys_config.config_content["font_size"]
@@ -114,10 +114,10 @@ def detect_file_availability_issues(
 
         # start threads
         thread_list = []
-        if xbot or complete:
-            xbot_thread = threading.Thread(target=xbot_thread_run, args=(
-                apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
-            thread_list.append(xbot_thread)
+        # if xbot or complete:
+        #     xbot_thread = threading.Thread(target=xbot_thread_run, args=(
+        #         apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
+        #     thread_list.append(xbot_thread)
 
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
@@ -138,15 +138,15 @@ def detect_file_availability_issues(
         for thread in thread_list:
             thread.join()
 
-def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
-    # output folder for xbot
-    with cond:
-        # typer.secho("========Xbot========", fg=typer.colors.MAGENTA)
-        if not os.path.exists(apk_output_folder):
-            os.makedirs(apk_output_folder)
-        # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
-        run_xbot(android_studio_devices, apk, current_directory, current_dark_mode, current_font_size)
-        # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
+# def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
+#     # output folder for xbot
+#     with cond:
+#         # typer.secho("========Xbot========", fg=typer.colors.MAGENTA)
+#         if not os.path.exists(apk_output_folder):
+#             os.makedirs(apk_output_folder)
+#         # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
+#         run_xbot(android_studio_devices, apk, current_directory, current_dark_mode, current_font_size)
+#         # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
 def ui_checker_thread_run(apk_path,apk):
     # typer.secho("========UI checker========", fg=typer.colors.MAGENTA)
     os.system(current_directory + "/uichecker/uicheck " + str(
