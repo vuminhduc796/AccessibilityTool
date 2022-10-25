@@ -9,13 +9,15 @@ import time, csv
 
 import typer
 import threading
+import config.config as sys_config
+
 local_variables = threading.local()
 # local_variables.adb = 'adb'
 local_variables.adb = 'adb'
 # adb = "adb -s %s"%(run_rpk_explore_apk.emulator)
 # folder_name = run.folder_name
 # tmp_dir = run_rpk_explore_apk.tmp_file
-
+aapt = sys_config.config_content['aapt']
 # adb = ''
 tmp_dir = ''
 act_paras_file = ''
@@ -80,6 +82,7 @@ def installAPP(new_apkpath, apk_name, results_folder):
 
     out = subprocess.getoutput(cmd)
     for o in out.split('\n'):
+
         if 'Failure' in o or 'Error' in o:
             print('install failure: %s' % apk_name)
             print(out)
@@ -131,12 +134,13 @@ def scan_and_return():
     current_emulator = local_variables.adb[-13:]
     print(pressLocations.get(current_emulator))
 
-    os.system(local_variables.adb + ' shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
+    os.system(local_variables.adb + ' shell input tap ' + str(
+        pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
     time.sleep(3)
 
     screensize = get_screen_size()
-    #horizontal phone need higher cut in cuz more pixel
+    # horizontal phone need higher cut in cuz more pixel
     if current_emulator == "emulator-5558":
 
         os.system(local_variables.adb + ' shell input tap ' + str(int(screensize) - 360) + " " + str(170))
@@ -184,7 +188,7 @@ def unzip(zipfile, activity):
 
 
 def collect_results(activity, appname, accessbility_folder, results_outputs):
-    #print("collectResultFunc")
+    # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
     print('Collecting scan results from device...')
 
@@ -250,16 +254,16 @@ def check_current_screen_new(activity, appname, results_outputs):
     keywords = ['has stopped', 'isn\'t responding', 'keeps stopping']
 
     '''dump xml and check'''
-    #print(local_variables.adb)
+    # print(local_variables.adb)
     layout_path = os.path.join(results_outputs, 'layouts')
     if not os.path.exists(layout_path):
         os.makedirs(layout_path)
-    #print("====== dump =======")
+    # print("====== dump =======")
     os.system(local_variables.adb + ' shell uiautomator dump /sdcard/%s.xml' % activity)
-    #print("====== pull xml =======")
+    # print("====== pull xml =======")
     pull_xml = local_variables.adb + '  pull /sdcard/%s.xml %s' % (activity, layout_path)
     os.system(pull_xml)
-    #print("====== clean xml =======")
+    # print("====== clean xml =======")
     clean_xml = local_variables.adb + ' shell rm /sdcard/%s.xml' % activity
     os.system(clean_xml)
 
@@ -275,7 +279,7 @@ def check_current_screen_new(activity, appname, results_outputs):
     if not subprocess.getoutput('grep -i "ALLOW" %s' % (layout_path)) == '' and not subprocess.getoutput(
             'grep -i "DENY" %s' % (layout_path)) == '':
         os.system(local_variables.adb + ' shell input tap 780 1080')  # tap ALLOW
-        #print("hehe")
+        # print("hehe")
         time.sleep(1)
         cmd = local_variables.adb + " shell dumpsys activity activities | grep mResumedActivity"
         cmdd = local_variables.adb + " shell dumpsys activity activities | grep mFocusedActivity"
@@ -299,10 +303,10 @@ def check_current_screen_new(activity, appname, results_outputs):
 def explore(activity, appname, results_folder, results_outputs):
     print("exploreFunc")
     current = check_current_screen_new(activity, appname, results_outputs)
-    #print(current)
+    # print(current)
     if current == 'abnormal':
         # click home and click 'ok' if crashes (two kinds of 'ok's)
-        os.system(local_variables.adb+' shell input tap 540 1855')
+        os.system(local_variables.adb + ' shell input tap 540 1855')
         time.sleep(1)
 
         # os.system(adb + ' shell input tap 899 1005')
@@ -334,19 +338,21 @@ def init_d(activity, d):
 def extract_activity_action(path):
     # {activity1: {actions: action1, category: cate1}}
     # new format: {activity: [[action1, category1],[action2, category2]]}
+    global action_category_pair
     d = {}
     flag = 0
     for line in open(path, 'r').readlines():
         line = line.strip()
-
+        print(line)
         if line.startswith("<activity"):
-            print(line)
+
             activity = line.split('android:name="')[1].split('"')[0]
-            print(activity)
+            # print(activity)
             if activity.startswith('.'):
                 activity = used_pkg_name + activity
-            print(" activity: " + activity + " " + used_pkg_name)
-            if not activity in d.keys() and used_pkg_name in activity:
+            # print(" activity: " + activity + " " + used_pkg_name)
+            # and used_pkg_name in activity
+            if not activity in d.keys():
                 # d = init_d(activity, d) # some activities may have different actions and categories
                 d[activity] = []
                 flag = 1
@@ -491,10 +497,7 @@ def parseManifest(new_apkpath, apk_name, results_folder, decompilePath, results_
             action = s[0]
             category = s[1]
 
-            status = startAct(component, action, category, apk_name, results_folder, results_outputs)
-            print(status)
-            if status == 'normal':
-                break
+            startAct(component, action, category, apk_name, results_folder, results_outputs)
 
         # without action and category
         startAct(component, '', '', apk_name, results_folder, results_outputs)
@@ -504,10 +507,10 @@ def get_pkgname(apk_path):
     global defined_pkg_name
     global used_pkg_name
     # changed
-    cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
+    cmd = aapt + " dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
     defined_pkg_name = subprocess.getoutput(cmd)
 
-    launcher = subprocess.getoutput(r"aapt dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
+    launcher = subprocess.getoutput(aapt + " dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
     if launcher.startswith(".") or defined_pkg_name in launcher or launcher == '':
         used_pkg_name = defined_pkg_name
     else:
@@ -527,7 +530,7 @@ def remove_folder(apkname, decompilePath):
                 os.remove(rm_path)
 
 
-def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, storydroid, dark_mode = "light_mode",
+def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, storydroid, dark_mode="light_mode",
                     fontsize="normal"):
     global current_font_size, current_dark_mode
     # change
@@ -541,7 +544,8 @@ def exploreActivity(new_apkpath, apk_name, results_folder, emulator, tmp_file, s
     act_paras_file = storydroid
     current_setting = current_font_size + "_" + current_dark_mode
     decompilePath = os.path.join(results_folder, "apktool")  # Decompiled app path (apktool handled)
-    results_outputs = "output/" + apk_name + "/" + pressLocations.get(emulator).get("name") + "/" + current_setting + "/googleScanner"
+    results_outputs = "output/" + apk_name + "/" + pressLocations.get(emulator).get(
+        "name") + "/" + current_setting + "/googleScanner"
     installErrorAppPath = os.path.join(results_folder, "install-error-apks")
 
     if not os.path.exists(decompilePath):

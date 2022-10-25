@@ -54,7 +54,7 @@ def sign_apk(apk_name, decompileAPKPath, repackagedAppPath):
 
 
     print("zip apk")
-    zip_cmd = "zipalign -v 4 " + repackAppPath + " " + repackAppPathZipped
+    zip_cmd =  sys_config.config_content["zip_align"] + " -v 4 " + repackAppPath + " " + repackAppPathZipped
     os.system(zip_cmd)
 
     read, write = os.pipe()

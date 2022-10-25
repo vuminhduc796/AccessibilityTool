@@ -32,6 +32,7 @@ emulators = []
 # java_home_path = '/Library/Java/JavaVirtualMachines/openjdk-17.0.1/Contents/Home/' # For Macbook
 # java_home_path = '/Library/Java/JavaVirtualMachines/jdk1.8.0_202.jdk/Contents/Home/' # For Macbook
 java_home_path = sys_config.config_content['java_home_path']
+aapt = sys_config.config_content['aapt']
 # sdk_platform_path = '/home/dell/Tools/Xbot/config/libs/android-platforms/'
 # sdk_platform_path = '/home/senchen/Tools/xbot/config/libs/android-platforms/' # For Ubuntu (NTU-Computer)
 # sdk_platform_path = '/home/senchen/Engines/Xbot/main-folder/config/libs/android-platforms/' # For Ubuntu (TJU-Computer)
@@ -119,10 +120,10 @@ def run_soot(apk_path, pkg):  # Get bundle data for UI page rendering
 
 
 def get_pkg(apk_path):  # This version has a problem about pkg, may inconsist to the real pkg
-    cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
+    cmd = aapt + " dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % apk_path
     defined_pkg_name = subprocess.getoutput(cmd)
 
-    launcher = subprocess.getoutput(r"aapt dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
+    launcher = subprocess.getoutput(aapt + " dump badging " + apk_path + " | grep launchable-activity | awk '{print $2}'")
     if launcher.startswith(".") or defined_pkg_name in launcher or launcher == '' or launcher == '':
         return defined_pkg_name
     else:
