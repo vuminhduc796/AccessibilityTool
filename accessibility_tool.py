@@ -158,7 +158,14 @@ def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
     # init login config
     with cond:
         # typer.secho("========deer========", fg=typer.colors.MAGENTA)
-        login_options = {}
+        login_options = {
+            'hasLogin' : False,
+            'facebookLogin': False,
+            'username': '',
+            'password': '',
+            'activityName': '',
+            'packageName': '',
+        }
         if "auto-login" in sys_config.config_content:
             if sys_config.config_content["auto-login"]['method'] == 'facebook':
                 login_options = {

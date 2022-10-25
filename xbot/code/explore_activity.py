@@ -95,7 +95,9 @@ def installAPP(new_apkpath, apk_name, results_folder):
 
 
 def uninstallApp(package):
+
     cmd = local_variables.adb + " uninstall " + package
+    print("delete command:" + cmd)
     os.system(cmd)
 
 

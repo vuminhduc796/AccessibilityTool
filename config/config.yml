@@ -8,7 +8,7 @@ apk_signer: /Users/vuminhduc796/Library/Android/sdk/build-tools/30.0.3/apksigner
   pass:android
 
 # false if not m1 chip
-arm64: true
+arm64: 'true'
 auto_login:
   activity: .ui.authentication.mediaauth.AuthActivity
   method: facebook
