@@ -232,15 +232,14 @@ def login_with_facebook(d, login_options):
             d(resourceId=elementId).click()
             time.sleep(3)
 
-    #     try to input username and password
+        #     try to input username and password
         xml = d.dump_hierarchy()
 
-    #
+        #
         passwordTextEditId = search_input_from_XMLElement(xml, 'password')
         if passwordTextEditId is not None:
             d.implicitly_wait(20.0)
             d(resourceId=passwordTextEditId).set_text(login_options['password'])
-
 
             usernameTextEditId = search_input_from_XMLElement(xml, 'email')
             if usernameTextEditId is None:
@@ -271,9 +270,10 @@ def login_with_facebook(d, login_options):
 
     return True
 
+
 def try_login(d, login_options):
     # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
-    try :
+    try:
         d.app_start(login_options['packageName'], login_options['activityName'])
         time.sleep(3)
         xml = d.dump_hierarchy()
@@ -288,7 +288,7 @@ def try_login(d, login_options):
             d.implicitly_wait(20.0)
             d(resourceId=elementId).click()
 
-    #     try to input username and password
+        #     try to input username and password
         xml = d.dump_hierarchy()
         usernameTextEditId = search_input_from_XMLElement(xml, 'email')
         if usernameTextEditId is None:
@@ -332,7 +332,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, accessibility_pa
         # check_arch = "adb -s " + deviceId + " shell getprop ro.product.cpu.abi"
         # res = subprocess.getoutput(check_arch)
 
-        if sys_config.config_content['arm64'] == "true":
+        if sys_config.config_content['arm64'] == "true" or sys_config.config_content['arm64']:
+            print("check connnection for M1")
             connect_arm64(deviceId)
         d = u2.connect(deviceId)
     except requests.exceptions.ConnectionError:
@@ -349,7 +350,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, accessibility_pa
     if login_options['hasLogin']:
         try_login(d, login_options)
         d.sleep(3)
-
 
     if login_options['facebookLogin']:
         login_with_facebook(d, login_options)
@@ -434,7 +434,6 @@ def check_and_create_dir(dir_name):
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
-
     current_directory = outmost_directory + "/guidedExplore/data"
     output_directory = outmost_directory + "/output/" + app_name + "/" + android_device + "/" + current_setting
     apk_path = current_directory + '/repackaged_apks/' + app_name + ".apk"
@@ -479,4 +478,3 @@ def connect_arm64(deviceId):
     launch_command = 'adb -s ' + deviceId + ' shell /data/local/tmp/atx_arm server --nouia -d --addr ' \
                                             '127.0.0.1:7912'
     typer.secho(subprocess.getoutput(launch_command), fg=typer.colors.MAGENTA)
-

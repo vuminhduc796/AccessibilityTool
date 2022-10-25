@@ -68,10 +68,6 @@ def detect_file_availability_issues(
             devices_names.append(sys_config.config_content['emulators']['alias'][device])
         else:
             devices_names.append(device)
-    # export system variables
-    os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"])
-    os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
-
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
     for apk in apks:
@@ -157,25 +153,33 @@ def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
     # init login config
     with cond:
         # typer.secho("========deer========", fg=typer.colors.MAGENTA)
-        login_options = {}
-        if sys_config.config_content["auto-login"]['method'] == 'facebook':
-            login_options = {
-                'username': sys_config.config_content["default_facebook"]['username'],
-                'password': sys_config.config_content["default_facebook"]['password'],
-                'activityName': sys_config.config_content["auto-login"]['activity'],
-                'packageName': sys_config.config_content["auto-login"]['packageName'],
-                'hasLogin': False,
-                'facebookLogin': True
-            }
-        else:
-            login_options = {
-                'username': sys_config.config_content["auto-login"]['username'],
-                'password': sys_config.config_content["auto-login"]['password'],
-                'activityName': sys_config.config_content["auto-login"]['activity'],
-                'packageName': sys_config.config_content["auto-login"]['packageName'],
-                'hasLogin': True,
-                'facebookLogin': False
-            }
+        login_options = {
+            'hasLogin' : False,
+            'facebookLogin': False,
+            'username': '',
+            'password': '',
+            'activityName': '',
+            'packageName': '',
+        }
+        if "auto-login" in sys_config.config_content:
+            if sys_config.config_content["auto-login"]['method'] == 'facebook':
+                login_options = {
+                    'username': sys_config.config_content["default_facebook"]['username'],
+                    'password': sys_config.config_content["default_facebook"]['password'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
+                    'hasLogin': False,
+                    'facebookLogin': True
+                }
+            else:
+                login_options = {
+                    'username': sys_config.config_content["auto-login"]['username'],
+                    'password': sys_config.config_content["auto-login"]['password'],
+                    'activityName': sys_config.config_content["auto-login"]['activity'],
+                    'packageName': sys_config.config_content["auto-login"]['packageName'],
+                    'hasLogin': True,
+                    'facebookLogin': False
+                }
 
         # run_deer(apk, current_directory, login_options)
         run_deer(apk, current_directory)
@@ -284,8 +288,9 @@ def set_up_devices(device_name_alias):
 
         emulators.append(device)
         port_number = device[-4:]
-
-        subprocess.Popen(['emulator', "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
+        emulator_cmd = sys_config.config_content['sdk_platform_path'] + "/emulator/emulator"
+        print(emulator_cmd)
+        subprocess.Popen([emulator_cmd, "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
 
     time.sleep(10)
 
