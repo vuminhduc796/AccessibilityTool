@@ -366,7 +366,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, accessibility_pa
     path_planner = PathPlanner(packageName, atg_json, deeplinks_json)
     delta = 0
     while delta <= test_time:
-        random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, timeout=60, swipe=True)
+        random_bfs_explore(d, deviceId, path_planner, visited_activities, ss_path, accessibility_path, timeout=60, swipe=True)
         print('---------------------- visited rate: ', path_planner.get_visited_rate())
         visited_rate.append(path_planner.get_visited_rate())
 
