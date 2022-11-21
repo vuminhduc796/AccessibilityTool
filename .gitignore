@@ -15,3 +15,4 @@ guidedExplore/data/
 *.apk
 data/repackaged_apks/
 config/config.yml
+frontend/node_modules/
