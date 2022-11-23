@@ -1,17 +1,18 @@
+import matplotlib.pyplot as plt
+import os
+import torch.nn as nn
+from owleyes.network import Net
 import argparse
 import cv2
 import numpy as np
 import torch
 from torch.autograd import Function, Variable
-from PIL import Image,ImageFile
+from PIL import Image, ImageFile
 
+import app_utils
 from owleyes import getdata
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from owleyes.network import Net
-import torch.nn as nn
-import os
-import matplotlib.pyplot as plt
 
 
 class FeatureExtractor():
@@ -172,7 +173,8 @@ class GuidedBackpropReLU(Function):
     @staticmethod
     def forward(self, input):
         positive_mask = (input > 0).type_as(input)
-        output = torch.addcmul(torch.zeros(input.size()).type_as(input), input, positive_mask)
+        output = torch.addcmul(torch.zeros(
+            input.size()).type_as(input), input, positive_mask)
         self.save_for_backward(input, output)
         return output
 
@@ -272,10 +274,13 @@ def owleyes_scan(current_folder, parent_folder):
         os.mkdir(output_folder)
 
     files = os.listdir(image_folder)
+
+    apk_name, emulator_name_android_studio, current_setting = current_folder.rsplit(
+        r"/")[-3:]
+    print("owl eyes scan")
     for file in files:
         (filename, extension) = os.path.splitext(file)
         image_num = filename
-
         image_name = image_folder + "/" + file
 
         model = Net()
@@ -283,13 +288,15 @@ def owleyes_scan(current_folder, parent_folder):
         model_dir = os.path.join(parent_folder, "owleyes")
         # mps for m1 chip
         # "mps" if torch.backends.mps.is_available() else
-        model.load_state_dict(torch.load(model_dir + "/4model.pth", map_location=torch.device("cpu")))
+        model.load_state_dict(torch.load(
+            model_dir + "/4model.pth", map_location=torch.device("cpu")))
 
         output_file_path = output_folder + "/" + image_num + "/"
         if not os.path.exists(output_file_path):
             os.mkdir(output_file_path)
 
-        grad_cam = GradCam(model=model, target_layer_names=["40"], use_cuda=False)
+        grad_cam = GradCam(model=model, target_layer_names=[
+                           "40"], use_cuda=False)
 
         img = cv2.imread(image_name, 1)
         img = np.float32(cv2.resize(img, (448, 768))) / 255
@@ -311,3 +318,5 @@ def owleyes_scan(current_folder, parent_folder):
         cv2.imwrite(output_file_path + "gb.jpg", gb)
         cv2.imwrite(output_file_path + "cam_gb.jpg", cam_gb)
         print("done: " + output_file_path)
+        app_utils.add_new_activity_to_config(
+            apk_name, emulator_name_android_studio, current_setting, image_num)

@@ -27,31 +27,47 @@ const AcivityGraph = React.memo(()  => {
 
     const graphRef = useRef();
 
-    useEffect(() => {
+    const tryLoadData = () => {
+      try {
+       return require("../../data/config.json");
+      } catch (err) {
+       return null;
+      }
+    };
 
+    useEffect(() => {
+      
       const interval = setInterval(() => {
 
-        var dataConfigs = require('../../data/config.json');
+           
+        
+        var readData = tryLoadData()
+        console.log(readData)
 
-        if (dataConfigs !== cacheData || cacheConfigs !== currentConfig){
+        if (readData !== null){
+          console.log("Dddsd")
+
+          var dataConfigs = readData.configs;     
+
+          if (dataConfigs !== cacheData || cacheConfigs !== currentConfig){
 
 
-          setConfigs(dataConfigs)
-        // use config to get directory
-        var isFound = false;
-        for(var currentConfigIndex = 0; currentConfigIndex < dataConfigs.length; currentConfigIndex ++){
-          var dataConfig = dataConfigs[currentConfigIndex]
-            if (dataConfig.config.device === devicesMapping[currentConfig.device] && dataConfig.config.mode ===  modesMapping[currentConfig.mode]){
-              isFound = true
-              loadDataForGraph(dataConfig)
+            setConfigs(dataConfigs)
+          // use config to get directory
+          var isFound = false;
+          for(var currentConfigIndex = 0; currentConfigIndex < dataConfigs.length; currentConfigIndex ++){
+            var dataConfig = dataConfigs[currentConfigIndex]
+              if (dataConfig.config.device === devicesMapping[currentConfig.device] && dataConfig.config.mode ===  modesMapping[currentConfig.mode]){
+                isFound = true
+                loadDataForGraph(dataConfig)
+              }
+
             }
-
+            console.log(isFound)
+            setCacheData(dataConfigs);
+            setCacheConfigs(currentConfig);
           }
-          console.log(isFound)
-          setCacheData(dataConfigs);
-          setCacheConfigs(currentConfig);
         }
-
       }, 2000);
     
       return () => clearInterval(interval);

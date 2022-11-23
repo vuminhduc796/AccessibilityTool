@@ -7,9 +7,11 @@ import time
 from os.path import isfile, join
 import typer
 from pathlib import Path
+
+import app_utils
 import config.config as sys_config
 import subprocess
-
+import shutil
 from guidedExplore.dynamic_GUI_testing import dynamic_GUI_testing
 from guidedExplore.run_preprocess import run_deer
 from owleyes.cnn_cam3 import owleyes_scan
@@ -58,6 +60,9 @@ def detect_file_availability_issues(
     """
     Detect Accessibility issues.
     """
+
+
+
     # check options
 
     if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
@@ -115,10 +120,19 @@ def detect_file_availability_issues(
 
         # start threads
         thread_list = []
-        if xbot or complete:
-            xbot_thread = threading.Thread(target=xbot_thread_run, args=(
-                apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
-            thread_list.append(xbot_thread)
+
+        timer = RepeatTimer(10, app_utils.sync_front_end_data)
+        timer.start()
+
+        front_end_thread = threading.Thread(target=front_end_run)
+        thread_list.append(front_end_thread)
+
+        # if xbot or complete:
+        #     xbot_thread = threading.Thread(target=xbot_thread_run, args=(
+        #         apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
+        #     thread_list.append(xbot_thread)
+
+
 
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
@@ -136,8 +150,14 @@ def detect_file_availability_issues(
 
         for thread in thread_list:
             thread.start()
+            print('thread runnnn')
         for thread in thread_list:
             thread.join()
+
+def front_end_run():
+    # start frontend
+    start_front_end_cmd = "cd frontend && npm start"
+    p = subprocess.run(start_front_end_cmd, shell= True)
 
 def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
     # output folder for xbot
@@ -192,7 +212,9 @@ def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
         for device in devices_names:
             # get device name from number
             emulator_name_android_studio = device_name_alias[device]["alias"]
-            dynamic_GUI_testing(device, apk[:-4], current_directory, login_options, emulator_name_android_studio,
+            app_name = apk[:-4]
+            app_utils.add_new_config(app_name,emulator_name_android_studio,current_setting)
+            dynamic_GUI_testing(device,app_name , current_directory, login_options, emulator_name_android_studio,
                                 current_setting)
             # deer
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
@@ -284,7 +306,7 @@ def set_up_devices(device_name_alias):
     os.system("adb -s emulator-5558 emu kill")
     os.system("adb -s emulator-5560 emu kill")
     os.system("adb -s emulator-5554 emu kill")
-    time.sleep(3)
+    time.sleep(5)
     current_dark_mode = ""
     current_font_size = ""
     emulators = []
@@ -322,6 +344,11 @@ def set_up_devices(device_name_alias):
         else:
             os.system(adb + " shell settings put system font_scale 1.0")
     return emulators, current_dark_mode, current_font_size
+
+class RepeatTimer(threading.Timer):
+    def run(self):
+        while not self.finished.wait(self.interval):
+            self.function(*self.args, **self.kwargs)
 
 
 if __name__ == '__main__':
