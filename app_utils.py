@@ -57,7 +57,8 @@ def add_new_config(app_name, device, mode):
 
     list_configs = get_list_of_configs()
     is_new_config = True
-    for current_config in list_configs:
+    for config in list_configs:
+        current_config = config["config"]
         if current_config["appName"] == app_name and current_config["device"] == device and current_config["mode"] == mode:
             is_new_config = False
             break
