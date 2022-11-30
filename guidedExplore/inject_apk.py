@@ -35,7 +35,7 @@ def injectApk(folderName, deeplinks=r'deeplinks.json'):
             schemeName = pkName.replace('.', '_')
             if 'activity' in doc['manifest']['application'].keys():
                 for activity in doc['manifest']['application']['activity']:
-                    # print(activity)
+                    print(activity)
                     linkCount = 0
                     activity['@android:exported'] = True
                     # activityName = activity['@android:name'].split('.')[-1]

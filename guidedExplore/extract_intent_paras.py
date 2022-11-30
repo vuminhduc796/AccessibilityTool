@@ -12,6 +12,7 @@ equals_smali = 'Ljava/lang/String;->equals'
 contains_smali = 'Ljava/util/Set;->contains'
 
 
+# NOT USED
 # first check the field contains_smali and equals_smali to judge if equals or contains is existed
 def check_equals_contains(smali_file):
     equals = False
@@ -26,7 +27,7 @@ def check_equals_contains(smali_file):
 
     return equals, contains
 
-
+# NOT USED
 def extract_force_test_strings(smali_file):
     strings = []
     equals, contains = check_equals_contains(smali_file)
@@ -50,7 +51,7 @@ def extract_force_test_strings(smali_file):
 
     return strings
 
-
+# NOT USED
 # statistics intent paras
 def intent_field_extractor(path):
     log = r'intent_smali_analysis.txt'

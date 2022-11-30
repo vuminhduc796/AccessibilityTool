@@ -1,6 +1,5 @@
 import os
 from guidedExplore import inject_apk
-import config.config as sys_config
 
 def batch_inject(apk_dir, save_dir, re_packaged_dir, deeplinks_path):
     for root, dirs, files in os.walk(apk_dir):
@@ -16,10 +15,7 @@ def batch_inject(apk_dir, save_dir, re_packaged_dir, deeplinks_path):
             unit_inject(app_save_dir, re_packaged_apk, deeplinks_path=deeplinks_path)
 
 
-def batch_sign_apks(re_packaged_apks):
-    for re_apk in os.listdir(re_packaged_apks):
-        re_packaged_apk = os.path.join(re_packaged_apks, re_apk)
-        unit_sign_APK(re_packaged_apk)
+
 
 
 # /Users/hhuu0025/Downloads/SDK/build-tools/31.0.0/apksigner sign --ks /Users/hhuu0025/.android/debug.keystore /Users/hhuu0025/PycharmProjects/uiautomator2/activityMining/re_apks/bilibili_v1.16.2_apkpure.com.apk
@@ -38,33 +34,6 @@ def unit_inject(app_save_dir, re_packaged_apk, deeplinks_path, outmost_directory
     print('run inject apk')
     inject_apk.injectApk(app_save_dir, deeplinks_path)
 
-    temp_apk = outmost_directory+ "/guidedExplore/data/repackaged_apks/temp.apk"
-
-    print('repackage apk')
-    cmd2 = 'apktool b ' + app_save_dir + ' --use-aapt2 -o ' + temp_apk
-    os.system(cmd2)
-
-    print("zip apk")
-
-    zip_cmd = sys_config.config_content['zip_align']+" -f -p 4 " + temp_apk + " " + re_packaged_apk
-    os.system(zip_cmd)
-
-    print('sign apk')
-    unit_sign_APK(re_packaged_apk)
-
-
-def unit_sign_APK(apk_path):
-    print('sign ' + apk_path)
-
-    #cmd3 = '/Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    #cmd3 = '/home/chunyangchen/Android/Sdk/build-tools/30.0.3/apksigner sign --ks /home/chunyangchen/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-    cmd3 = sys_config.config_content['apk_signer']+' '+apk_path
-
-    # cmd3 = sys_config.config_content['apk_signer']+' sign --ks /Users/leih/.android/debug.keystore --ks-pass pass:android --key-pass pass:android ' + apk_path
-
-
-    sdk_platform_path = sys_config.config_content['sdk_platform_path']  # For Macbook
-    os.system(cmd3)
 
 
 if __name__ == '__main__':
