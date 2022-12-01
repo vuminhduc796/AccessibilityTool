@@ -619,12 +619,18 @@ class Device(object):
                 install_cmd.append("-g")
             install_cmd.append(app.app_path)
             install_p = subprocess.Popen(install_cmd, stdout=subprocess.PIPE)
+            tryCount = 0
             while self.connected and package_name not in self.adb.get_installed_apps():
+                tryCount += 1
                 print("Please wait while installing the app...")
+                if tryCount > 10:
+                    install_p.terminate()
+                    print("Cannot install " + app.get_package_name())
+                    return False
                 time.sleep(2)
             if not self.connected:
                 install_p.terminate()
-                return
+                return False
 
         dumpsys_p = subprocess.Popen(["adb", "-s", self.serial, "shell",
                                       "dumpsys", "package", package_name], stdout=subprocess.PIPE)
@@ -645,7 +651,7 @@ class Device(object):
 
         self.logger.info("App installed: %s" % package_name)
         self.logger.info("Main activity: %s" % app.get_main_activity())
-
+        return True
     @staticmethod
     def __parse_main_activity_from_dumpsys_lines(lines):
         main_activity = None

@@ -60,7 +60,7 @@ class ParamGenerator:
                             key = param[0]
                             type = param[1]
                             if type == "getExtras":
-                                if "extra_keys" in param_dict.keys():
+                                if 'extra_keys' not in param_dict.keys():
                                     param_dict["extra_keys"] = [key]
                                 else:
                                     param_dict.get("extra_keys").append(key)

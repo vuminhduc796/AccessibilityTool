@@ -1,5 +1,7 @@
 import random
 import json
+from os.path import isfile, join
+
 import adbutils
 import typer
 import os
@@ -45,7 +47,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
 
     # install app
     targetApp = App(apk_path, output_dir=atg_save_dir)
-    d.install_app(targetApp)
+    isAppOpened = d.install_app(targetApp)
     packageName = targetApp.package_name
     mainActivity = targetApp.main_activity
 
@@ -58,30 +60,29 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
     d.take_screenshot()
 
     currentState = d.get_current_state()
-
-    with open(deeplinks_json, 'r', encoding='utf8') as f:
-        activities = json.loads(f.read())
-        for activity in activities:
-            for deeplink in activities[activity]:
-                print(deeplink["extra_boolean"])
-                intent = Intent(component=deeplink["component"],
-                                action=deeplink["action"],
-                                category=deeplink["category"],
-                                extra_boolean=deeplink["extra_boolean"],
-                                extra_int=deeplink["extra_int"],
-                                data_uri=deeplink["data_uri"],
-                                extra_keys=deeplink["extra_keys"],
-                                extra_array_float=deeplink["extra_array_float"],
-                                extra_array_long=deeplink["extra_array_long"],
-                                extra_array_int=deeplink["extra_array_int"],
-                                extra_float=deeplink["extra_float"],
-                                extra_long=deeplink["extra_long"],
-                                extra_component=deeplink["extra_component"],
-                                extra_string=deeplink["extra_string"],
-                                )
-                print(intent.__str__())
-                d.send_intent(intent=intent.get_cmd())
-                time.sleep(5)
+    if isAppOpened is True:
+        with open(deeplinks_json, 'r', encoding='utf8') as f:
+            activities = json.loads(f.read())
+            for activity in activities:
+                for deeplink in activities[activity]:
+                    intent = Intent(component=deeplink["component"],
+                                    action=deeplink["action"],
+                                    category=deeplink["category"],
+                                    extra_boolean=deeplink["extra_boolean"],
+                                    extra_int=deeplink["extra_int"],
+                                    data_uri=deeplink["data_uri"],
+                                    extra_keys=deeplink["extra_keys"],
+                                    extra_array_float=deeplink["extra_array_float"],
+                                    extra_array_long=deeplink["extra_array_long"],
+                                    extra_array_int=deeplink["extra_array_int"],
+                                    extra_float=deeplink["extra_float"],
+                                    extra_long=deeplink["extra_long"],
+                                    extra_component=deeplink["extra_component"],
+                                    extra_string=deeplink["extra_string"],
+                                    )
+                    print(intent.__str__())
+                    d.send_intent(intent=intent.get_cmd())
+                    time.sleep(5)
     print(currentState.views)
 
     # save the json file
@@ -121,4 +122,12 @@ if __name__ == '__main__':
     #                      '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/',
     #                      'login_options', '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/visited_rates/alltrails.txt',)
     print(os.getcwd())
-    dynamic_GUI_testing("emulator-5554", "Firefox", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
+    outmost_directory = os.getcwd().replace('/apkExplore', '')
+    #
+    # run_deer(apk_file, emulator, outmost_directory)
+    apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
+
+    for apk in apks:
+        dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
+                            "normal")
+    #dynamic_GUI_testing("emulator-5554", "Firefox", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
