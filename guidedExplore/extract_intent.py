@@ -5,7 +5,7 @@ import glob
 import json
 import os
 import sys
-
+import tldextract
 
 def addLinkToDict(schemeName, activityName, linkCount, thisDict, pkName, action):
     deeplinks = 'deeplinks'
@@ -69,21 +69,46 @@ def extractComponent(currentIntentFilter, activityName, pkName, thisDict):
 
     return thisDict
 
+def isHostSimilar(hostList, newHost):
+
+    domainHostList = []
+    if newHost in hostList:
+        return False
+
+    for host in hostList:
+        domainHostList.append(tldextract.extract(host).domain)
+    if tldextract.extract(newHost).domain in domainHostList:
+        return False
+
+    return True
+
 def extractLink(dataField, thisDict, activityName):
     if type(dataField) == list:
         schemeList = []
         hostList = []
-        prefixList = [""]
+        prefixList = []
         for field in dataField:
-            if '@android:scheme' in field and field['@android:scheme'] not in schemeList:
+            if '@android:scheme' in field and field['@android:scheme'] not in schemeList and len(field['@android:scheme']) > 1:
                 schemeList.append(field['@android:scheme'])
-            if '@android:host' in field and field['@android:host'] not in hostList:
+            if '@android:host' in field and isHostSimilar(hostList, field['@android:host']) and len(field['@android:host']) > 1:
                 hostList.append(field['@android:host'])
-            if '@android:path' in field and field['@android:path'] not in prefixList:
-                prefixList.append(field['@android:path'])
-            if '@android:pathPrefix' in field and field['@android:pathPrefix'] not in prefixList:
-                prefixList.append(field['@android:pathPrefix'])
+            if '@android:path' in field and len(field['@android:path']) > 1:
+                path = field['@android:path']
+                if path[-1] == '/':
+                    path = field['@android:path'].rstrip(field['@android:path'][-1])
+                if path not in prefixList:
+                    prefixList.append(path)
+            if '@android:pathPrefix' in field:
+                path = field['@android:pathPrefix']
+                if path[-1] == '/':
+                    path = field['@android:pathPrefix'].rstrip(field['@android:pathPrefix'][-1])
+                if path not in prefixList:
+                    prefixList.append(field['@android:pathPrefix'])
 
+        if len(prefixList) == 0:
+            prefixList.append("")
+        if "http" in schemeList and "https" in schemeList:
+            schemeList.remove('http')
         for scheme in schemeList:
             for host in hostList:
                 for prefix in prefixList:
@@ -159,7 +184,6 @@ def extractIntent(folderName, deeplinks=r'deeplinks.json'):
     print(thisDict)
 
     with open(deeplinks, 'w') as fd:
-        print("dsds")
         json.dump( thisDict, fd, indent=4)
 
 def extractDeepLinkField():

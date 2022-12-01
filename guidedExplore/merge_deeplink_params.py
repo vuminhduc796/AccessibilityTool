@@ -12,8 +12,8 @@ class ParamGenerator:
         with open(para_json, 'r', encoding='utf8') as f:
             self.intent_paras = json.loads(f.read())
 
-    def get_paras_by_pkg_activity(self, package, activity, assign_value=True):
-        activities = self.intent_paras.get(package, None)
+    def get_paras_by_pkg_activity(self, activity, assign_value=True):
+        activities = self.intent_paras
         if activities is None:
             return None
         else:
@@ -21,8 +21,6 @@ class ParamGenerator:
             if activity_paras is None:
                 return None
             else:
-                if assign_value:
-                    return self.assign_default_value2params(activity_paras)
                 return activity_paras
 
     def assign_default_value2params(self, params):
@@ -50,18 +48,57 @@ class ParamGenerator:
         params = 'params'
         if os.stat(deeplink_json).st_size != 0:
             with open(deeplink_json, 'r', encoding='utf8') as f:
-                print(deeplink_json)
-                print(merged_path)
-                deeplinks = json.loads(f.read())
-                for package in deeplinks.keys():
-                    activities = deeplinks.get(package)
-                    for activity in activities.keys():
-                        params_list = self.get_paras_by_pkg_activity(package, activity)
-                        if params_list is not None:
-                            activities.get(activity).get(params).extend(params_list)
-                with open(merged_path, 'w', encoding='utf8') as save:
-                    json.dump(deeplinks, save, indent=4)
 
+                activities = json.loads(f.read())
+                for activity in activities.keys():
+                    params_list = self.get_paras_by_pkg_activity(activity)
+
+                    if params_list is not None:
+                        param_dict = {}
+                        for param in params_list:
+
+                            key = param[0]
+                            type = param[1]
+                            if type == "getExtras":
+                                if "extra_keys" in param_dict.keys():
+                                    param_dict["extra_keys"] = [key]
+                                else:
+                                    param_dict.get("extra_keys").append(key)
+                            elif type == "getStringExtra":
+                                param_dict = mapKey(param_dict, "extra_string", "string", key)
+                            elif type == "getBooleanExtra":
+                                param_dict = mapKey(param_dict, "extra_boolean", "true", key)
+                            elif type == "getIntArrayExtra":
+                                param_dict = mapKey(param_dict, "extra_array_int", [1,2,3], key)
+                            elif type == "getLongArrayExtra":
+                                param_dict = mapKey(param_dict, "extra_array_long", [1,2,3], key)
+                            elif type == "getFloatArrayExtra":
+                                param_dict = mapKey(param_dict, "extra_array_float", [1,2,3], key)
+                            elif type == "getComponent":
+                                param_dict = mapKey(param_dict, "extra_component", "component", key)
+                            elif type == "getExtraUri":
+                                param_dict = mapKey(param_dict, "extra_uri", "component", key)
+                            elif type == "getIntExtra":
+                                param_dict = mapKey(param_dict, "extra_int", 1, key)
+                            elif type == "getFloatExtra":
+                                param_dict = mapKey(param_dict, "extra_float", 1, key)
+                            elif type == "getLongExtra":
+                                param_dict = mapKey(param_dict, "extra_long", 1, key)
+                        print("Dsd")
+                        print(param_dict)
+                        for key, value in param_dict.items():
+                            for component in activities[activity]:
+                                component[key] = value
+                        #activities.get(activity).get(params).extend(params_list)
+            with open(merged_path, 'w', encoding='utf8') as save:
+                json.dump(activities, save, indent=4)
+
+def mapKey(param_dict, type, hardCodedValue, key):
+    if type not in param_dict.keys():
+        param_dict[type] = [{key: hardCodedValue}]
+    else:
+        param_dict.get(type).append({key: hardCodedValue})
+    return param_dict
 
 if __name__ == '__main__':
     pass

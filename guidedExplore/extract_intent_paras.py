@@ -80,6 +80,7 @@ def intent_field_extractor(path):
 
 
 def smali_intent_para_extractor(path, save_path):
+    global intent_para
     apps_intent_para = {}
     apps = [i for i in os.listdir(path)]
 
@@ -171,11 +172,9 @@ def smali_intent_para_extractor(path, save_path):
                                 cur_pairs.extend(pairs)
                                 intent_para[file] = cur_pairs
 
-        apps_intent_para[package] = intent_para
-    save_json = json.dumps(apps_intent_para, indent=4)
-    with open(save_path, 'w', encoding='utf8') as f2:
-        f2.write(save_json)
-
+        print(intent_para)
+    with open(save_path, 'w') as fd:
+        json.dump( intent_para, fd, indent=4)
 
 if __name__ == '__main__':
     # path = r'/Users/hhuu0025/PycharmProjects/uiautomator2/activityMining/recompile samples'

@@ -1,5 +1,6 @@
 import os
 import shutil
+from os.path import isfile, join
 
 from guidedExplore.decompile_apk import unit_decpmpile
 from guidedExplore.extract_atg import batch_extract, activity_searching
@@ -26,23 +27,23 @@ def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplink
         os.mkdir(repackage_app_save_apk)
     print(deeplinks_path)
     extractIntent(app_save_dir, deeplinks_path)
-    #injectApk(app_save_dir, deeplinks_path)
-    # extract atg
+
+
+    # extract atg commented out because currently under investigation due to low coverage.
 
     # atg_save_dir = os.path.join(save_dir, 'activity_atg')
     # if not os.path.exists(atg_save_dir):
     #     os.mkdir(atg_save_dir)
-    # # unit_extract(decompiled_apks=recompiled_apks, folder=folder, available_activity_dict=available_activity_dict,
-    # #              save_dir=atg_save_dir)
     # batch_extract(decompiled_apks=recompiled_apks, save_dir=atg_save_dir)
     #
-    # # extract intent parameters
-    # paras_save_path = os.path.join(save_dir, 'intent_para.json')
-    # smali_intent_para_extractor(path=recompiled_apks, save_path=paras_save_path)
-    #
-    # # merge intent params and activity atgs
-    # params = ParamGenerator(paras_save_path)
-    # params.merge_deeplinks_params(deeplinks_path, merged_path)
+
+    # extract intent parameters
+    paras_save_path = os.path.join(save_dir, 'intent_para.json')
+    smali_intent_para_extractor(path=recompiled_apks, save_path=paras_save_path)
+
+    # merge intent params and activity atgs
+    params = ParamGenerator(paras_save_path)
+    params.merge_deeplinks_params(deeplinks_path, merged_path)
 
 def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
@@ -110,6 +111,11 @@ if __name__ == "__main__":
     outmost_directory = os.getcwd().replace('/guidedExplore','')
     #
     # run_deer(apk_file, emulator, outmost_directory)
-    run_deer("ebay.apk", outmost_directory)
+    apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
+    print(apks)
+    run_deer("Firefox.apk", outmost_directory)
+    # for apk in apks:
+    #
+    #     run_deer(apk, outmost_directory)
 
 
