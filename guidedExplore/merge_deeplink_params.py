@@ -95,9 +95,9 @@ class ParamGenerator:
 
 def mapKey(param_dict, type, hardCodedValue, key):
     if type not in param_dict.keys():
-        param_dict[type] = [{key: hardCodedValue}]
+        param_dict[type] = {key: hardCodedValue}
     else:
-        param_dict.get(type).append({key: hardCodedValue})
+        param_dict.get(type)[key] = hardCodedValue
     return param_dict
 
 if __name__ == '__main__':

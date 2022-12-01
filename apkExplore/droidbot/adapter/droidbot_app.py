@@ -1,4 +1,5 @@
 import logging
+import os
 import socket
 import subprocess
 import time
@@ -72,7 +73,7 @@ class DroidBotAppConn(Adapter):
             # install droidbot app
             try:
                 import pkg_resources
-                droidbot_app_path = "../resources/droidbotApp.apk"
+                droidbot_app_path = os.getcwd() + "/droidbot/resources/droidbotApp.apk"
                 install_cmd = ["install", droidbot_app_path]
                 self.device.adb.run_cmd(install_cmd)
                 self.logger.debug("DroidBot app installed.")

@@ -21,10 +21,21 @@ def addLinkToDict(schemeName, activityName, linkCount, thisDict, pkName, action)
 def addLink(scheme, host, prefix, activityName, thisDict):
 
     newLink = {
-                "scheme": scheme,
-                "host": host,
-                "pathPrefix": prefix,
-                "action": "android.intent.action.VIEW"
+                "data_uri": scheme + "://" + host + prefix,
+                "action": "android.intent.action.VIEW",
+                "component": None,
+                "category": None,
+                "extra_keys": None,
+                "extra_string": None,
+                "extra_boolean": None,
+                "extra_array_int": None,
+                "extra_array_long": None,
+                "extra_array_float": None,
+                "extra_component": None,
+                "extra_uri": None,
+                "extra_int": None,
+                "extra_float": None,
+                "extra_long": None,
             }
     if activityName in thisDict.keys():
         thisDict[activityName].append(newLink)
@@ -36,7 +47,19 @@ def addComponent(activityName, thisDict, pkName, action, category):
     newComponent = {
                 "component": pkName + "/" + activityName,
                 "action": action,
-                "category": category
+                "category": category,
+                "data_uri": None,
+                "extra_keys": None,
+                "extra_string": None,
+                "extra_boolean": None,
+                "extra_array_int": None,
+                "extra_array_long": None,
+                "extra_array_float": None,
+                "extra_component": None,
+                "extra_uri": None,
+                "extra_int": None,
+                "extra_float": None,
+                "extra_long": None,
             }
     if activityName in thisDict.keys():
         thisDict[activityName].append(newComponent)

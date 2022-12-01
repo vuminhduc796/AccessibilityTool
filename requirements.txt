@@ -171,17 +171,17 @@ zlib=1.2.12=h7f8727e_2
 zstd=1.4.9=haebb681_0
 
 torch~=1.12.0.dev20220509+cu116
-numpy~=1.19.2
+numpy~=1.23.4
 pillow~=8.4.0
 scikit-learn~=1.0.2
-torchvision~=0.8.2
+torchvision~=0.13.1
 matplotlib~=3.5.1
 scikit-image~=0.19.2
 pexpect~=4.8.0
 lark~=1.1.2
 msbase~=0.3.4
 termcolor~=1.1.0
-path~=16.4.0
+path~=16.5.0
 uiautomator2~=2.16.14
 requests~=2.27.1
 pyaxmlparser~=0.3.27
@@ -189,3 +189,7 @@ xmltodict~=0.13.0
 yaml~=0.2.5
 pyyaml~=5.3.1
 typer~=0.4.1
+opencv-python~=4.6.0.66
+adbutils~=1.0.8
+tldextract~=3.2.0
+androguard
