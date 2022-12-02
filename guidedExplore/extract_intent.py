@@ -178,26 +178,17 @@ def extractIntent(folderName, deeplinks=r'deeplinks.json'):
 
                     activityName = activity['@android:name']
                     # start inject
-                    if 'intent-filter' in activity.keys():
+                    thisDict = deeplink_component_extraction(activity, activityName, isActivityExported, pkName, thisDict)
+            if 'activity-alias' in doc['manifest']['application'].keys():
 
-                        if type(activity['intent-filter']) == list:
-                            for i in range(0, len(activity['intent-filter'])):
-                                currentIntentFilter = activity['intent-filter'][i]
-                                if isActivityExported:
-                                    thisDict = extractComponent(currentIntentFilter, activityName, pkName, thisDict)
-                                # deep link
-                                if 'data' in currentIntentFilter.keys():
-                                    dataField = currentIntentFilter['data']
-                                    thisDict = extractLink(dataField,thisDict,activityName)
-
-                        else:
-                            if isActivityExported:
-                                thisDict = extractComponent(activity['intent-filter'], activityName, pkName, thisDict)
-
-                            if 'data' in activity['intent-filter'].keys():
-                                dataField = activity['intent-filter']['data']
-                                thisDict = extractLink(dataField,thisDict,activityName)
-
+                for aliasActivity in doc['manifest']['application']['activity-alias']:
+                    print(aliasActivity)
+                    isActivityExported = initialExported
+                    if '@android:exported' in aliasActivity and aliasActivity['@android:exported'] == "true":
+                        isActivityExported = True
+                    activityName = aliasActivity['@android:targetActivity']
+                    thisDict = deeplink_component_extraction(aliasActivity, activityName, isActivityExported, pkName,
+                                                            thisDict)
 
     except FileNotFoundError as e:
         print(e)
@@ -213,6 +204,30 @@ def extractIntent(folderName, deeplinks=r'deeplinks.json'):
 
     with open(deeplinks, 'w') as fd:
         json.dump( thisDict, fd, indent=4)
+
+
+def deeplink_component_extraction(activity, activityName, isActivityExported, pkName, thisDict):
+    if 'intent-filter' in activity.keys():
+
+        if type(activity['intent-filter']) == list:
+            for i in range(0, len(activity['intent-filter'])):
+                currentIntentFilter = activity['intent-filter'][i]
+                if isActivityExported:
+                    thisDict = extractComponent(currentIntentFilter, activityName, pkName, thisDict)
+                # deep link
+                if 'data' in currentIntentFilter.keys():
+                    dataField = currentIntentFilter['data']
+                    thisDict = extractLink(dataField, thisDict, activityName)
+
+        else:
+            if isActivityExported:
+                thisDict = extractComponent(activity['intent-filter'], activityName, pkName, thisDict)
+
+            if 'data' in activity['intent-filter'].keys():
+                dataField = activity['intent-filter']['data']
+                thisDict = extractLink(dataField, thisDict, activityName)
+    return thisDict
+
 
 def extractDeepLinkField():
     pass

@@ -144,8 +144,8 @@ if __name__ == '__main__':
     # run_deer(apk_file, emulator, outmost_directory)
     apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
     excluded_apps = ["Telegram.apk","AliExpress.apk","Wildberries.apk","VidMate.apk"]
-    for apk in apks:
-        if apk not in excluded_apps:
-            dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
-                               "normal")
-    # dynamic_GUI_testing("emulator-5554", "Firefox", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
+    # for apk in apks:
+    #     if apk not in excluded_apps:
+    #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
+    #                            "normal")
+    dynamic_GUI_testing("emulator-5554", "MicrosoftEdge", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
