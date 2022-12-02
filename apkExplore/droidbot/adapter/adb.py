@@ -41,11 +41,16 @@ class ADB(Adapter):
         """
         self.logger = logging.getLogger(self.__class__.__name__)
         if device is None:
-            from droidbot.device import Device
+            from apkExplore.droidbot.device import Device
             device = Device()
         self.device = device
 
         self.cmd_prefix = ['adb', "-s", device.serial]
+        self.root()
+
+    def root(self):
+        print("root adb device")
+        subprocess.run("adb -s " + self.device.serial + " root",shell=True)
 
     def run_cmd(self, extra_args):
         """

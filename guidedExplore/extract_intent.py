@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import tldextract
+global addedLink
 
 def addLinkToDict(schemeName, activityName, linkCount, thisDict, pkName, action):
     deeplinks = 'deeplinks'
@@ -19,28 +20,31 @@ def addLinkToDict(schemeName, activityName, linkCount, thisDict, pkName, action)
     return thisDict
 
 def addLink(scheme, host, prefix, activityName, thisDict):
-
-    newLink = {
-                "data_uri": scheme + "://" + host + prefix,
-                "action": "android.intent.action.VIEW",
-                "component": None,
-                "category": None,
-                "extra_keys": None,
-                "extra_string": None,
-                "extra_boolean": None,
-                "extra_array_int": None,
-                "extra_array_long": None,
-                "extra_array_float": None,
-                "extra_component": None,
-                "extra_uri": None,
-                "extra_int": None,
-                "extra_float": None,
-                "extra_long": None,
-            }
-    if activityName in thisDict.keys():
-        thisDict[activityName].append(newLink)
-    else:
-        thisDict[activityName] = [newLink]
+    uri = scheme + "://" + host + prefix
+    global addedLink
+    if uri not in addedLink:
+        addedLink.append(uri)
+        newLink = {
+                    "data_uri": scheme + "://" + host + prefix,
+                    "action": "android.intent.action.VIEW",
+                    "component": None,
+                    "category": None,
+                    "extra_keys": None,
+                    "extra_string": None,
+                    "extra_boolean": None,
+                    "extra_array_int": None,
+                    "extra_array_long": None,
+                    "extra_array_float": None,
+                    "extra_component": None,
+                    "extra_uri": None,
+                    "extra_int": None,
+                    "extra_float": None,
+                    "extra_long": None,
+                }
+        if activityName in thisDict.keys():
+            thisDict[activityName].append(newLink)
+        else:
+            thisDict[activityName] = [newLink]
     return thisDict
 
 def addComponent(activityName, thisDict, pkName, action, category):
@@ -153,7 +157,8 @@ def extractLink(dataField, thisDict, activityName):
 def extractIntent(folderName, deeplinks=r'deeplinks.json'):
     # get packageName
     xmlDir = os.path.join(folderName, 'AndroidManifest.xml')
-
+    global addedLink
+    addedLink = []
     try:
         with open(xmlDir, 'r') as fd:
             doc = xmltodict.parse(fd.read())

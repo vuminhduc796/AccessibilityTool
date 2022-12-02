@@ -319,6 +319,9 @@ class Device(object):
         self.adb.press("BACK")
         return True
 
+    def go_home(self):
+        self.adb.press("HOME")
+
     def receive_call(self, phone=DEFAULT_NUM):
         """
         simulate a income phonecall
