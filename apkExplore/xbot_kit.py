@@ -129,22 +129,22 @@ def scan_and_return(deviceId):
     time.sleep(1)
 
 
-def collect_results(activity, accessbility_folder, deviceId, appName):
+def collect_results(activity, output_dir, device):
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
     print('Collecting scan results from device...')
-
+    adb_command = "adb -s " + device.serial
     # To save issues and screenshot temporarily in order to rename.
-    tmp_folder = os.path.join(accessbility_folder, deviceId)
+    tmp_folder = os.path.join(output_dir, "tmp", device.serial)
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    issue_path = os.path.join(accessbility_folder, appName, 'issues')
+    issue_path = os.path.join(output_dir,"issues")
     if not os.path.exists(issue_path):
         os.makedirs(issue_path)
-    pull_results = "adb pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
+    pull_results = adb_command + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
     # pull_results = adb + " pull /data/data/ %s" % ("./testhere")
     os.system(pull_results)
 
@@ -161,18 +161,24 @@ def collect_results(activity, accessbility_folder, deviceId, appName):
         unzip(os.path.join(issue_path, activity + '.zip'), activity)
 
     # '''Pull screenshot and rename'''
-    # screenshot_path = os.path.join(results_outputs, appname, pressLocations.get(adb[-13:]).get("name"), 'screenshots')
-    # if not os.path.exists(screenshot_path):
-    #     os.makedirs(screenshot_path)
-    # pull_screenshots = adb + " pull /data/data/%s/files/screenshots/ %s" % (scanner_pkg, tmp_folder)
-    # os.system(pull_screenshots)
-    # for png in os.listdir(tmp_folder):
-    #     if not png.endswith('thumbnail.png'):
-    #         os.system('mv "%s/%s" "%s/%s"'%(tmp_folder,png,screenshot_path,activity))
+    screenshot_path_act = os.path.join(output_dir,'activity_screenshots', activity)
+    if not os.path.exists(screenshot_path_act):
+        os.makedirs(screenshot_path_act)
+
+    pull_screenshots = adb_command + " pull /data/data/%s/files/screenshots/ %s" % (scanner_pkg, tmp_folder)
+    os.system(pull_screenshots)
+    for screenshot_folder in os.listdir(tmp_folder):
+        screenshot_path_tmp = tmp_folder + "/" + screenshot_folder
+        for img in os.listdir(screenshot_path_tmp):
+            print(img)
+            if not img.endswith('thumbnail.png'):
+                cmd = 'mv "%s/%s" "%s"'%(screenshot_path_tmp,img,screenshot_path_act)
+                print(cmd)
+                os.system(cmd)
     clean_tmp_folder(tmp_folder)
 
-    clean_results = 'adb shell rm -rf /data/data/%s/cache/export/' % (scanner_pkg)
+    clean_results = adb_command + ' shell rm -rf /data/data/%s/cache/export/' % scanner_pkg
     os.system(clean_results)
 
-    clean_screenshots = 'adb shell rm -rf /data/data/%s/files/screenshots' % (scanner_pkg)
+    clean_screenshots = adb_command + ' shell rm -rf /data/data/%s/files/screenshots' % scanner_pkg
     os.system(clean_screenshots)

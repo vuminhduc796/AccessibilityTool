@@ -21,12 +21,12 @@ def check_and_create_dir(dir_name):
         os.makedirs(dir_name)
 
 
-def run_xbot_check(activity, accessibility_path, deviceId, appName):
-    scan_and_return(deviceId)
-    collect_results(activity, accessibility_path, deviceId, appName)
+def run_xbot_check(activity, output_dir, device):
+    scan_and_return(device.serial)
+    collect_results(activity, output_dir, device)
 
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options,
+def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, login_options,
                          log_save_path, test_time=1200, reinstall=False):
     visited_rate = []
     visited_activities = []
@@ -41,7 +41,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
         output_dir=atg_save_dir,
         grant_perm=True
     )
-
     d.set_up()
     d.connect()
 
@@ -94,6 +93,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, ss_path, deeplinks_json, 
                     if currentScreen in activity:
                         print("activity explored - break condition")
                         numberOfSuccessful += 1
+                        run_xbot_check(activity,output_dir,d)
+                        time.sleep(2)
                         d.go_home()
                         break
                     d.go_home()
@@ -123,11 +124,13 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     # atg_json = current_directory + "/" + app_name + '/activity_atg.json'
     # atg_save_dir = current_directory + app_name + '/activity_atg_dynamic.json'
     ss_path = output_directory + '/activity_screenshots/'
+    gg_issue_path = output_directory + '/issues/'
     deeplinks_json = os.path.join(current_directory, app_name, 'deeplinks_params.json')
     log = current_directory + '/visited_rates/' + app_name + ".txt"
     check_and_create_dir(ss_path)
+    check_and_create_dir(gg_issue_path)
     check_and_create_dir(current_directory + '/visited_rates/')
-    unit_dynamic_testing(emulator, apk_path, atg_json, ss_path, deeplinks_json, atg_save_dir, login_options, log,
+    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, login_options, log,
                          reinstall=False)
 
 
@@ -148,4 +151,4 @@ if __name__ == '__main__':
     #     if apk not in excluded_apps:
     #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
     #                            "normal")
-    dynamic_GUI_testing("emulator-5554", "MicrosoftEdge", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
+    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
