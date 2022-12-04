@@ -236,6 +236,61 @@ def replay():
     pass
 
 
+@app.command("default")
+def create_default_emulators():
+    """
+        Create default emulators.
+    """
+    sdk = sys_config.config_content["sdk_platform_path"]
+    adb = sdk + '/platform-tools/adb'
+    avdmanager = sdk + "/tools/bin/avdmanager"
+
+    if sys_config.config_content["arm64"] == 'true':
+        package = "system-images;android-28;default;arm64-v8a"
+    else:
+        package = "system-images;android-28;default;x86"
+
+    sdkmanager = sdk + "/tools/bin/sdkmanager"
+    os.system(sdkmanager + ' "{package}"'.format(package=package))
+
+    # delete previous avds
+    try:
+        os.system(avdmanager + " delete avd -n phone-vertical")
+        os.system(avdmanager + " delete avd -n phone-horizontal")
+    except Exception as e:
+        print(e)
+
+    # create new avds
+    os.system(avdmanager + ' create avd -n phone-horizontal -k "{package}" -d pixel_xl'.format(package=package))
+    os.system(avdmanager + ' create avd -n phone-vertical -k "{package}" -d pixel_xl'.format(package=package))
+
+    emulator = sdk + "/emulator/emulator"
+    os.system(emulator + ' -avd phone-horizontal &')    # launch phone-horizontal
+    os.system(emulator + ' -avd phone-vertical &')  # start the vertical phone
+
+    os.system(adb + ' -s emulator-5554 wait-for-device')
+    os.system(adb + ' -s emulator-5556 wait-for-device')
+
+    while subprocess.check_output(adb + ' -s emulator-5554 shell getprop sys.boot_completed', shell=True, text=True).strip() != "1" or subprocess.check_output('adb -s emulator-5556 shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
+        time.sleep(1)
+
+    # install scanner apk
+    scanner_apk = os.getcwd() + "/xbot/scanner.apk"
+    os.system(adb + ' -s emulator-5554 install ' + scanner_apk)
+    os.system(adb + ' -s emulator-5556 install ' + scanner_apk)
+
+    os.system(adb + " -s emulator-5554 shell settings put system font_scale 1.0")  # set font size to 1
+    os.system(adb + " -s emulator-5556 shell settings put system font_scale 1.0")  # set font size to 1
+
+    os.system(adb + " -s emulator-5556 emu kill")  # kill the vertical emulator
+
+    time.sleep(5)
+    # rotate horizontal phone
+    os.system(adb + " shell settings put system accelerometer_rotation 0")
+    os.system(adb + " shell settings put system user_rotation 3")
+
+    os.system(adb + " -s emulator-5554 emu kill")   # kill the horizontal emulator
+
 @config_app.command("emulator")
 def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--add",
                                                                      "--a",
