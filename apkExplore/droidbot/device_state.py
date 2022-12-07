@@ -398,6 +398,53 @@ class DeviceState(object):
             depth += 1
         return -1
 
+    def get_view_with_keywords(self, keywords):
+        """
+        Search for the keywords within the views text
+        :return view
+        """
+        for view_dict in self.views:
+            if self.__safe_dict_get(view_dict, 'enabled') and \
+                    self.__safe_dict_get(view_dict, 'visible') and \
+                    self.__safe_dict_get(view_dict, 'clickable') and \
+                    self.__safe_dict_get(view_dict, 'resource_id') not in \
+               ['android:id/navigationBarBackground',
+                'android:id/statusBarBackground']:
+                if 'text' in view_dict and view_dict['text'] and keywords in view_dict['text'].lower():
+                    return view_dict
+
+        for view_dict in self.views:
+            if self.__safe_dict_get(view_dict, 'enabled') and \
+                    self.__safe_dict_get(view_dict, 'visible') and  \
+                    self.__safe_dict_get(view_dict, 'resource_id') not in \
+                    ['android:id/navigationBarBackground',
+                     'android:id/statusBarBackground']:
+                if 'text' in view_dict and view_dict['text'] and keywords in view_dict['text'].lower():
+                    return view_dict
+
+        return None
+
+    def get_input_view_with_keywords(self, keywords):
+        """
+        Search for the keywords within the views text
+        :return view
+        """
+        for view_dict in self.views:
+            if self.__safe_dict_get(view_dict, 'enabled') and \
+                    self.__safe_dict_get(view_dict, 'visible') and \
+                    self.__safe_dict_get(view_dict, 'editable') and \
+                    self.__safe_dict_get(view_dict, 'resource_id') not in \
+               ['android:id/navigationBarBackground',
+                'android:id/statusBarBackground']:
+                if 'text' in view_dict and view_dict['text']:
+                    print(keywords, ' ++++ ' + view_dict['text'])
+                if 'text' in view_dict and view_dict['text'] and keywords in view_dict['text'].lower():
+                    return view_dict
+                if 'resource_id' in view_dict and view_dict['text'] and keywords in view_dict['resource_id'].lower():
+                    return view_dict
+
+        return None
+
     def get_possible_input(self):
         """
         Get a list of possible input events for this state
