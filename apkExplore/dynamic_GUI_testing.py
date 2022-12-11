@@ -8,6 +8,7 @@ import os
 import subprocess
 from datetime import datetime
 
+from apkExplore.droidbot.exploration.Graph import Graph, Screen, Edge
 from apkExplore.droidbot.intent import Intent
 from apkExplore.xbot_kit import scan_and_return, collect_results
 from droidbot.device import Device
@@ -19,6 +20,7 @@ def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
         # in case multiple directories need to be created. for example /activity_screenshots/appRelease
         os.makedirs(dir_name)
+
 
 def email_password_login(d, login_options):
     # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
@@ -78,7 +80,6 @@ def email_password_login(d, login_options):
         d.view_touch(x, y)
         time.sleep(5)
 
-
     # except Exception as e:
     #
     #     print('Failed to start {} because {}'.format(login_options['activityName'], e))
@@ -86,9 +87,10 @@ def email_password_login(d, login_options):
 
     return True
 
+
 def login_with_facebook(d, login_options):
     # d.app_start('com.alltrails.alltrails', '.ui.authentication.mediaauth.AuthActivity')
-    try :
+    try:
 
         # d.app_start(login_options['packageName'], login_options['activityName'])
         adbArgs = ['am', 'start', '-n', login_options['packageName'] + '/' + login_options['activityName']]
@@ -97,7 +99,6 @@ def login_with_facebook(d, login_options):
         time.sleep(3)
         currentState = d.get_current_state()
         # TODO: save the current activity
-
 
         # check facebookLogin
         elementId = currentState.get_view_with_keywords('facebook')
@@ -151,6 +152,7 @@ def login_with_facebook(d, login_options):
 
     return True
 
+
 def run_xbot_check(activity, output_dir, device):
     scan_and_return(device.serial)
     collect_results(activity, output_dir, device)
@@ -184,6 +186,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     numberOfActivities = 0
     numberOfSuccessful = 0
+    buttons_by_screen_hash = {}
+    graph = Graph()
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
     if isAppOpened:
@@ -217,13 +221,28 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                         print("Ping stdout output:\n", e.output)
                     time.sleep(3)
                     print(intent.__str__())
+
                     currentScreen = d.get_top_activity_name().split("/")[-1]
+                    views = d.get_views()
+
                     print("current: " + currentScreen)
                     print("desire: " + activity)
+
+
+                    print("hash: " + currentScreen + "//" + str(d.dict_hash_current_screen()))
+                    # if login_options['hasLogin']:
+                    #     print("login")
+                    #     email_password_login(d, login_options)
+                    #
+                    # if login_options['facebookLogin']:
+                    #     login_with_facebook(d, login_options)
+                    # print(clickable_views)
                     if currentScreen in activity:
-                        print("activity explored - break condition")
+
+                        start_exploration(activity, d, graph, output_dir,"", "")
                         numberOfSuccessful += 1
-                        run_xbot_check(activity,output_dir,d)
+
+
                         time.sleep(2)
                         d.go_home()
                         break
@@ -234,11 +253,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     # print(currentState.views)
     # try automatic login
-    if login_options['hasLogin']:
-        email_password_login(d, login_options)
-
-    if login_options['facebookLogin']:
-        login_with_facebook(d, login_options)
 
     currentState = d.get_current_state()
     print(currentState)
@@ -251,6 +265,43 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     visited_activities.append(mainActivity)
 
     d.disconnect()
+
+
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn):
+    currentScreenTree = d.get_top_activity_name().split("/")[-1]
+    views = d.get_views()
+    currentScreenHash = d.dict_hash_current_screen()
+
+    if previous_view_hash != currentScreenHash:
+        newEdge = Edge(clicked_btn, previous_view_hash,currentScreenHash)
+        graph.addEdge(newEdge)
+    clickable_views = []
+    # print(views)
+    if views is not None:
+        for view in views:
+            if view["clickable"] is True:
+                clickable_views.append(view)
+    if not graph.checkScreenExisted(currentScreenHash):
+        graph.addScreen(Screen(views, currentScreenHash, currentScreenTree,
+                               clickable_views))
+        time.sleep(1)
+        run_xbot_check(activity, output_dir, d)
+        time.sleep(1)
+    print(graph)
+    print(currentScreenHash)
+    screen = graph.getScreenFromExisted(currentScreenHash)
+    print(screen)
+    if len(screen.clickableViews) == 0:
+        d.key_press('BACK')
+    for clickable_view in screen.clickableViews:
+        if clickable_view not in screen.clickedViews:
+            screen.addToClickedView(clickable_view)
+            d.tap_view(clickable_view)
+
+            print(graph)
+
+            start_exploration(activity, d, graph, output_dir, screen.nodeHash,clickable_view)
+
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
@@ -269,40 +320,36 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     check_and_create_dir(ss_path)
     check_and_create_dir(gg_issue_path)
     check_and_create_dir(current_directory + '/visited_rates/')
-    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, login_options, log,
+    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, login_options,
+                         log,
                          reinstall=False)
 
 
 if __name__ == '__main__':
+    print(os.getcwd())
+    outmost_directory = os.getcwd().replace('/apkExplore', '')
+    login_options = {
+        'hasLogin': True,
+        'facebookLogin': False,
+        'username': 'vuminhduc30@gmail.com',
+        'password': 'minhduc123',
+        'packageName': 'com.alibaba.aliexpresshd',
+        'activityName': 'com.aliexpress.sky.user.ui.SkyShellActivity'
+    }
+    # run_deer(apk_file, emulator, outmost_directory)
+    apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
+    excluded_apps = ["Telegram.apk", "AliExpress.apk", "Wildberries.apk", "VidMate.apk"]
+    # for apk in apks:
+    #     if apk not in excluded_apps:
+    #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
+    #                            "normal")
+    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), login_options,
+                        "phone-vertical", "normal")
+    #
+    #
     # unit_dynamic_testing("08221FDD4004DF", "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/input/alltrails.apk",
     #                      "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/activity_atg/alltrails.json",
     #                      "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/output/alltrails/08221FDD4004DF/setting1/activity_screenshots/",
     #                      "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/deeplinks_params.json",
     #                      '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/',
-    #                      'login_options', '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/visited_rates/alltrails.txt',)
-    print(os.getcwd())
-    outmost_directory = os.getcwd().replace('/apkExplore', '')
-    #
-    # run_deer(apk_file, emulator, outmost_directory)
-    apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
-    excluded_apps = ["Telegram.apk","AliExpress.apk","Wildberries.apk","VidMate.apk"]
-    # for apk in apks:
-    #     if apk not in excluded_apps:
-    #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
-    #                            "normal")
-    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), False, "phone-vertical", "normal")
-
-    login_options = {
-        'hasLogin': True,
-        'facebookLogin': False,
-        'username': 'test',
-        'password': 'test',
-        'packageName': 'com.alltrails.alltrails',
-        'activityName': 'com.alltrails.alltrails.ui.authentication.AuthenticationActivity'
-    }
-    unit_dynamic_testing("08221FDD4004DF", "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/input/alltrails.apk",
-                         "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/activity_atg/alltrails.json",
-                         "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/output/alltrails/08221FDD4004DF/setting1/activity_screenshots/",
-                         "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/deeplinks_params.json",
-                         '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/alltrails/',
-                         login_options, '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/visited_rates/alltrails.txt',)
+    #                      login_options, '/Users/han/GoogleDrive/Monash/project/AccessibilityTool/guidedExplore/data/visited_rates/alltrails.txt',)

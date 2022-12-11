@@ -76,7 +76,7 @@ def unzip(zipfile, activity):
 
 def get_screen_size():
     cmd = "adb shell wm size"
-    print(cmd)
+    # print(cmd)
     process = os.popen(cmd)
     output = process.read()
     m = re.search(r'(\d+)x(\d+)', output)
@@ -98,7 +98,6 @@ def clean_tmp_folder(folder):
 
 def scan_and_return(deviceId):
     # function from xbot to click on certain button from the current screen
-    time.sleep(1)
 
     # scan and share
     # os.system(adb + ' shell input tap 110 170')
@@ -107,7 +106,7 @@ def scan_and_return(deviceId):
     # os.system(adb + ' shell input tap 720 826')
     time.sleep(1)
     current_emulator = deviceId
-    print(pressLocations.get(current_emulator))
+    # print(pressLocations.get(current_emulator))
 
     os.system('adb shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
@@ -125,15 +124,17 @@ def scan_and_return(deviceId):
     # cancel and back
     os.system('adb shell input keyevent 4')
     time.sleep(1)
-    os.system('adb shell input keyevent 3')
+    os.system('adb shell input keyevent 4')
     time.sleep(1)
+    # os.system('adb shell input keyevent 3')
+    # time.sleep(1)
 
 
 def collect_results(activity, output_dir, device):
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
-    print('Collecting scan results from device...')
+     # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
     # To save issues and screenshot temporarily in order to rename.
     tmp_folder = os.path.join(output_dir, "tmp", device.serial)
@@ -170,10 +171,8 @@ def collect_results(activity, output_dir, device):
     for screenshot_folder in os.listdir(tmp_folder):
         screenshot_path_tmp = tmp_folder + "/" + screenshot_folder
         for img in os.listdir(screenshot_path_tmp):
-            print(img)
             if not img.endswith('thumbnail.png'):
                 cmd = 'mv "%s/%s" "%s"'%(screenshot_path_tmp,img,screenshot_path_act)
-                print(cmd)
                 os.system(cmd)
     clean_tmp_folder(tmp_folder)
 

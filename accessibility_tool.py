@@ -18,15 +18,19 @@ from owleyes.cnn_cam3 import owleyes_scan
 from xbot.code.run_xbot import run_xbot
 from typing import List, Optional
 
-app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
+
+
+
+app = typer.Typer(help="Android Accessibility Tool", no_args_is_help=True)
 config_app = typer.Typer()
-app.add_typer(config_app, name="config",help="Manage config.",no_args_is_help=True)
+app.add_typer(config_app, name="config", help="Manage config.", no_args_is_help=True)
 current_directory = os.getcwd()
 cond = threading.Condition()
 # export system variables
 os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
 print(sys_config.config_content["sdk_platform_path"])
 print(os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"]))
+
 
 def delete_auto_login_config(remove_auto_login: bool):
     if remove_auto_login:
@@ -35,6 +39,7 @@ def delete_auto_login_config(remove_auto_login: bool):
 
 @app.command("detect")
 def detect_file_availability_issues(
+
         apk_path: Path = typer.Option(current_directory + '/input', "--input", "--i",
                                       exists=True,
                                       file_okay=False,
@@ -53,7 +58,7 @@ def detect_file_availability_issues(
         screenshot_issue: bool = typer.Option(False, "--screenshot_issue", "--s",
                                               help="Uses OwlEye to generate screenshots of errors"),
         gcam: bool = typer.Option(False, "--gcam", "--gc",
-                                              help="Uses OwlEye to generate screenshots of errors"),
+                                  help="Uses OwlEye to generate screenshots of errors"),
         complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                   "OwlEye)")
 ):
@@ -61,10 +66,8 @@ def detect_file_availability_issues(
     Detect Accessibility issues.
     """
 
-
-
     # check options
-
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
     if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
         typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
         exit()
@@ -81,7 +84,6 @@ def detect_file_availability_issues(
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
     for apk in apks:
-
 
         apk_output_folder = current_directory + "/output/" + apk[:-4]
         # set up emulators
@@ -103,14 +105,14 @@ def detect_file_availability_issues(
 
             emulator_name_android_studio = device_name_alias[device]["alias"]
 
-            #delete app
+            # delete app
             cmd = "aapt dump badging %s | grep 'package' | awk -v FS=\"'\" '/package: name=/{print$2}'" % (
-                        current_directory + "/input/ " + apk)
+                    current_directory + "/input/ " + apk)
             defined_pkg_name = subprocess.getoutput(cmd)
             cmd = "adb -s " + device + " uninstall " + defined_pkg_name
             os.system(cmd)
 
-            current_folder_device = apk_output_folder + "/" +  emulator_name_android_studio
+            current_folder_device = apk_output_folder + "/" + emulator_name_android_studio
             if not os.path.exists(current_folder_device):
                 os.makedirs(current_folder_device)
 
@@ -132,8 +134,6 @@ def detect_file_availability_issues(
         #         apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
         #     thread_list.append(xbot_thread)
 
-
-
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
             thread_list.append(ui_checker_thread)
@@ -154,10 +154,12 @@ def detect_file_availability_issues(
         for thread in thread_list:
             thread.join()
 
+
 def front_end_run():
     # start frontend
     start_front_end_cmd = "cd frontend && npm start"
-    p = subprocess.run(start_front_end_cmd, shell= True)
+    p = subprocess.run(start_front_end_cmd, shell=True)
+
 
 def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
     # output folder for xbot
@@ -168,18 +170,22 @@ def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark
         # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
         run_xbot(android_studio_devices, apk, current_directory, current_dark_mode, current_font_size)
         # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
-def ui_checker_thread_run(apk_path,apk):
+
+
+def ui_checker_thread_run(apk_path, apk):
     # typer.secho("========UI checker========", fg=typer.colors.MAGENTA)
     os.system(current_directory + "/uichecker/uicheck " + str(
         apk_path.absolute()) + "/" + apk + " " + current_directory + "/uichecker/rules/input.dl")
     # typer.secho("========UI checker Finished========", fg=typer.colors.MAGENTA)
-def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
+
+
+def deer_thread_run(apk, devices_names, device_name_alias, current_setting):
     # deer
     # init login config
     with cond:
         # typer.secho("========deer========", fg=typer.colors.MAGENTA)
         login_options = {
-            'hasLogin' : False,
+            'hasLogin': False,
             'facebookLogin': False,
             'username': '',
             'password': '',
@@ -213,13 +219,15 @@ def deer_thread_run(apk,devices_names,device_name_alias,current_setting):
             # get device name from number
             emulator_name_android_studio = device_name_alias[device]["alias"]
             app_name = apk[:-4]
-            app_utils.add_new_config(app_name,emulator_name_android_studio,current_setting)
-            dynamic_GUI_testing(device,app_name , current_directory, login_options, emulator_name_android_studio,
+            app_utils.add_new_config(app_name, emulator_name_android_studio, current_setting)
+            dynamic_GUI_testing(device, app_name, current_directory, login_options, emulator_name_android_studio,
                                 current_setting)
             # deer
             # typer.secho("========Start running deer========", fg=typer.colors.MAGENTA)
         sys_config.inform_finish_deer()
-            # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
+        # typer.secho("========Deer Finished========", fg=typer.colors.MAGENTA)
+
+
 def owleyes_thread_run(devices_names, device_name_alias, apk_output_folder, current_setting):
     with cond:
         for device in devices_names:
@@ -228,6 +236,8 @@ def owleyes_thread_run(devices_names, device_name_alias, apk_output_folder, curr
             path = os.path.join(apk_output_folder, emulator_name_android_studio, current_setting)
             owleyes_scan(path, current_directory)
             # typer.secho("========OwlEye Finished========", fg=typer.colors.MAGENTA)
+
+
 @app.command("replay")
 def replay():
     """
@@ -317,7 +327,8 @@ def set_up_devices(device_name_alias):
         port_number = device[-4:]
         emulator_cmd = sys_config.config_content['sdk_platform_path'] + "/emulator/emulator"
         print(emulator_cmd)
-        subprocess.Popen([emulator_cmd, "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
+        subprocess.Popen(
+            [emulator_cmd, "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
 
     time.sleep(10)
 
@@ -344,6 +355,7 @@ def set_up_devices(device_name_alias):
         else:
             os.system(adb + " shell settings put system font_scale 1.0")
     return emulators, current_dark_mode, current_font_size
+
 
 class RepeatTimer(threading.Timer):
     def run(self):

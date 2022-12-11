@@ -1,3 +1,5 @@
+import hashlib
+import json
 import logging
 import os
 import re
@@ -318,6 +320,22 @@ class Device(object):
         time.sleep(2)
         self.adb.press("BACK")
         return True
+
+    def dict_hash_current_screen(self) -> str:
+        """MD5 hash of a dictionary."""
+        dhash = hashlib.md5()
+        # We need to sort arguments so {'a': 1, 'b': 2} is
+        # the same as {'b': 2, 'a': 1}
+        encoded = json.dumps(self.get_views(), sort_keys=True).encode()
+        dhash.update(encoded)
+        return dhash.hexdigest()
+
+    def tap_view(self, view):
+        bound = view["bounds"]
+        if bound is not None and len(bound) == 2 and len(bound[0]) == 2 and len(bound[1]) == 2:
+            x_point = (bound[0][0] + bound[1][0])/2
+            y_point = (bound[0][1] + bound[1][1])/2
+            self.view_touch(x_point,y_point)
 
     def go_home(self):
         self.adb.press("HOME")
