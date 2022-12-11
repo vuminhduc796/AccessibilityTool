@@ -2,16 +2,13 @@ import random
 import json
 from os.path import isfile, join
 
-import adbutils
-import typer
 import os
 import subprocess
 from datetime import datetime
-
 from apkExplore.droidbot.exploration.Graph import Graph, Screen, Edge
 from apkExplore.droidbot.intent import Intent
 from apkExplore.xbot_kit import scan_and_return, collect_results
-from droidbot.device import Device
+from droidbot.device import Device, dict_hash_current_screen
 from droidbot.app import App
 import time
 
@@ -222,14 +219,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     time.sleep(3)
                     print(intent.__str__())
 
-                    currentScreen = d.get_top_activity_name().split("/")[-1]
-                    views = d.get_views()
 
-                    print("current: " + currentScreen)
+                    views = d.get_views()
                     print("desire: " + activity)
 
-
-                    print("hash: " + currentScreen + "//" + str(d.dict_hash_current_screen()))
                     # if login_options['hasLogin']:
                     #     print("login")
                     #     email_password_login(d, login_options)
@@ -237,9 +230,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     # if login_options['facebookLogin']:
                     #     login_with_facebook(d, login_options)
                     # print(clickable_views)
+                    currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
-
-                        start_exploration(activity, d, graph, output_dir,"", "")
+                        t_end = time.time() + 120
+                        start_exploration(activity, d, graph, output_dir,"", "", t_end)
                         numberOfSuccessful += 1
 
 
@@ -267,11 +261,20 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     d.disconnect()
 
 
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn):
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end):
+    if time.time() > t_end:
+        print("time is up")
+        return
     currentScreenTree = d.get_top_activity_name().split("/")[-1]
     views = d.get_views()
-    currentScreenHash = d.dict_hash_current_screen()
-
+    currentActivity = d.get_top_activity_name().split("/")[-1]
+    currentScreenHash = dict_hash_current_screen(views)
+    print(d.get_top_activity_name())
+    # print(views)
+    if currentActivity in "com.android.launcher3/.Launcher":
+        return
+    if currentActivity not in activity:
+        d.key_press('BACK')
     if previous_view_hash != currentScreenHash:
         newEdge = Edge(clicked_btn, previous_view_hash,currentScreenHash)
         graph.addEdge(newEdge)
@@ -288,9 +291,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         run_xbot_check(activity, output_dir, d)
         time.sleep(1)
     print(graph)
-    print(currentScreenHash)
     screen = graph.getScreenFromExisted(currentScreenHash)
-    print(screen)
     if len(screen.clickableViews) == 0:
         d.key_press('BACK')
     for clickable_view in screen.clickableViews:
@@ -298,9 +299,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             screen.addToClickedView(clickable_view)
             d.tap_view(clickable_view)
 
-            print(graph)
-
-            start_exploration(activity, d, graph, output_dir, screen.nodeHash,clickable_view)
+            start_exploration(activity, d, graph, output_dir, screen.nodeHash,clickable_view, t_end)
 
 
 

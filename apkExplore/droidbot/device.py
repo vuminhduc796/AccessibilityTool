@@ -22,6 +22,16 @@ DEFAULT_NUM = '1234567890'
 DEFAULT_CONTENT = 'Hello world!'
 
 
+def dict_hash_current_screen(view) -> str:
+    """MD5 hash of a dictionary."""
+    dhash = hashlib.md5()
+    # We need to sort arguments so {'a': 1, 'b': 2} is
+    # the same as {'b': 2, 'a': 1}
+    encoded = json.dumps(view, sort_keys=True).encode()
+    dhash.update(encoded)
+    return dhash.hexdigest()
+
+
 class Device(object):
     """
     this class describes a connected device
@@ -320,15 +330,6 @@ class Device(object):
         time.sleep(2)
         self.adb.press("BACK")
         return True
-
-    def dict_hash_current_screen(self) -> str:
-        """MD5 hash of a dictionary."""
-        dhash = hashlib.md5()
-        # We need to sort arguments so {'a': 1, 'b': 2} is
-        # the same as {'b': 2, 'a': 1}
-        encoded = json.dumps(self.get_views(), sort_keys=True).encode()
-        dhash.update(encoded)
-        return dhash.hexdigest()
 
     def tap_view(self, view):
         bound = view["bounds"]
