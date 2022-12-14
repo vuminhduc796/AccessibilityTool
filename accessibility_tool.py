@@ -21,14 +21,19 @@ from typing import List, Optional
 app = typer.Typer(help="Android Accessibility Tool",no_args_is_help=True)
 config_app = typer.Typer()
 app.add_typer(config_app, name="config",help="Manage config.",no_args_is_help=True)
-emulator = typer.Typer()
-app.add_typer(emulator, name="emulator",help="Manage emulators.",no_args_is_help=True)
+emulator_app = typer.Typer()
+app.add_typer(emulator_app, name="emulator",help="Manage emulators.",no_args_is_help=True)
 current_directory = os.getcwd()
 cond = threading.Condition()
 # export system variables
 os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
 print(sys_config.config_content["sdk_platform_path"])
 print(os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"]))
+sdk = sys_config.config_content["sdk_platform_path"]
+adb = sdk + '/platform-tools/adb'
+avdmanager = sdk + "/tools/bin/avdmanager"
+sdkmanager = sdk + "/tools/bin/sdkmanager"
+emulator = sdk + "/emulator/emulator"
 
 def delete_auto_login_config(remove_auto_login: bool):
     if remove_auto_login:
@@ -237,61 +242,77 @@ def replay():
     """
     pass
 
-@emulator.command("default")
+@emulator_app.command("default")
 def create_default_emulators():
     """
         Create default emulators.
     """
-    sdk = sys_config.config_content["sdk_platform_path"]
-    adb = sdk + '/platform-tools/adb'
-    avdmanager = sdk + "/tools/bin/avdmanager"
-
-    if sys_config.config_content["arm64"] == 'true':
-        package = "system-images;android-28;default;arm64-v8a"
-    else:
-        package = "system-images;android-28;default;x86"
-
-    sdkmanager = sdk + "/tools/bin/sdkmanager"
-    os.system(sdkmanager + ' "{package}"'.format(package=package))
-
-    # delete previous avds
+    # delete previous AVDs
     try:
         os.system(avdmanager + " delete avd -n phone-vertical")
         os.system(avdmanager + " delete avd -n phone-horizontal")
     except Exception as e:
         print(e)
 
-    # create new avds
-    os.system(avdmanager + ' create avd -n phone-horizontal -k "{package}" -d pixel_xl'.format(package=package))
-    os.system(avdmanager + ' create avd -n phone-vertical -k "{package}" -d pixel_xl'.format(package=package))
+    # setup new AVDs
+    emulator_setup("phone-horizontal", "pixel_xl", False)
+    emulator_setup("phone-vertical", "pixel_xl", True)
 
-    emulator = sdk + "/emulator/emulator"
+@emulator_app.command("devices")
+def view_devices():
+    """
+    View available devices
+    """
+    os.system(avdmanager + " list device")
 
-    os.system(emulator + ' -avd phone-vertical &')  # start the vertical phone
+@emulator_app.command("emulators")
+def view_emulators():
+    """
+    View created emulators
+    """
+    os.system(avdmanager + " list avd")
+
+@emulator_app.command("delete")
+def view_emulators(emulator_names: List[str] = typer.Argument(..., help="List of names of the emulators to delete")):
+    """
+    Delete existing emulator
+    """
+    for name in emulator_names:
+        os.system(avdmanager + " delete avd -n " + name)
+
+@emulator_app.command("create")
+def create_emulator(name: str = typer.Option(..., "--name", "-n", help="Name of the emulator"),
+                    device: str = typer.Option("pixel_xl", "--device", "-d", help="Device index or id"),
+                    horizontal: bool = typer.Option(False, "--horizontal", "-h", help="Create the horizontal device")):
+    """
+    Create emulator
+    """
+    emulator_setup(name, device, horizontal)
+
+def emulator_setup(name, device, horizontal):
+    if sys_config.config_content["arm64"] == 'true':
+        package = "system-images;android-28;default;arm64-v8a"
+    else:
+        package = "system-images;android-28;default;x86"
+
+    os.system(sdkmanager + f' "{package}"')
+    os.system(avdmanager + f' create avd -n {name} -k "{package}" -d {device}')
+    os.system(emulator + f' -avd {name} &')  # start the emulator
+
     time.sleep(1)
     os.system(adb + ' wait-for-device')
     while subprocess.check_output(adb + ' shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
         time.sleep(1)
     time.sleep(3)
 
-    # load state
-    os.system(adb + ' emu avd snapshot push baseline ./snapshot')
-    os.system(adb + ' emu avd snapshot load baseline')
-    os.system(adb + " emu kill")  # kill the vertical emulator
+    # push the snapshot
+    if horizontal:
+        os.system(adb + ' emu avd snapshot push baseline ./snapshot_horizontal')
+    else:
+        os.system(adb + ' emu avd snapshot push baseline ./snapshot')
+
+    os.system(adb + " emu kill")  # kill the emulator
     time.sleep(5)
-
-    os.system(emulator + ' -avd phone-horizontal &')    # launch phone-horizontal
-    time.sleep(1)
-    os.system(adb + ' wait-for-device')
-    while subprocess.check_output(adb + ' shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
-        time.sleep(1)
-    time.sleep(3)
-
-    # load state
-    os.system(adb + ' emu avd snapshot push baseline ./snapshot_horizontal')
-    os.system(adb + ' emu avd snapshot load baseline')
-    time.sleep(3)
-    os.system(adb + " emu kill")   # kill the horizontal emulator
 
 @config_app.command("emulator")
 def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--add",
