@@ -25,15 +25,15 @@ emulator_app = typer.Typer()
 app.add_typer(emulator_app, name="emulator",help="Manage emulators.",no_args_is_help=True)
 current_directory = os.getcwd()
 cond = threading.Condition()
-# export system variables
-os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
-print(sys_config.config_content["sdk_platform_path"])
-print(os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"]))
 sdk = sys_config.config_content["sdk_platform_path"]
 adb = sdk + '/platform-tools/adb'
 avdmanager = sdk + "/tools/bin/avdmanager"
 sdkmanager = sdk + "/tools/bin/sdkmanager"
 emulator = sdk + "/emulator/emulator"
+
+# export system variables
+os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
+os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"])
 
 def delete_auto_login_config(remove_auto_login: bool):
     if remove_auto_login:
@@ -265,7 +265,7 @@ def view_devices():
     """
     os.system(avdmanager + " list device")
 
-@emulator_app.command("emulators")
+@emulator_app.command("view")
 def view_emulators():
     """
     View created emulators
@@ -297,21 +297,21 @@ def emulator_setup(name, device, horizontal):
 
     os.system(sdkmanager + f' "{package}"')
     os.system(avdmanager + f' create avd -n {name} -k "{package}" -d {device}')
-    os.system(emulator + f' -avd {name} &')  # start the emulator
+    os.system(emulator + f' -avd {name} -port 5584 -no-snapshot-save &')  # start the emulator
 
     time.sleep(1)
-    os.system(adb + ' wait-for-device')
-    while subprocess.check_output(adb + ' shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
+    os.system(adb + ' -s emulator-5584 wait-for-device')
+    while subprocess.check_output(adb + ' -s emulator-5584 shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
         time.sleep(1)
     time.sleep(3)
 
     # push the snapshot
     if horizontal:
-        os.system(adb + ' emu avd snapshot push baseline ./snapshot_horizontal')
+        os.system(adb + ' -s emulator-5584 emu avd snapshot push baseline ./snapshot_horizontal')
     else:
-        os.system(adb + ' emu avd snapshot push baseline ./snapshot')
+        os.system(adb + ' -s emulator-5584 emu avd snapshot push baseline ./snapshot')
 
-    os.system(adb + " emu kill")  # kill the emulator
+    os.system(adb + " -s emulator-5584 emu kill")  # kill the emulator
     time.sleep(5)
 
 @config_app.command("emulator")
