@@ -255,8 +255,8 @@ def create_default_emulators():
         print(e)
 
     # setup new AVDs
-    emulator_setup("phone-horizontal", "pixel_xl", False)
-    emulator_setup("phone-vertical", "pixel_xl", True)
+    emulator_setup("phone-horizontal", "pixel_xl", True)
+    emulator_setup("phone-vertical", "pixel_xl", False)
 
 @emulator_app.command("devices")
 def view_devices():
@@ -395,7 +395,7 @@ def set_up_devices(device_name_alias):
         port_number = device[-4:]
         emulator_cmd = sys_config.config_content['sdk_platform_path'] + "/emulator/emulator"
         print(emulator_cmd)
-        subprocess.Popen([emulator_cmd, "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-load"])
+        subprocess.Popen([emulator_cmd, "-port", port_number, '-avd', emulator_name_android_studio, "-no-snapshot-save", "-snapshot", "baseline"])
 
     time.sleep(10)
 
