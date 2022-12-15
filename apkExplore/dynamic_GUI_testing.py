@@ -1,3 +1,4 @@
+import hashlib
 import random
 import json
 from os.path import isfile, join
@@ -151,8 +152,10 @@ def login_with_facebook(d, login_options):
 
 
 def run_xbot_check(activity, output_dir, device):
+    device.adb.shell("settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
     scan_and_return(device.serial)
     collect_results(activity, output_dir, device)
+    device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
 
 def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, login_options,
@@ -179,11 +182,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     packageName = targetApp.package_name
     mainActivity = targetApp.main_activity
 
-    test_start_time = datetime.now()
-
     numberOfActivities = 0
     numberOfSuccessful = 0
-    buttons_by_screen_hash = {}
     graph = Graph()
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
@@ -219,7 +219,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     time.sleep(3)
                     print(intent.__str__())
 
-
                     views = d.get_views()
                     print("desire: " + activity)
 
@@ -232,10 +231,9 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     # print(clickable_views)
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
-                        t_end = time.time() + 120
-                        start_exploration(activity, d, graph, output_dir,"", "", t_end)
+                        t_end = time.time() + 1200
+                        start_exploration(activity, d, graph, output_dir, "", "", t_end)
                         numberOfSuccessful += 1
-
 
                         time.sleep(2)
                         d.go_home()
@@ -267,24 +265,40 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         return
     currentScreenTree = d.get_top_activity_name().split("/")[-1]
     views = d.get_views()
+
     currentActivity = d.get_top_activity_name().split("/")[-1]
-    currentScreenHash = dict_hash_current_screen(views)
-    print(d.get_top_activity_name())
+
+    currentScreenHash = ""
+    for view in views:
+        currentScreenHash += view["package"] + str(view["visible"]) + str(view["checkable"]) + str(view["editable"]) + str(view[
+            "clickable"]) + \
+                             str(view["bounds"][0][0]) + str(view["bounds"][1][0]) + str(view["bounds"][0][
+                                 1]) \
+                             + str(view["bounds"][1][1]) + view["class"] + view["size"] + str(view["long_clickable"]) + str(view[
+                                 "selected"]) \
+                             + d.get_top_activity_name()
+
+    currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
+    print(currentScreenHash)
+    # print(currentScreenHash)
     # print(views)
     if currentActivity in "com.android.launcher3/.Launcher":
         return
     if currentActivity not in activity:
         d.key_press('BACK')
     if previous_view_hash != currentScreenHash:
-        newEdge = Edge(clicked_btn, previous_view_hash,currentScreenHash)
+
+        newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
         graph.addEdge(newEdge)
     clickable_views = []
     # print(views)
+
     if views is not None:
         for view in views:
             if view["clickable"] is True:
                 clickable_views.append(view)
     if not graph.checkScreenExisted(currentScreenHash):
+        print("new screen found")
         graph.addScreen(Screen(views, currentScreenHash, currentScreenTree,
                                clickable_views))
         time.sleep(1)
@@ -299,8 +313,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             screen.addToClickedView(clickable_view)
             d.tap_view(clickable_view)
 
-            start_exploration(activity, d, graph, output_dir, screen.nodeHash,clickable_view, t_end)
-
+            start_exploration(activity, d, graph, output_dir, screen.nodeHash, clickable_view, t_end)
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):

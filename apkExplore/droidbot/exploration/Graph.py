@@ -41,6 +41,7 @@ class Screen:
         self.clickedViews.append(clickableView)
 
     def __str__(self):
+        print(self.nodeHash)
         return "Node: " + self.nodeActivityName + " | " + self.nodeHash + " | " + str(
             len(self.clickedViews)) + "/" + str(len(self.clickableViews))
 
