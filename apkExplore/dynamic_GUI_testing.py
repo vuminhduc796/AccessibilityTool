@@ -8,7 +8,7 @@ import subprocess
 from datetime import datetime
 from apkExplore.droidbot.exploration.Graph import Graph, Screen, Edge
 from apkExplore.droidbot.intent import Intent
-from apkExplore.xbot_kit import scan_and_return, collect_results
+from apkExplore.xbot_kit import scan_and_return, collect_results, clean_up_scanner_data
 from droidbot.device import Device, dict_hash_current_screen
 from droidbot.app import App
 import time
@@ -153,8 +153,13 @@ def login_with_facebook(d, login_options):
 
 def run_xbot_check(activity, output_dir, device):
     device.adb.shell("settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
+    scanner_pkg = 'com.google.android.apps.accessibility.auditor'
+     # print('Collecting scan results from device...')
+    adb_command = "adb -s " + device.serial
+    clean_up_scanner_data(adb_command, scanner_pkg)
     scan_and_return(device.serial)
-    collect_results(activity, output_dir, device)
+    collect_results(activity, output_dir, device, False)
+    clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
 
@@ -179,7 +184,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # install app
     targetApp = App(apk_path, output_dir=atg_save_dir)
     isAppOpened = d.install_app(targetApp)
-    packageName = targetApp.package_name
     mainActivity = targetApp.main_activity
 
     numberOfActivities = 0
@@ -270,22 +274,26 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     currentScreenHash = ""
     for view in views:
-        currentScreenHash += view["package"] + str(view["visible"]) + str(view["checkable"]) + str(view["editable"]) + str(view[
+
+        viewHash = str(view["visible"]) + str(view["checkable"]) + str(view["editable"]) + str(view[
             "clickable"]) + \
                              str(view["bounds"][0][0]) + str(view["bounds"][1][0]) + str(view["bounds"][0][
                                  1]) \
                              + str(view["bounds"][1][1]) + view["class"] + view["size"] + str(view["long_clickable"]) + str(view[
                                  "selected"]) \
                              + d.get_top_activity_name()
-
-    currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
+        if viewHash not in currentScreenHash:
+            currentScreenHash += viewHash
+    print("=== HASH ===")
     print(currentScreenHash)
+    currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
+
     # print(currentScreenHash)
     # print(views)
     if currentActivity in "com.android.launcher3/.Launcher":
         return
-    if currentActivity not in activity:
-        d.key_press('BACK')
+    # if currentActivity not in activity:
+    #     d.key_press('BACK')
     if previous_view_hash != currentScreenHash:
 
         newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
@@ -293,6 +301,8 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     clickable_views = []
     # print(views)
 
+
+    #
     if views is not None:
         for view in views:
             if view["clickable"] is True:
@@ -304,8 +314,12 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         time.sleep(1)
         run_xbot_check(activity, output_dir, d)
         time.sleep(1)
-    print(graph)
+    else:
+        print("screen existed")
+    print(graph.getNodes())
     screen = graph.getScreenFromExisted(currentScreenHash)
+
+    # navigation
     if len(screen.clickableViews) == 0:
         d.key_press('BACK')
     for clickable_view in screen.clickableViews:

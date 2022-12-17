@@ -26,6 +26,8 @@ class Graph:
         return "Graph: \n" + "Nodes: \n" + '\n '.join(map(str, self.screens)) + "\n" + "Edges: \n" + '\n '.join(
             map(str, self.edges))
 
+    def getNodes(self):
+        return "Nodes: \n" + '\n '.join(map(str, self.screens))
 
 class Screen:
     screenCount = 0

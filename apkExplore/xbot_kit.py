@@ -51,27 +51,8 @@ pressLocations = {
     },
 }
 
+currentIndex = 0
 
-def unzip(zipfile, activity):
-    '''unzip result file and delete zip file'''
-    cmd = 'unzip -o "%s" -d "%s"' % (zipfile, zipfile.split('.zip')[0])
-    os.system(cmd)
-
-    os.system('rm %s' % zipfile)
-    # rename txt and png file name
-    issue_folder = zipfile.split('.zip')[0]
-    if os.path.exists(issue_folder) and os.path.isdir(issue_folder):
-
-        for f in os.listdir(issue_folder):
-            folder = os.path.join(issue_folder)
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-            if f.endswith('.png'):
-                mv_cmd = 'mv "%s" "%s/%s.png"' % (os.path.join(issue_folder, f), folder, activity)
-                os.system(mv_cmd)
-            if f.endswith('.txt'):
-                mv_cmd = 'mv "%s" "%s/%s.txt"' % (os.path.join(issue_folder, f), folder, activity)
-                os.system(mv_cmd)
 
 
 def get_screen_size():
@@ -130,7 +111,13 @@ def scan_and_return(deviceId):
     # time.sleep(1)
 
 
-def collect_results(activity, output_dir, device):
+def collect_results(activity, output_dir, device, isNewActivity):
+    global currentIndex
+    if isNewActivity:
+        currentIndex = 0
+    else:
+        currentIndex += 1
+    currentImgName = activity + str(currentIndex)
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
@@ -142,42 +129,73 @@ def collect_results(activity, output_dir, device):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    issue_path = os.path.join(output_dir,"issues")
-    if not os.path.exists(issue_path):
-        os.makedirs(issue_path)
-    pull_results = adb_command + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
-    # pull_results = adb + " pull /data/data/ %s" % ("./testhere")
-    os.system(pull_results)
+    extract_issue(activity, adb_command, currentImgName, output_dir, scanner_pkg, tmp_folder)
 
-    zip_folder = os.path.join(tmp_folder + "/export")
-
-    if os.path.exists(zip_folder):
-        for zip in os.listdir(zip_folder):
-            if zip.endswith('.zip'):
-                os.system('mv "%s/%s" "%s/%s.zip"' % (zip_folder, zip, issue_path, activity))
-
-    clean_tmp_folder(tmp_folder)
-
-    if os.path.exists(os.path.join(issue_path, activity + '.zip')):
-        unzip(os.path.join(issue_path, activity + '.zip'), activity)
-
-    # '''Pull screenshot and rename'''
+    '''Pull screenshot and rename'''
     screenshot_path_act = os.path.join(output_dir,'activity_screenshots', activity)
     if not os.path.exists(screenshot_path_act):
         os.makedirs(screenshot_path_act)
 
     pull_screenshots = adb_command + " pull /data/data/%s/files/screenshots/ %s" % (scanner_pkg, tmp_folder)
     os.system(pull_screenshots)
-    for screenshot_folder in os.listdir(tmp_folder):
-        screenshot_path_tmp = tmp_folder + "/" + screenshot_folder
-        for img in os.listdir(screenshot_path_tmp):
-            if not img.endswith('thumbnail.png'):
-                cmd = 'mv "%s/%s" "%s"'%(screenshot_path_tmp,img,screenshot_path_act)
-                os.system(cmd)
+
+    screenshot_path_tmp = tmp_folder + "/screenshots"
+    for img in os.listdir(screenshot_path_tmp):
+        if not img.endswith('thumbnail.png'):
+            cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,currentImgName)
+            os.system(cmd)
     clean_tmp_folder(tmp_folder)
 
+
+def clean_up_scanner_data(adb_command, scanner_pkg):
     clean_results = adb_command + ' shell rm -rf /data/data/%s/cache/export/' % scanner_pkg
     os.system(clean_results)
-
     clean_screenshots = adb_command + ' shell rm -rf /data/data/%s/files/screenshots' % scanner_pkg
     os.system(clean_screenshots)
+
+
+def extract_issue(activity, adb_command, currentImgName, output_dir, scanner_pkg, tmp_folder):
+    issue_path = os.path.join(output_dir, "issues")
+    if not os.path.exists(issue_path):
+        os.makedirs(issue_path)
+
+    pull_results = adb_command + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
+    # pull_results = adb + " pull /data/data/ %s" % ("./testhere")
+    os.system(pull_results)
+    zip_folder = os.path.join(tmp_folder + "/export")
+    if os.path.exists(zip_folder):
+        print(os.listdir(zip_folder))
+        for zip in os.listdir(zip_folder):
+            if not zip.endswith('.zip'):
+                os.system('rm "%s/%s"' % (zip_folder, zip))
+        for zip in os.listdir(zip_folder):
+            if zip.endswith('.zip'):
+                os.system('mv "%s/%s" "%s/tmp.zip"' % (zip_folder, zip, zip_folder))
+                cmd = 'unzip -o "%s/tmp.zip" -d "%s"' % (zip_folder, zip_folder)
+                os.system(cmd)
+                os.system('rm "%s/tmp.zip"' % zip_folder)
+        for f in os.listdir(zip_folder):
+            folder = os.path.join(issue_path, activity)
+            print(folder)
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+            if f.endswith('.png'):
+                mv_cmd = 'mv "%s" "%s/%s.png"' % (os.path.join(zip_folder, f), folder, currentImgName)
+                os.system(mv_cmd)
+            if f.endswith('.txt'):
+                mv_cmd = 'mv "%s" "%s/%s.txt"' % (os.path.join(zip_folder, f), folder, currentImgName)
+                os.system(mv_cmd)
+                # os.system('mv "%s/%s" "%s/%s.zip"' % (zip_folder, zip, issue_path, activity))
+    clean_tmp_folder(tmp_folder)
+    # if os.path.exists(os.path.join(issue_path, activity + '.zip')):
+    #     zipfile = os.path.join(issue_path, activity + '.zip')
+    #
+    #     '''unzip result file and delete zip file'''
+    #     tmp_folder =
+    #
+    #     # rename txt and png file name
+    #     issue_folder = zipfile.split('.zip')[0]
+    #     if os.path.exists(issue_folder) and os.path.isdir(issue_folder):
+
+
+
