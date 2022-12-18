@@ -88,7 +88,8 @@ def scan_and_return(deviceId):
     time.sleep(1)
     current_emulator = deviceId
     # print(pressLocations.get(current_emulator))
-
+    if 'emulator' not in current_emulator:
+        current_emulator = 'emulator-5554'
     os.system('adb shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
     time.sleep(3)
@@ -98,8 +99,10 @@ def scan_and_return(deviceId):
     if current_emulator == "emulator-5558":
 
         os.system('adb shell input tap ' + str(int(screensize) - 360) + " " + str(170))
-    else:
+    elif screensize is not None:
         os.system('adb shell input tap ' + str(int(screensize) - 150) + " " + str(150))
+    else:
+        os.system('adb shell input tap ' + str(1440 - 150) + " " + str(150))
 
     time.sleep(3)
     # cancel and back
@@ -140,6 +143,8 @@ def collect_results(activity, output_dir, device, isNewActivity):
     os.system(pull_screenshots)
 
     screenshot_path_tmp = tmp_folder + "/screenshots"
+    if not os.path.exists(screenshot_path_tmp):
+        os.makedirs(screenshot_path_tmp)
     for img in os.listdir(screenshot_path_tmp):
         if not img.endswith('thumbnail.png'):
             cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,currentImgName)

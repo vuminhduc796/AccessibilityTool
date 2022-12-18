@@ -157,7 +157,9 @@ def run_xbot_check(activity, output_dir, device):
      # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
     clean_up_scanner_data(adb_command, scanner_pkg)
+    print('Starting scan...')
     scan_and_return(device.serial)
+    print('Scan complete. Collecting results...')
     collect_results(activity, output_dir, device, False)
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
@@ -236,13 +238,15 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
                         t_end = time.time() + 1200
-                        start_exploration(activity, d, graph, output_dir, "", "", t_end)
+                        start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp)
                         numberOfSuccessful += 1
 
                         time.sleep(2)
-                        d.go_home()
+                        # d.go_home()
                         break
                     d.go_home()
+                    time.sleep(1)
+                    d.start_app(targetApp)
                     time.sleep(1)
 
                 print("total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
@@ -263,7 +267,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     d.disconnect()
 
 
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end):
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp):
     if time.time() > t_end:
         print("time is up")
         return
@@ -271,6 +275,8 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     views = d.get_views()
 
     currentActivity = d.get_top_activity_name().split("/")[-1]
+
+    # TODO: Before get the rough viewHash, maybe compare the current screen with the previous screen exact same? to save some time
 
     currentScreenHash = ""
     for view in views:
@@ -314,20 +320,27 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         time.sleep(1)
         run_xbot_check(activity, output_dir, d)
         time.sleep(1)
+        # check if app exited
+        if d.get_top_activity_name() == "com.android.launcher3/.Launcher":
+            d.start_app(targetApp)
     else:
         print("screen existed")
     print(graph.getNodes())
     screen = graph.getScreenFromExisted(currentScreenHash)
 
     # navigation
-    if len(screen.clickableViews) == 0:
+
+    if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
         d.key_press('BACK')
+        return
     for clickable_view in screen.clickableViews:
         if clickable_view not in screen.clickedViews:
+            print("clicking")
+            print(clickable_view)
             screen.addToClickedView(clickable_view)
             d.tap_view(clickable_view)
-
-            start_exploration(activity, d, graph, output_dir, screen.nodeHash, clickable_view, t_end)
+            time.sleep(1)
+            start_exploration(activity, d, graph, output_dir, screen.nodeHash, clickable_view, t_end, targetApp)
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
