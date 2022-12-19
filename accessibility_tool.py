@@ -297,19 +297,21 @@ def emulator_setup(name, device, horizontal):
 
     os.system(sdkmanager + f' "{package}"')
     os.system(avdmanager + f' create avd -n {name} -k "{package}" -d {device}')
-    os.system(emulator + f' -avd {name} -port 5584 -no-snapshot-save &')  # start the emulator
+    os.system(emulator + f' -avd {name} -port 5584 &')  # start the emulator
 
     time.sleep(1)
     os.system(adb + ' -s emulator-5584 wait-for-device')
     while subprocess.check_output(adb + ' -s emulator-5584 shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
         time.sleep(1)
-    time.sleep(3)
 
-    # push the snapshot
+    # install scanner apk
+    scanner_apk = os.getcwd() + "/xbot/scanner.apk"
+    os.system(adb + ' -s emulator-5584 install ' + scanner_apk)
+
+    os.system(adb + " -s emulator-5584 shell settings put system font_scale 1.0")  # set font size to 1
     if horizontal:
-        os.system(adb + ' -s emulator-5584 emu avd snapshot push baseline ./snapshot_horizontal')
-    else:
-        os.system(adb + ' -s emulator-5584 emu avd snapshot push baseline ./snapshot')
+        os.system(adb + " shell settings put system accelerometer_rotation 0")
+        os.system(adb + " shell settings put system user_rotation 3")
 
     os.system(adb + " -s emulator-5584 emu kill")  # kill the emulator
     time.sleep(5)
