@@ -271,50 +271,48 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     if time.time() > t_end:
         print("time is up")
         return
+
+    # wait for screen is fully loaded
+    time.sleep(1)
     currentScreenTree = d.get_top_activity_name().split("/")[-1]
     views = d.get_views()
 
     currentActivity = d.get_top_activity_name().split("/")[-1]
 
     # TODO: Before get the rough viewHash, maybe compare the current screen with the previous screen exact same? to save some time
-
+    start_hashing_time = time.time()
     currentScreenHash = ""
+    current_top = d.get_top_activity_name()
     for view in views:
+        viewHash = str(view["editable"]) + str(view[
+            "clickable"]) + view["class"] + view["size"] + str(view[
+                                 "selected"]) + current_top
 
-        viewHash = str(view["visible"]) + str(view["checkable"]) + str(view["editable"]) + str(view[
-            "clickable"]) + \
-                             str(view["bounds"][0][0]) + str(view["bounds"][1][0]) + str(view["bounds"][0][
-                                 1]) \
-                             + str(view["bounds"][1][1]) + view["class"] + view["size"] + str(view["long_clickable"]) + str(view[
-                                 "selected"]) \
-                             + d.get_top_activity_name()
         if viewHash not in currentScreenHash:
             currentScreenHash += viewHash
-    print("=== HASH ===")
-    print(currentScreenHash)
+    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time) )
     currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
 
     # print(currentScreenHash)
     # print(views)
     if currentActivity in "com.android.launcher3/.Launcher":
+        print("In launcher screen == return")
         return
     # if currentActivity not in activity:
     #     d.key_press('BACK')
     if previous_view_hash != currentScreenHash:
-
+        print("Added new edge")
         newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
         graph.addEdge(newEdge)
     clickable_views = []
     # print(views)
 
-
-    #
     if views is not None:
         for view in views:
-            if view["clickable"] is True:
+            if view["clickable"] is True and view['enabled'] is True:
                 clickable_views.append(view)
     if not graph.checkScreenExisted(currentScreenHash):
-        print("new screen found")
+        print("Added new screen")
         graph.addScreen(Screen(views, currentScreenHash, currentScreenTree,
                                clickable_views))
         time.sleep(1)
@@ -322,6 +320,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         time.sleep(1)
         # check if app exited
         if d.get_top_activity_name() == "com.android.launcher3/.Launcher":
+            print("App exited -- restart")
             d.start_app(targetApp)
     else:
         print("screen existed")
@@ -331,13 +330,16 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     # navigation
 
     if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
+        print("No button to click == go back")
         d.key_press('BACK')
+        time.sleep(1)
         return
     for clickable_view in screen.clickableViews:
         if clickable_view not in screen.clickedViews:
-            print("clicking")
+            print("clicking " + str(len(screen.clickedViews)) + "/" + str(len(screen.clickableViews)))
             print(clickable_view)
             screen.addToClickedView(clickable_view)
+            time.sleep(1)
             d.tap_view(clickable_view)
             time.sleep(1)
             start_exploration(activity, d, graph, output_dir, screen.nodeHash, clickable_view, t_end, targetApp)
@@ -371,7 +373,6 @@ if __name__ == '__main__':
         'hasLogin': True,
         'facebookLogin': False,
         'username': 'vuminhduc30@gmail.com',
-        'password': 'minhduc123',
         'packageName': 'com.alibaba.aliexpresshd',
         'activityName': 'com.aliexpress.sky.user.ui.SkyShellActivity'
     }
