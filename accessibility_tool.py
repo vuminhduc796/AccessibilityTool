@@ -289,6 +289,77 @@ def create_emulator(name: str = typer.Option(..., "--name", "-n", help="Name of 
     """
     emulator_setup(name, device, horizontal)
 
+@emulator_app.command("snapshot_save")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Save snapshot and store in emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} emu avd snapshot save {name}')
+
+
+@emulator_app.command("snapshot_load")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Load snapshot stored in emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} emu avd snapshot load {name}')
+
+@emulator_app.command("snapshot_export")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Export snapshot from emulator to /snapshots
+    """
+    if serial:
+        serial = ' -s ' + serial
+    path = os.getcwd() + "/snapshots/" + name
+    os.system(f'{adb}{serial} emu avd snapshot pull {name} {path}')
+
+@emulator_app.command("snapshot_import")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Import snapshot from /snapshots to emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    path = os.getcwd() + "/snapshots/" + name
+    os.system(f'{adb}{serial} emu avd snapshot push {name} {path}')
+
+@emulator_app.command("font_size")
+def snapshot_save(value: str = typer.Option(..., "--value", "-v", help="Value to set as the font size"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Set the font size
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} shell settings put system font_scale {value}')
+
+@emulator_app.command("screen_size")
+def snapshot_save(value: str = typer.Option(..., "--value", "-v", help="Value to set as the font size"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Set the screen size
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} shell wm size {value}')
+
+@emulator_app.command("running")
+def snapshot_save():
+    """
+    View running emulator serial numbers
+    """
+    os.system(adb + ' devices')
+
+
 def emulator_setup(name, device, horizontal):
     if sys_config.config_content["arm64"] == 'true':
         package = "system-images;android-28;default;arm64-v8a"
