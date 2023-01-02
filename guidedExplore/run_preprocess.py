@@ -113,7 +113,7 @@ if __name__ == "__main__":
     # run_deer(apk_file, emulator, outmost_directory)
     apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
     print(apks)
-    run_deer("MicrosoftEdge.apk", outmost_directory)
+    run_deer("alltrails.apk", outmost_directory)
     # for apk in apks:
     #
     #     run_deer(apk, outmost_directory)

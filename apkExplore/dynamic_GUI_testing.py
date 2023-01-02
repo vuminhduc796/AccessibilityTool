@@ -152,9 +152,10 @@ def login_with_facebook(d, login_options):
 
 
 def run_xbot_check(activity, output_dir, device):
-    device.adb.shell("settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
+    device.adb.shell(
+        "settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
-     # print('Collecting scan results from device...')
+    # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
     clean_up_scanner_data(adb_command, scanner_pkg)
     print('Starting scan...')
@@ -222,10 +223,9 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                         d.send_intent(intent=intent.get_cmd())
                     except subprocess.CalledProcessError as e:
                         print("Ping stdout output:\n", e.output)
-                    time.sleep(3)
+                    time.sleep(2)
                     print(intent.__str__())
 
-                    views = d.get_views()
                     print("desire: " + activity)
 
                     # if login_options['hasLogin']:
@@ -267,6 +267,9 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     d.disconnect()
 
 
+list_check = []
+
+
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp):
     if time.time() > t_end:
         print("time is up")
@@ -275,8 +278,37 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     # wait for screen is fully loaded
     time.sleep(1)
     currentScreenTree = d.get_top_activity_name().split("/")[-1]
-    views = d.get_views()
+    temp_views = d.get_views()
+    isViewReady = True
+    currentTries = 0
 
+    while isViewReady:
+        print(len(temp_views) > 0 and temp_views[0]['package'] == "com.google.android.apps.accessibility.auditor" and currentTries < 5)
+        if ((len(temp_views) > 0 and temp_views[0]['package'] == "com.google.android.apps.accessibility.auditor") or temp_views in list_check) and currentTries < 5:
+            print("retry: " + str(currentTries))
+            # d.disconnect()
+            # time.sleep(1)
+            # d.set_up()
+            time.sleep(3)
+            temp_views = d.get_views()
+            currentTries += 1
+
+        else:
+
+            list_check.append(temp_views)
+            print("Found, " + str(len(list_check)))
+            isViewReady = False
+    views = []
+    for view in temp_views:
+        view_bound = view["bounds"]
+        top_bound = view_bound[0][1]
+        left_bound = view_bound[0][0]
+        bottom_bound = view_bound[1][1]
+        right_bound = view_bound[1][0]
+
+        if bottom_bound > top_bound and right_bound > left_bound:
+            views.append(view)
+    print("Collected " + str(len(views)) + "/" + str(len(temp_views)))
     currentActivity = d.get_top_activity_name().split("/")[-1]
 
     # TODO: Before get the rough viewHash, maybe compare the current screen with the previous screen exact same? to save some time
@@ -285,16 +317,14 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     current_top = d.get_top_activity_name()
     for view in views:
         viewHash = str(view["editable"]) + str(view[
-            "clickable"]) + view["class"] + view["size"] + str(view[
-                                 "selected"]) + current_top
+                                                   "clickable"]) + view["class"] + view["size"] + str(view[
+                                                                                                          "selected"]) + current_top
 
         if viewHash not in currentScreenHash:
             currentScreenHash += viewHash
-    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time) )
+    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time))
     currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
 
-    # print(currentScreenHash)
-    # print(views)
     if currentActivity in "com.android.launcher3/.Launcher":
         print("In launcher screen == return")
         return
@@ -305,12 +335,14 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
         graph.addEdge(newEdge)
     clickable_views = []
-    # print(views)
 
     if views is not None:
         for view in views:
             if view["clickable"] is True and view['enabled'] is True:
                 clickable_views.append(view)
+
+    print("This screen has " + str(len(clickable_views)) + " clickable views.")
+
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
         graph.addScreen(Screen(views, currentScreenHash, currentScreenTree,
@@ -328,7 +360,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     screen = graph.getScreenFromExisted(currentScreenHash)
 
     # navigation
-
+    time.sleep(1)
     if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
         print("No button to click == go back")
         d.key_press('BACK')
@@ -369,13 +401,13 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
 if __name__ == '__main__':
     print(os.getcwd())
     outmost_directory = os.getcwd().replace('/apkExplore', '')
-    login_options = {
-        'hasLogin': True,
-        'facebookLogin': False,
-        'username': 'vuminhduc30@gmail.com',
-        'packageName': 'com.alibaba.aliexpresshd',
-        'activityName': 'com.aliexpress.sky.user.ui.SkyShellActivity'
-    }
+    # login_options = {
+    #     'hasLogin': True,
+    #     'facebookLogin': False,
+    #     'username': 'vuminhduc30@gmail.com',
+    #     'packageName': 'com.alibaba.aliexpresshd',
+    #     'activityName': 'com.aliexpress.sky.user.ui.SkyShellActivity'
+    # }
     # run_deer(apk_file, emulator, outmost_directory)
     apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
     excluded_apps = ["Telegram.apk", "AliExpress.apk", "Wildberries.apk", "VidMate.apk"]
@@ -383,8 +415,12 @@ if __name__ == '__main__':
     #     if apk not in excluded_apps:
     #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
     #                            "normal")
-    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), login_options,
+    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), {},
                         "phone-vertical", "normal")
+
+    # attempt to get resource -> get xml
+    # app = App(os.getcwd().replace("/apkExplore", "") + "/input/AliExpress.apk")
+    # print(app.apk.get_android_resources().resource_values)
     #
     #
     # unit_dynamic_testing("08221FDD4004DF", "/Users/han/GoogleDrive/Monash/project/AccessibilityTool/input/alltrails.apk",
