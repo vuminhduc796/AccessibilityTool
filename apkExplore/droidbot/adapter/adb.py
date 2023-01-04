@@ -9,6 +9,8 @@ try:
 except ImportError:
     from pipes import quote # Python 2
 
+DROIDBOT_APP_PACKAGE = "io.github.ylimit.droidbotapp"
+ACCESSIBILITY_SERVICE = DROIDBOT_APP_PACKAGE + "/io.github.privacystreams.accessibility.PSAccessibilityService"
 
 class ADBException(Exception):
     """
@@ -238,7 +240,7 @@ class ADB(Adapter):
         service_names = self.get_enabled_accessibility_services()
         if service_name in service_names:
             service_names.remove(service_name)
-            self.shell("settings put secure enabled_accessibility_services %s" % ":".join(service_names))
+            self.shell("am force-stop %s" % service_name)
 
     def enable_accessibility_service(self, service_name):
         """
@@ -250,6 +252,12 @@ class ADB(Adapter):
             service_names.append(service_name)
             self.shell("settings put secure enabled_accessibility_services %s" % ":".join(service_names))
         self.shell("settings put secure accessibility_enabled 1")
+
+    def enable_tool(self, device):
+        self.enable_accessibility_service(ACCESSIBILITY_SERVICE)
+
+    def disable_tool(self, device):
+        self.disable_accessibility_service(ACCESSIBILITY_SERVICE)
 
     def enable_accessibility_service_db(self, service_name):
         """

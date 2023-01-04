@@ -81,7 +81,6 @@ class DroidBotAppConn(Adapter):
                 self.logger.warning("Failed to install DroidBotApp.")
                 traceback.print_exc()
 
-        # device.adb.disable_accessibility_service(ACCESSIBILITY_SERVICE)
         device.adb.enable_accessibility_service(ACCESSIBILITY_SERVICE)
 
         if ACCESSIBILITY_SERVICE not in device.get_service_names() \
@@ -95,6 +94,12 @@ class DroidBotAppConn(Adapter):
         while ACCESSIBILITY_SERVICE not in device.get_service_names() and self.__can_wait:
             print("Please enable accessibility for DroidBot app manually.")
             time.sleep(1)
+
+    def enable_tool(self, device):
+        device.adb.enable_accessibility_service(ACCESSIBILITY_SERVICE)
+
+    def disable_tool(self, device):
+        device.adb.disable_accessibility_service(ACCESSIBILITY_SERVICE)
 
     def tear_down(self):
         self.device.uninstall_app(DROIDBOT_APP_PACKAGE)
@@ -160,6 +165,7 @@ class DroidBotAppConn(Adapter):
                 self.logger.warning("Invalid data before packet head: " + message[:acc_event_idx])
             body = json.loads(message[acc_event_idx + len("AccEvent >>> "):])
             self.last_acc_event = body
+            # print("Last node updated")
             return
 
         rotation_idx = message.find("rotation >>> ")

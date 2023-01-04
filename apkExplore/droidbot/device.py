@@ -31,7 +31,7 @@ class Device(object):
     this class describes a connected device
     """
 
-    def __init__(self, device_serial=None, is_emulator=False, output_dir=None,
+    def __init__(self, device_serial=None, is_emulator=True, output_dir=None,
                  cv_mode=False, grant_perm=False, telnet_auth_token=None,
                  enable_accessibility_hard=False, humanoid=None, ignore_ad=False):
         """
@@ -153,6 +153,7 @@ class Device(object):
         establish connections on this device
         :return:
         """
+        print(self.adapters)
         for adapter in self.adapters:
             adapter_enabled = self.adapters[adapter]
             if not adapter_enabled:
@@ -168,6 +169,23 @@ class Device(object):
         self.unlock()
         self.check_connectivity()
         self.connected = True
+
+    def resume_tool(self):
+
+        for adapter in self.adapters:
+            if isinstance(adapter, ADB) or isinstance(adapter, DroidBotAppConn):
+                adapter_enabled = self.adapters[adapter]
+                if not adapter_enabled:
+                    continue
+                adapter.enable_tool(self)
+
+    def pause_tool(self):
+        for adapter in self.adapters:
+            if isinstance(adapter, ADB) or isinstance(adapter,DroidBotAppConn):
+                adapter_enabled = self.adapters[adapter]
+                if not adapter_enabled:
+                    continue
+                adapter.disable_tool(self)
 
     def disconnect(self):
         """
@@ -330,6 +348,7 @@ class Device(object):
         if bound is not None and len(bound) == 2 and len(bound[0]) == 2 and len(bound[1]) == 2:
             x_point = (bound[0][0] + bound[1][0])/2
             y_point = (bound[0][1] + bound[1][1])/2
+            print("TAP x: " + str(x_point) + " y: " + str(y_point))
             self.view_touch(x_point,y_point)
 
     def go_home(self):

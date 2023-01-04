@@ -195,8 +195,8 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
     if isAppOpened:
-        d.start_app(targetApp)
-        time.sleep(2)
+        # d.start_app(targetApp)
+        # time.sleep(2)
         with open(deeplinks_json, 'r', encoding='utf8') as f:
             activities = json.loads(f.read())
             for activity in activities:
@@ -238,7 +238,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
                         t_end = time.time() + 1200
-                        start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp)
+                        start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp, 0)
                         numberOfSuccessful += 1
 
                         time.sleep(2)
@@ -254,9 +254,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # print(currentState.views)
     # try automatic login
 
-    currentState = d.get_current_state()
-    print(currentState)
-
     # save the json file
     stateJson = currentState.to_json()
     with open('test.json', 'w') as f:
@@ -266,90 +263,45 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     d.disconnect()
 
+MAX_DEPTH = 4
 
-list_check = []
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
 
-
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp):
-    if time.time() > t_end:
+    depth += 1
+    print(depth)
+    if time.time() > t_end or depth >= MAX_DEPTH:
         print("time is up")
-        return
+        return False
 
-    # wait for screen is fully loaded
     time.sleep(1)
-    currentScreenTree = d.get_top_activity_name().split("/")[-1]
+
     temp_views = d.get_views()
-    isViewReady = True
-    currentTries = 0
-
-    while isViewReady:
-        print(len(temp_views) > 0 and temp_views[0]['package'] == "com.google.android.apps.accessibility.auditor" and currentTries < 5)
-        if ((len(temp_views) > 0 and temp_views[0]['package'] == "com.google.android.apps.accessibility.auditor") or temp_views in list_check) and currentTries < 5:
-            print("retry: " + str(currentTries))
-            # d.disconnect()
-            # time.sleep(1)
-            # d.set_up()
-            time.sleep(3)
-            temp_views = d.get_views()
-            currentTries += 1
-
-        else:
-
-            list_check.append(temp_views)
-            print("Found, " + str(len(list_check)))
-            isViewReady = False
-    views = []
-    for view in temp_views:
-        view_bound = view["bounds"]
-        top_bound = view_bound[0][1]
-        left_bound = view_bound[0][0]
-        bottom_bound = view_bound[1][1]
-        right_bound = view_bound[1][0]
-
-        if bottom_bound > top_bound and right_bound > left_bound:
-            views.append(view)
-    print("Collected " + str(len(views)) + "/" + str(len(temp_views)))
     currentActivity = d.get_top_activity_name().split("/")[-1]
-
-    # TODO: Before get the rough viewHash, maybe compare the current screen with the previous screen exact same? to save some time
-    start_hashing_time = time.time()
-    currentScreenHash = ""
-    current_top = d.get_top_activity_name()
-    for view in views:
-        viewHash = str(view["editable"]) + str(view[
-                                                   "clickable"]) + view["class"] + view["size"] + str(view[
-                                                                                                          "selected"]) + current_top
-
-        if viewHash not in currentScreenHash:
-            currentScreenHash += viewHash
-    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time))
-    currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
-
     if currentActivity in "com.android.launcher3/.Launcher":
-        print("In launcher screen == return")
-        return
-    # if currentActivity not in activity:
-    #     d.key_press('BACK')
+        print("App exited -- restart")
+        d.start_app(targetApp)
+
+    currentScreenHash, views, clickable_views = hash_screen(currentActivity, temp_views)
+
     if previous_view_hash != currentScreenHash:
         print("Added new edge")
         newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
         graph.addEdge(newEdge)
-    clickable_views = []
 
-    if views is not None:
-        for view in views:
-            if view["clickable"] is True and view['enabled'] is True:
-                clickable_views.append(view)
 
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
 
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
-        graph.addScreen(Screen(views, currentScreenHash, currentScreenTree,
+        graph.addScreen(Screen(views, currentScreenHash, currentActivity,
                                clickable_views))
+        d.pause_tool()
         time.sleep(1)
         run_xbot_check(activity, output_dir, d)
-        time.sleep(1)
+        time.sleep(2)
+        d.resume_tool()
+        # wait for screen is fully loaded
+        time.sleep(2)
         # check if app exited
         if d.get_top_activity_name() == "com.android.launcher3/.Launcher":
             print("App exited -- restart")
@@ -365,16 +317,67 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         print("No button to click == go back")
         d.key_press('BACK')
         time.sleep(1)
-        return
-    for clickable_view in screen.clickableViews:
-        if clickable_view not in screen.clickedViews:
-            print("clicking " + str(len(screen.clickedViews)) + "/" + str(len(screen.clickableViews)))
-            print(clickable_view)
-            screen.addToClickedView(clickable_view)
+        temp_views = d.get_views()
+        currentActivity = d.get_top_activity_name().split("/")[-1]
+        newHash, newViews, clickable_views = hash_screen(currentActivity, temp_views)
+        if newHash == currentScreenHash:
+            print("Repress BACK")
+            d.key_press('BACK')
             time.sleep(1)
-            d.tap_view(clickable_view)
-            time.sleep(1)
-            start_exploration(activity, d, graph, output_dir, screen.nodeHash, clickable_view, t_end, targetApp)
+        return True
+
+
+    isContinue = True
+    while isContinue is True:
+        unclicked_views = []
+        for element in screen.clickableViews:
+            if element not in screen.clickedViews:
+                unclicked_views.append(element)
+        if  len(unclicked_views) > 0 :
+            click_view = unclicked_views[random.randint(0, len(unclicked_views) - 1)]
+        elif len(unclicked_views) == 0:
+            click_view = unclicked_views[0]
+        print("clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(len(screen.clickableViews)))
+        print(click_view)
+        screen.addToClickedView(click_view)
+        time.sleep(1)
+        d.tap_view(click_view)
+        time.sleep(1)
+        isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp, depth)
+        if len(unclicked_views) <= 0:
+            isContinue = False
+    return True
+
+def hash_screen(currentActivity, temp_views):
+    views = []
+    for view in temp_views:
+        view_bound = view["bounds"]
+        top_bound = view_bound[0][1]
+        left_bound = view_bound[0][0]
+        bottom_bound = view_bound[1][1]
+        right_bound = view_bound[1][0]
+
+        if bottom_bound > top_bound and right_bound > left_bound:
+            views.append(view)
+    print("Collected " + str(len(views)) + "/" + str(len(temp_views)))
+    start_hashing_time = time.time()
+    currentScreenHash = ""
+
+    clickable_views = []
+    for view in views:
+        if view["clickable"] is True and view['enabled'] is True:
+            clickable_views.append(view)
+
+    for view in clickable_views:
+        viewHash = str(view["editable"]) + str(view[
+                                                   "clickable"]) + view["class"] + view["size"] + str(view[
+                                                                                                          "selected"]) + currentActivity
+
+        if viewHash not in currentScreenHash:
+            currentScreenHash += viewHash
+    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time))
+    currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
+    return currentScreenHash, views, clickable_views
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
