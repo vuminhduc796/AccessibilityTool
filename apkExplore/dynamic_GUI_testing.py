@@ -195,6 +195,11 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
     if isAppOpened:
+        # start to track the crash
+
+        with open(output_dir+'/crashlog.txt', 'w') as f:
+            proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
+
         # d.start_app(targetApp)
         # time.sleep(2)
         with open(deeplinks_json, 'r', encoding='utf8') as f:
@@ -237,13 +242,15 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     # print(clickable_views)
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
+                        print('currentScreen {} in activity {}'.format(currentScreen, activity))
                         t_end = time.time() + 1200
                         start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp, 0)
                         numberOfSuccessful += 1
-
                         time.sleep(2)
                         # d.go_home()
                         break
+                    else:
+                        print('currentScreen {} not in activity {}'.format(currentScreen, activity))
                     d.go_home()
                     time.sleep(1)
                     d.start_app(targetApp)
@@ -289,7 +296,17 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         graph.addEdge(newEdge)
 
 
+
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
+
+    #
+    # if views is not None:
+    #     for view in views:
+    #         if view["clickable"] is True:
+    #             clickable_views.append(view)
+
+    #TODO: support text input views and other actions such as swipe and scroll
+
 
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
@@ -310,7 +327,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         print("screen existed")
     print(graph.getNodes())
     screen = graph.getScreenFromExisted(currentScreenHash)
-
     # navigation
     time.sleep(1)
     if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
@@ -412,14 +428,14 @@ if __name__ == '__main__':
     #     'activityName': 'com.aliexpress.sky.user.ui.SkyShellActivity'
     # }
     # run_deer(apk_file, emulator, outmost_directory)
+
     apks = [f for f in os.listdir("../input") if isfile(join(outmost_directory + "/input", f))]
     excluded_apps = ["Telegram.apk", "AliExpress.apk", "Wildberries.apk", "VidMate.apk"]
     # for apk in apks:
     #     if apk not in excluded_apps:
     #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
     #                            "normal")
-    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), {},
-                        "phone-vertical", "normal")
+    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), {},"phone-vertical", "normal")
 
     # attempt to get resource -> get xml
     # app = App(os.getcwd().replace("/apkExplore", "") + "/input/AliExpress.apk")
