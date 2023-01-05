@@ -195,6 +195,11 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
     if isAppOpened:
+        # start to track the crash
+
+        with open(output_dir+'/crashlog.txt', 'w') as f:
+            proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
+
         # d.start_app(targetApp)
         # time.sleep(2)
         with open(deeplinks_json, 'r', encoding='utf8') as f:
@@ -237,13 +242,15 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     # print(clickable_views)
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
+                        print('currentScreen {} in activity {}'.format(currentScreen, activity))
                         t_end = time.time() + 200
                         start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp, 0)
                         numberOfSuccessful += 1
-
                         time.sleep(2)
                         # d.go_home()
                         break
+                    else:
+                        print('currentScreen {} not in activity {}'.format(currentScreen, activity))
                     d.go_home()
                     time.sleep(1)
                     d.start_app(targetApp)
@@ -286,13 +293,11 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     currentScreenHash, views, clickable_views = hash_screen(currentActivity, temp_views)
 
-
-
-
-
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
 
-    # add new node and scan for new screen
+    #TODO: support text input views and other actions such as swipe and scroll
+
+
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
         newAct = graph.getActivityStoringName(currentActivity)
