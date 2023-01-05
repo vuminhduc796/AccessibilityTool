@@ -114,13 +114,8 @@ def scan_and_return(deviceId):
     # time.sleep(1)
 
 
-def collect_results(activity, output_dir, device, isNewActivity):
-    global currentIndex
-    if isNewActivity:
-        currentIndex = 0
-    else:
-        currentIndex += 1
-    currentImgName = activity + str(currentIndex)
+def collect_results(activity, output_dir, device, isNewActivity, numberedActName):
+
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
@@ -132,7 +127,7 @@ def collect_results(activity, output_dir, device, isNewActivity):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    extract_issue(activity, adb_command, currentImgName, output_dir, scanner_pkg, tmp_folder)
+    extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pkg, tmp_folder)
 
     '''Pull screenshot and rename'''
     screenshot_path_act = os.path.join(output_dir,'activity_screenshots', activity)
@@ -147,7 +142,7 @@ def collect_results(activity, output_dir, device, isNewActivity):
         os.makedirs(screenshot_path_tmp)
     for img in os.listdir(screenshot_path_tmp):
         if not img.endswith('thumbnail.png'):
-            cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,currentImgName)
+            cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,numberedActName)
             os.system(cmd)
     clean_tmp_folder(tmp_folder)
 
@@ -159,7 +154,7 @@ def clean_up_scanner_data(adb_command, scanner_pkg):
     os.system(clean_screenshots)
 
 
-def extract_issue(activity, adb_command, currentImgName, output_dir, scanner_pkg, tmp_folder):
+def extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pkg, tmp_folder):
     issue_path = os.path.join(output_dir, "issues")
     if not os.path.exists(issue_path):
         os.makedirs(issue_path)
@@ -185,10 +180,10 @@ def extract_issue(activity, adb_command, currentImgName, output_dir, scanner_pkg
             if not os.path.exists(folder):
                 os.makedirs(folder)
             if f.endswith('.png'):
-                mv_cmd = 'mv "%s" "%s/%s.png"' % (os.path.join(zip_folder, f), folder, currentImgName)
+                mv_cmd = 'mv "%s" "%s/%s.png"' % (os.path.join(zip_folder, f), folder, numberedActName)
                 os.system(mv_cmd)
             if f.endswith('.txt'):
-                mv_cmd = 'mv "%s" "%s/%s.txt"' % (os.path.join(zip_folder, f), folder, currentImgName)
+                mv_cmd = 'mv "%s" "%s/%s.txt"' % (os.path.join(zip_folder, f), folder, numberedActName)
                 os.system(mv_cmd)
                 # os.system('mv "%s/%s" "%s/%s.zip"' % (zip_folder, zip, issue_path, activity))
     clean_tmp_folder(tmp_folder)

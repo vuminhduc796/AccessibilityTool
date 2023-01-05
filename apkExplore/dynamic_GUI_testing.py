@@ -151,7 +151,7 @@ def login_with_facebook(d, login_options):
     return True
 
 
-def run_xbot_check(activity, output_dir, device):
+def run_xbot_check(activity, output_dir, device, numberedActName):
     device.adb.shell(
         "settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
@@ -161,7 +161,7 @@ def run_xbot_check(activity, output_dir, device):
     print('Starting scan...')
     scan_and_return(device.serial)
     print('Scan complete. Collecting results...')
-    collect_results(activity, output_dir, device, False)
+    collect_results(activity, output_dir, device, False, numberedActName)
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
@@ -237,7 +237,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     # print(clickable_views)
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
-                        t_end = time.time() + 1200
+                        t_end = time.time() + 200
                         start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp, 0)
                         numberOfSuccessful += 1
 
@@ -263,12 +263,12 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     d.disconnect()
 
-MAX_DEPTH = 4
+MAX_DEPTH = 3
 
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
 
+    # early exit when time is up or depth is exceeded
     depth += 1
-    print(depth)
     if time.time() > t_end or depth >= MAX_DEPTH:
         print("time is up")
         return False
@@ -277,27 +277,30 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     temp_views = d.get_views()
     currentActivity = d.get_top_activity_name().split("/")[-1]
+    while currentActivity[0] == '.':
+
+        currentActivity = currentActivity[1:]
     if currentActivity in "com.android.launcher3/.Launcher":
         print("App exited -- restart")
         d.start_app(targetApp)
 
     currentScreenHash, views, clickable_views = hash_screen(currentActivity, temp_views)
 
-    if previous_view_hash != currentScreenHash:
-        print("Added new edge")
-        newEdge = Edge(clicked_btn, previous_view_hash, currentScreenHash)
-        graph.addEdge(newEdge)
+
+
 
 
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
 
+    # add new node and scan for new screen
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
-        graph.addScreen(Screen(views, currentScreenHash, currentActivity,
+        newAct = graph.getActivityStoringName(currentActivity)
+        graph.addScreen(Screen(views, currentScreenHash, newAct,
                                clickable_views))
         d.pause_tool()
         time.sleep(1)
-        run_xbot_check(activity, output_dir, d)
+        run_xbot_check(currentActivity, output_dir, d, newAct)
         time.sleep(2)
         d.resume_tool()
         # wait for screen is fully loaded
@@ -308,11 +311,29 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             d.start_app(targetApp)
     else:
         print("screen existed")
-    print(graph.getNodes())
+
+    print(graph)
     screen = graph.getScreenFromExisted(currentScreenHash)
+    numberedActivityName = screen.nodeActivityName
+
+    # add Edge
+    if previous_view_hash != currentScreenHash:
+        print("Added new edge")
+
+        previousNode = graph.getScreenFromExisted(previous_view_hash)
+        if previousNode is None:
+            previousNumberedActName = ""
+        else:
+            previousNumberedActName = graph.getScreenFromExisted(previous_view_hash).nodeActivityName
+
+        newEdge = Edge(clicked_btn, previousNumberedActName, numberedActivityName)
+        graph.addEdge(newEdge)
+
 
     # navigation
     time.sleep(1)
+
+    # back when no view to click
     if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
         print("No button to click == go back")
         d.key_press('BACK')
@@ -320,13 +341,15 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         temp_views = d.get_views()
         currentActivity = d.get_top_activity_name().split("/")[-1]
         newHash, newViews, clickable_views = hash_screen(currentActivity, temp_views)
+
+        # solve soft keyboard prevent back issues
         if newHash == currentScreenHash:
             print("Repress BACK")
             d.key_press('BACK')
             time.sleep(1)
         return True
 
-
+    # click each element on the screen (DFS)
     isContinue = True
     while isContinue is True:
         unclicked_views = []
@@ -335,8 +358,9 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
                 unclicked_views.append(element)
         if  len(unclicked_views) > 0 :
             click_view = unclicked_views[random.randint(0, len(unclicked_views) - 1)]
-        elif len(unclicked_views) == 0:
-            click_view = unclicked_views[0]
+        elif len(unclicked_views) <= 0:
+            isContinue = False
+            break
         print("clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(len(screen.clickableViews)))
         print(click_view)
         screen.addToClickedView(click_view)
@@ -344,8 +368,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         d.tap_view(click_view)
         time.sleep(1)
         isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp, depth)
-        if len(unclicked_views) <= 0:
-            isContinue = False
+
     return True
 
 def hash_screen(currentActivity, temp_views):
