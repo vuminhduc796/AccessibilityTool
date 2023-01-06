@@ -166,7 +166,8 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, current_graph, login_options,
+def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, current_graph,
+                         login_options,
                          log_save_path, test_time=1200, reinstall=False):
     visited_rate = []
     visited_activities = []
@@ -192,11 +193,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     numberOfActivities = 0
     numberOfSuccessful = 0
     # open app and get the screenshot of the first activity
-    currentState = d.get_current_state()
     if isAppOpened:
         # start to track the crash
 
-        with open(output_dir+'/crashlog.txt', 'w') as f:
+        with open(output_dir + '/crashlog.txt', 'w') as f:
             proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
 
         # d.start_app(targetApp)
@@ -260,19 +260,15 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # print(currentState.views)
     # try automatic login
 
-    # save the json file
-    stateJson = currentState.to_json()
-    with open('test.json', 'w') as f:
-        json.dump(stateJson, f)
-
     visited_activities.append(mainActivity)
 
     d.disconnect()
 
+
 MAX_DEPTH = 3
 
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
 
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
     # early exit when time is up or depth is exceeded
     depth += 1
     if time.time() > t_end or depth >= MAX_DEPTH:
@@ -284,7 +280,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     temp_views = d.get_views()
     currentActivity = d.get_top_activity_name().split("/")[-1]
     while currentActivity[0] == '.':
-
         currentActivity = currentActivity[1:]
     if currentActivity in "com.android.launcher3/.Launcher":
         print("App exited -- restart")
@@ -294,14 +289,14 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
 
-    #TODO: support text input views and other actions such as swipe and scroll
-
+    # TODO: support text input views and other actions such as swipe and scroll
 
     if not graph.checkScreenExisted(currentScreenHash):
         print("Added new screen")
         newAct = graph.getActivityStoringName(currentActivity)
         graph.addScreen(Screen(views, currentScreenHash, newAct,
                                clickable_views))
+        collect_current_state(d, currentActivity, newAct, output_dir)
         d.pause_tool()
         time.sleep(1)
         run_xbot_check(currentActivity, output_dir, d, newAct)
@@ -333,7 +328,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         newEdge = Edge(clicked_btn, previousNumberedActName, numberedActivityName)
         graph.addEdge(newEdge)
 
-
     # navigation
     time.sleep(1)
 
@@ -360,20 +354,35 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         for element in screen.clickableViews:
             if element not in screen.clickedViews:
                 unclicked_views.append(element)
-        if  len(unclicked_views) > 0 :
+        if len(unclicked_views) > 0:
             click_view = unclicked_views[random.randint(0, len(unclicked_views) - 1)]
         elif len(unclicked_views) <= 0:
             isContinue = False
             break
-        print("clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(len(screen.clickableViews)))
-        print(click_view)
+        print("clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(
+            len(screen.clickableViews)))
+
         screen.addToClickedView(click_view)
         time.sleep(1)
         d.tap_view(click_view)
         time.sleep(1)
-        isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp, depth)
+        isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp,
+                                       depth)
 
     return True
+
+
+def collect_current_state(d, activity, numberedActName, output_dir):
+    dir_path = os.path.join(output_dir, "states", activity)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    filename = numberedActName + ".json"
+    filepath = os.path.join(dir_path, filename)
+    stateJson = d.get_current_state().to_dict()
+    print(stateJson)
+    with open(filepath, 'w') as f:
+        json.dump(stateJson, f,  indent=4, separators=(',', ': '))
+
 
 def hash_screen(currentActivity, temp_views):
     views = []
@@ -424,8 +433,9 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     check_and_create_dir(gg_issue_path)
     check_and_create_dir(current_directory + '/visited_rates/')
 
-    current_graph = Graph(app_name, android_device,current_setting)
-    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir,current_graph, login_options,
+    current_graph = Graph(app_name, android_device, current_setting)
+    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, current_graph,
+                         login_options,
                          log,
                          reinstall=False)
 

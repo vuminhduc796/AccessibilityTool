@@ -1,4 +1,4 @@
-from app_utils import add_new_node_to_config, add_new_edge_to_config
+from app_utils import add_new_node_to_config, add_new_edge_to_config, add_new_activity_to_config
 
 
 class Graph:
@@ -61,6 +61,7 @@ class Graph:
             return activity + str(self.activity_count[activity])
         else:
             self.activity_count[activity] = 1
+            add_new_activity_to_config(self.app, self.device, self.mode, activity)
             return activity + str(1)
 
 class Screen:
