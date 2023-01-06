@@ -1,16 +1,29 @@
+from app_utils import add_new_node_to_config, add_new_edge_to_config
+
+
 class Graph:
     screens = []
     edges = []
     activity_count = {}
+    app = ""
+    device = ""
+    mode = ""
+
+    def __init__(self, app, device, mode):
+        self.app = app
+        self.device = device
+        self.mode = mode
 
     def addScreen(self, screen):
         self.screens.append(screen)
+        add_new_node_to_config(self.app, self.device, self.mode, screen)
 
     def addEdge(self, edge):
         for discoveredEdge in self.edges:
             if edge.src == discoveredEdge.src and edge.dest == discoveredEdge.dest:
                 return
         self.edges.append(edge)
+        add_new_edge_to_config(self.app, self.device, self.mode, edge)
 
     def checkScreenExisted(self, screenHash):
         for screen in self.screens:
@@ -34,6 +47,12 @@ class Graph:
         str = ""
         for x in self.activity_count:
             str += (x + ":")
+
+    def logNodeAndEdgeToConfig(self):
+        for edge in self.edges:
+            add_new_edge_to_config(self.app, self.device, self.mode, edge)
+        for node in self.screens:
+            add_new_node_to_config(self.app, self.device, self.mode, node)
 
 
     def getActivityStoringName(self, activity):

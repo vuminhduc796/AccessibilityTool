@@ -166,7 +166,7 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
 
-def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, login_options,
+def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, current_graph, login_options,
                          log_save_path, test_time=1200, reinstall=False):
     visited_rate = []
     visited_activities = []
@@ -191,7 +191,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     numberOfActivities = 0
     numberOfSuccessful = 0
-    graph = Graph()
     # open app and get the screenshot of the first activity
     currentState = d.get_current_state()
     if isAppOpened:
@@ -424,7 +423,9 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     check_and_create_dir(ss_path)
     check_and_create_dir(gg_issue_path)
     check_and_create_dir(current_directory + '/visited_rates/')
-    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, login_options,
+
+    current_graph = Graph(app_name, android_device,current_setting)
+    unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir,current_graph, login_options,
                          log,
                          reinstall=False)
 
@@ -445,7 +446,10 @@ if __name__ == '__main__':
     # for apk in apks:
     #     if apk not in excluded_apps:
     #         dynamic_GUI_testing("emulator-5554", apk[:-4], outmost_directory, False, "phone-vertical",
+    #
     #                            "normal")
+
+    graph = Graph("AliExpress", "phone-vertical", "normal")
     dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), {},
                         "phone-vertical", "normal")
 
