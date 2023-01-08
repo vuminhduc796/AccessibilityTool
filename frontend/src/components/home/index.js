@@ -7,16 +7,49 @@ import AcivityGraph from "../activityGraph/AcivityGraph";
 import DetailPage from "../detailPage/DetailPage";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { AppContext } from "../../context/Context";
+import config from '../../data/config.json'
 export const Home = () => {
 
-    const availableDevices = ["Vertical Phone", "Vertical Tablet", "Horizontal Phone", "Horizontal Tablet"]
-    const modes = ["Light mode", "Dark mode"]
+    const appNames = [];
+    const modes = [];
+    const devices = [];
+    const configObject = {};
+    let appName, mode, device;
+    for (let i=0; i<config.configs.length; i++) {
+        appName = config.configs[i].config.appName;
+        mode = config.configs[i].config.mode;
+        device = config.configs[i].config.device;
+        if (!appNames.includes(appName)) {
+            appNames.push(appName);
+        }
+        if (!modes.includes(mode)) {
+            modes.push(mode);
+        }
+        if (!devices.includes(device)) {
+            devices.push(device);
+        }
+
+        if (configObject[appName] === undefined) {
+            configObject[appName] = {}
+        }
+        if (configObject[appName][device] === undefined) {
+            configObject[appName][device] = [mode]
+        }
+        else {
+            configObject[appName][device].push(mode);
+        }
+        
+    }
+    console.log(configObject);
+
+    //const modes = ["Light mode", "Dark mode"]
   
-   
+   console.log(config.configs);
 
     const [currentConfig, setCurrentConfig] = useState({
-        device: availableDevices[0],
-        mode: modes[0]
+        app: appNames[0],
+        mode: modes[0],
+        device: devices[0]
     })
 
     const [nodeData, setCurrentNode] = useState({
@@ -46,12 +79,12 @@ export const Home = () => {
             <Dropdown.Toggle variant="secondary" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "20px"
                     }}>
-                {currentConfig.device}
+                {currentConfig.app}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {availableDevices.map((value) => <Dropdown.Item 
-                    onClick={() => setCurrentConfig({...currentConfig,device: value})}>
+                {appNames.map((value) => <Dropdown.Item 
+                    onClick={() => setCurrentConfig({...currentConfig,app: value})}>
                     {value}</Dropdown.Item>)}
                 
             </Dropdown.Menu>
@@ -60,16 +93,34 @@ export const Home = () => {
             <Dropdown.Toggle variant="secondary" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "20px"
                     }}>
+                {currentConfig.device}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
+                {devices.filter((value) => configObject[currentConfig.app][value] !== undefined)
+                .map((value) => <Dropdown.Item 
+                    onClick={() => setCurrentConfig({...currentConfig,device: value})}>
+                    {value}</Dropdown.Item>)}
+                
+            </Dropdown.Menu>
+            </Dropdown>
+
+            <Dropdown style={{width:"20%"}}>
+            <Dropdown.Toggle variant="secondary" id="dropdown-basic" 
+                style={{width:"100%", fontSize: "20px"
+                    }}>
                 {currentConfig.mode}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {modes.map((value) => <Dropdown.Item 
+                {modes.filter((value) => configObject[currentConfig.app][currentConfig.device].includes(value) !== undefined)
+                .map((value) => <Dropdown.Item 
                     onClick={() => setCurrentConfig({...currentConfig,mode: value})}>
                     {value}</Dropdown.Item>)}
                 
             </Dropdown.Menu>
             </Dropdown>
+
             <Button style={{width:"10%", fontSize: "20px"}} variant="success"> Refresh</Button>    
             </Row>
      

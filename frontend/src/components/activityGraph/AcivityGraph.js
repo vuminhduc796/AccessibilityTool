@@ -42,10 +42,8 @@ const AcivityGraph = React.memo(()  => {
            
         
         var readData = tryLoadData()
-        console.log(readData)
 
         if (readData !== null){
-          console.log("Dddsd")
 
           var dataConfigs = readData.configs;     
 
@@ -57,13 +55,12 @@ const AcivityGraph = React.memo(()  => {
           var isFound = false;
           for(var currentConfigIndex = 0; currentConfigIndex < dataConfigs.length; currentConfigIndex ++){
             var dataConfig = dataConfigs[currentConfigIndex]
-              if (dataConfig.config.device === devicesMapping[currentConfig.device] && dataConfig.config.mode ===  modesMapping[currentConfig.mode]){
+              if (dataConfig.config.device === currentConfig.device && dataConfig.config.mode ===  currentConfig.mode){
                 isFound = true
                 loadDataForGraph(dataConfig)
               }
 
             }
-            console.log(isFound)
             setCacheData(dataConfigs);
             setCacheConfigs(currentConfig);
           }
