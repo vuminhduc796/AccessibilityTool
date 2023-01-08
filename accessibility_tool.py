@@ -243,7 +243,7 @@ def replay():
     pass
 
 @emulator_app.command("default")
-def create_default_emulators():
+def create_default_emulators(tablet: bool = typer.Option(False, "--tablet", "-t", help="Create tablet emulators")):
     """
         Create default emulators.
     """
@@ -251,12 +251,18 @@ def create_default_emulators():
     try:
         os.system(avdmanager + " delete avd -n phone-vertical")
         os.system(avdmanager + " delete avd -n phone-horizontal")
+        if tablet:
+            os.system(avdmanager + " delete avd -n tablet-vertical")
+            os.system(avdmanager + " delete avd -n tablet-horizontal")
     except Exception as e:
         print(e)
 
     # setup new AVDs
-    emulator_setup("phone-horizontal", "pixel_xl", True)
-    emulator_setup("phone-vertical", "pixel_xl", False)
+    emulator_setup("phone-horizontal", "pixel_xl", True, tablet)
+    emulator_setup("phone-vertical", "pixel_xl", False, tablet)
+    if tablet:
+        emulator_setup("tablet-horizontal", "pixel_c", True, tablet)
+        emulator_setup("tablet-vertical", "pixel_c", False, tablet)
 
 @emulator_app.command("devices")
 def view_devices():
@@ -283,11 +289,12 @@ def view_emulators(emulator_names: List[str] = typer.Argument(..., help="List of
 @emulator_app.command("create")
 def create_emulator(name: str = typer.Option(..., "--name", "-n", help="Name of the emulator"),
                     device: str = typer.Option("pixel_xl", "--device", "-d", help="Device index or id"),
-                    horizontal: bool = typer.Option(False, "--horizontal", "-h", help="Create the horizontal device")):
+                    horizontal: bool = typer.Option(False, "--horizontal", "-h", help="Create the horizontal device"),
+                    tablet: bool = typer.Option(False, "--tablet", "-t", help="Create tablet emulator")):
     """
     Create emulator
     """
-    emulator_setup(name, device, horizontal)
+    emulator_setup(name, device, horizontal, tablet)
 
 @emulator_app.command("snapshot_save")
 def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
@@ -360,7 +367,7 @@ def snapshot_save():
     os.system(adb + ' devices')
 
 
-def emulator_setup(name, device, horizontal):
+def emulator_setup(name, device, horizontal, tablet):
     if sys_config.config_content["arm64"] == 'true':
         package = "system-images;android-28;default;arm64-v8a"
     else:
@@ -380,10 +387,11 @@ def emulator_setup(name, device, horizontal):
     os.system(adb + ' -s emulator-5584 install ' + scanner_apk)
 
     os.system(adb + " -s emulator-5584 shell settings put system font_scale 1.0")  # set font size to 1
-    if horizontal:
+    if (horizontal and not tablet) or (not horizontal and tablet):
         os.system(adb + " shell settings put system accelerometer_rotation 0")
         os.system(adb + " shell settings put system user_rotation 3")
 
+    time.sleep(1)
     os.system(adb + " -s emulator-5584 emu kill")  # kill the emulator
     time.sleep(5)
 
