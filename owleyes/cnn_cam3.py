@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import os
 import torch.nn as nn
 from owleyes.network import Net
@@ -32,7 +31,9 @@ class FeatureExtractor():
         self.gradients = []
 
         for name, module in self.model.module.features._modules.items():
+
             x = module(x)
+
             if name in self.target_layers:
                 x.register_hook(self.save_gradient)
                 outputs += [x]
@@ -62,9 +63,10 @@ class ModelOutputs():
 def preprocess_image(image_file):
     imgs_data = []
     img = Image.open(image_file)
-    img_data = getdata.dataTransform(img)
 
-    imgs_data.append(img_data)
+    img_data = getdata.dataTransform(img)
+    image_without_alpha = img_data[:3, :, :]
+    imgs_data.append(image_without_alpha)
     imgs_data = torch.stack(imgs_data)
     input = Variable(imgs_data, requires_grad=True)
     return input
@@ -75,7 +77,7 @@ def show_cam_on_image(img, mask, image_num, output_file_path):
     heatmap = np.float32(heatmap) / 255
     cam = heatmap + np.float32(img)
     cam = cam / np.max(cam)
-    cv2.imwrite(output_file_path + "cam.jpg", np.uint8(255 * cam))
+    cv2.imwrite(output_file_path + "/cam.jpg", np.uint8(255 * cam))
 
     # txtpath = './outputtxt2/{0}.txt'.format(image_num)
     # IMGpath = './examples/{0}.png'.format(image_num)
@@ -259,8 +261,9 @@ def deprocess_image(img):
     img = np.clip(img, 0, 1)
     return np.uint8(img * 255)
 
+cached = []
 
-def owleyes_scan(current_folder, parent_folder):
+def owleyes_scan(currentActivity, newAct, output_dir):
     """ python grad_cam.py <path_to_image>
     1. Loads an image with opencv.
     2. Preprocesses it for VGG19 and converts to a pytorch variable.
@@ -268,55 +271,108 @@ def owleyes_scan(current_folder, parent_folder):
     and computes intermediate activations.
     Makes the visualization. """
 
-    image_folder = os.path.join(current_folder, "activity_screenshots")
-    output_folder = os.path.join(current_folder, "ui_issue_cam")
+    image_name = newAct + ".png"
+    image = os.path.join(output_dir, "activity_screenshots",currentActivity, image_name)
+    output_folder = os.path.join(output_dir, "ui_issue_cam",currentActivity,newAct)
+    if not os.path.exists(os.path.join(output_dir, "ui_issue_cam")):
+        os.mkdir(os.path.join(output_dir, "ui_issue_cam"))
+    if not os.path.exists(os.path.join(output_dir, "ui_issue_cam", currentActivity)):
+        os.mkdir(os.path.join(output_dir, "ui_issue_cam", currentActivity))
     if not os.path.exists(output_folder):
         os.mkdir(output_folder)
 
-    files = os.listdir(image_folder)
-
-    apk_name, emulator_name_android_studio, current_setting = current_folder.rsplit(
-        r"/")[-3:]
     print("owl eyes scan")
-    for file in files:
-        (filename, extension) = os.path.splitext(file)
-        image_num = filename
-        image_name = image_folder + "/" + file
 
-        model = Net()
-        model = nn.DataParallel(model)
-        model_dir = os.path.join(parent_folder, "owleyes")
-        # mps for m1 chip
-        # "mps" if torch.backends.mps.is_available() else
-        model.load_state_dict(torch.load(
-            model_dir + "/4model.pth", map_location=torch.device("cpu")))
 
-        output_file_path = output_folder + "/" + image_num + "/"
-        if not os.path.exists(output_file_path):
-            os.mkdir(output_file_path)
+    model = Net()
+    model = nn.DataParallel(model)
+    model_dir = os.path.join(output_dir.split("/output")[0],"owleyes")
+    # mps for m1 chip
+    # "mps" if torch.backends.mps.is_available() else
+    model.load_state_dict(torch.load(
+        model_dir + "/4model.pth", map_location=torch.device("cpu")))
 
-        grad_cam = GradCam(model=model, target_layer_names=[
-                           "40"], use_cuda=False)
+    grad_cam = GradCam(model=model, target_layer_names=[
+                       "40"], use_cuda=False)
 
-        img = cv2.imread(image_name, 1)
-        img = np.float32(cv2.resize(img, (448, 768))) / 255
+    img = cv2.imread(image, 1)
+    img = np.float32(cv2.resize(img, (448, 768))) / 255
 
-        input = preprocess_image(image_name)
+    input = preprocess_image(image)
 
-        target_index = None
-        mask = grad_cam(input, target_index)
-        show_cam_on_image(img, mask, image_num, output_file_path)
-        gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
-        gb = gb_model(input, index=target_index)
+    target_index = None
+    mask = grad_cam(input, target_index)
+    show_cam_on_image(img, mask, newAct, output_folder)
+    gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
+    gb = gb_model(input, index=target_index)
 
-        gb = gb.transpose((1, 2, 0))
+    gb = gb.transpose((1, 2, 0))
 
-        cam_mask = cv2.merge([mask, mask, mask])
-        cam_gb = deprocess_image(cam_mask * gb)
-        gb = deprocess_image(gb)
+    cam_mask = cv2.merge([mask, mask, mask])
+    cam_gb = deprocess_image(cam_mask * gb)
+    gb = deprocess_image(gb)
 
-        cv2.imwrite(output_file_path + "gb.jpg", gb)
-        cv2.imwrite(output_file_path + "cam_gb.jpg", cam_gb)
-        print("done: " + output_file_path)
-        app_utils.add_new_activity_to_config(
-            apk_name, emulator_name_android_studio, current_setting, image_num)
+    cv2.imwrite(output_folder + "/gb.jpg", gb)
+    cv2.imwrite(output_folder + "/cam_gb.jpg", cam_gb)
+    print("done: " + output_folder)
+    # app_utils.add_new_activity_to_config(
+    #     apk_name, emulator_name_android_studio, current_setting, image_num)
+def old_owleyes_scan( parent_folder):
+    """ python grad_cam.py <path_to_image>
+    1. Loads an image with opencv.
+    2. Preprocesses it for VGG19 and converts to a pytorch variable.
+    3. Makes a forward pass to find the category index with the highest score,
+    and computes intermediate activations.
+    Makes the visualization. """
+
+    output_folder = 'test_owleye'
+    if not os.path.exists(output_folder):
+        os.mkdir(output_folder)
+
+    print("owl eyes scan")
+    image_name1 = os.path.join(parent_folder, "examples", "1.png")
+    image_name2 = os.path.join(parent_folder, "examples", "2.png")
+
+    model = Net()
+    model = nn.DataParallel(model)
+    model_dir = os.path.join(parent_folder)
+    # mps for m1 chip
+    # "mps" if torch.backends.mps.is_available() else
+    model.load_state_dict(torch.load(
+        model_dir + "/4model.pth", map_location=torch.device("cpu")))
+
+    output_file_path = output_folder + "/test/"
+    if not os.path.exists(output_file_path):
+        os.mkdir(output_file_path)
+
+    grad_cam = GradCam(model=model, target_layer_names=[
+                       "40"], use_cuda=False)
+
+    img1 = cv2.imread(image_name1, 1)
+    img2 = cv2.imread(image_name2, 1)
+    # image_without_alpha = image_name2[:, :, :3]
+    img1 = np.float32(cv2.resize(img1, (448, 768))) / 255
+    img2 = np.float32(cv2.resize(img2, (448, 768))) / 255
+    input1 = preprocess_image(image_name1)
+    input2 = preprocess_image(image_name2)
+    print(np.array(img1).shape)
+    print(np.array(img2).shape)
+    target_index = None
+    mask = grad_cam(input1, target_index)
+    mask = grad_cam(input2, target_index)
+    # show_cam_on_image(img1, mask, image_name1, output_file_path)
+    # gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
+    # gb = gb_model(input, index=target_index)
+    #
+    # gb = gb.transpose((1, 2, 0))
+    #
+    # cam_mask = cv2.merge([mask, mask, mask])
+    # cam_gb = deprocess_image(cam_mask * gb)
+    # gb = deprocess_image(gb)
+    #
+    # cv2.imwrite(output_file_path + "gb.jpg", gb)
+    # cv2.imwrite(output_file_path + "cam_gb.jpg", cam_gb)
+    # print("done: " + output_file_path)
+
+if __name__ == '__main__':
+    old_owleyes_scan( os.getcwd())

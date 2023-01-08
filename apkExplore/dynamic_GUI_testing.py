@@ -9,9 +9,11 @@ from datetime import datetime
 from apkExplore.droidbot.exploration.Graph import Graph, Screen, Edge
 from apkExplore.droidbot.intent import Intent
 from apkExplore.xbot_kit import scan_and_return, collect_results, clean_up_scanner_data
-from droidbot.device import Device, dict_hash_current_screen
-from droidbot.app import App
+from apkExplore.droidbot.device import Device
+from apkExplore.droidbot.app import App
 import time
+
+from owleyes.cnn_cam3 import owleyes_scan
 
 
 def check_and_create_dir(dir_name):
@@ -243,7 +245,7 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     if currentScreen in activity:
                         print('currentScreen {} in activity {}'.format(currentScreen, activity))
                         t_end = time.time() + 200
-                        start_exploration(activity, d, graph, output_dir, "", "", t_end, targetApp, 0)
+                        start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0)
                         numberOfSuccessful += 1
                         time.sleep(2)
                         # d.go_home()
@@ -297,10 +299,12 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         graph.addScreen(Screen(views, currentScreenHash, newAct,
                                clickable_views))
         collect_current_state(d, currentActivity, newAct, output_dir)
+
         d.pause_tool()
         time.sleep(1)
         run_xbot_check(currentActivity, output_dir, d, newAct)
         time.sleep(2)
+        owleyes_scan(currentActivity, newAct, output_dir)
         d.resume_tool()
         # wait for screen is fully loaded
         time.sleep(2)

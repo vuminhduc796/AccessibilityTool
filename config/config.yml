@@ -1,6 +1,7 @@
-aapt: /Users/han/Library/Android/sdk/build-tools/30.0.3/aapt
-apk_signer: /Users/han/Library/Android/sdk/build-tools/30.0.3/apksigner sign --ks
-  /Users/han/.android/debug.keystore --ks-pass pass:android --key-pass pass:android
+aapt: /Users/vuminhduc796/Library/Android/sdk/build-tools/30.0.3/aapt
+apk_signer: /Users/vuminhduc796/Library/Android/sdk/build-tools/30.0.3/apksigner sign
+  --ks /Users/vuminhduc796/.android/debug.keystore --ks-pass pass:android --key-pass
+  pass:android
 arm64: 'true'
 auto_login:
   activity: .ui.authentication.mediaauth.AuthActivity
@@ -28,9 +29,9 @@ emulators:
     name: emulator-5556
   tablet-vertical:
     name: emulator-5560
-finished: 'false'
+finished: 'true'
 font_size: normal
-java_home_path: /Users/han/Library/Java/JavaVirtualMachines/liberica-1.8.0_312/jre
-sdk_platform_path: /Users/han/Library/Android/sdk
+java_home_path: /Users/vuminhduc796/Library/Java/JavaVirtualMachines/liberica-1.8.0_312/jre
+sdk_platform_path: /Users/vuminhduc796/Library/Android/sdk
 updated: ''
-zip_align: /Users/han/Library/Android/sdk/build-tools/30.0.3/zipalign
+zip_align: /Users/vuminhduc796/Library/Android/sdk/build-tools/30.0.3/zipalign

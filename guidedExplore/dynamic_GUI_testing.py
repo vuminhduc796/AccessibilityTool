@@ -1,23 +1,19 @@
-import os
-import random
 import json
-import config.config as sys_config
-import adbutils
-import typer
-import uiautomator2 as u2
-import requests
-import uiautomator2.exceptions
-
-from guidedExplore.util import *
-
-from guidedExplore.util import getActivityPackage, saveScreenshot
-from guidedExplore.testing_path_planner import PathPlanner
-from guidedExplore.hierachySolver import click_points_Solver, bounds2int
-from guidedExplore.grantPermissonDetector import dialogSolver
+import random
 import subprocess
 from datetime import datetime
+
+import typer
+import uiautomator2.exceptions
 from uiautomator2 import Direction
-from guidedExplore.activity_launcher import launch_activity_by_deeplinks, launch_activity_by_deeplink
+
+import config.config as sys_config
+from guidedExplore.activity_launcher import launch_activity_by_deeplinks
+from guidedExplore.grantPermissonDetector import dialogSolver
+from guidedExplore.hierachySolver import click_points_Solver
+from guidedExplore.testing_path_planner import PathPlanner
+from guidedExplore.util import *
+from guidedExplore.util import getActivityPackage, saveScreenshot
 
 dynamic_atg = {}
 

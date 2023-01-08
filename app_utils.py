@@ -3,8 +3,6 @@ import shutil
 import json
 from os import path
 
-#from accessibility_tool import current_directory
-
 current_directory = os.getcwd().replace("/apkExplore", "")
 config_file_name = current_directory + "/output/config.json"
 

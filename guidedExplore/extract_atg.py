@@ -109,7 +109,6 @@ def activity_mapping(abs_path, folders, available_activity_dict, save_dir=r'acti
         with open(save_path, 'w') as fp:
             print(save_path, os.getcwd())
             json.dump(activity_dict, fp, indent=4)
-            print('Count: ' + str(count))
 
 
 def activity_searching(folders, abs_path):
