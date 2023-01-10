@@ -7,13 +7,13 @@ import { AppContext } from '../../context/Context';
 const DetailPage = () => {
 
   var data = useContext(AppContext);
-  var [node, setNode] = data["currentNode"]
+  var [node, setNode] = data["currentActivity"]
 
   const [google_report, setData] = useState("")
   if (node.config !== undefined){
-    var cam_gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/cam_gb.jpg`);
-    var cam_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/cam.jpg`);
-    var gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/gb.jpg`);
+    var cam_gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam_gb.jpg`);
+    var cam_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam.jpg`);
+    var gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/gb.jpg`);
 
     //var google_scanner_img = require( `/data/domain/phone-vertical/normal_light_mode/googleScanner/issues/au.com.domain.feature.home.HomeActivity/au.com.domain.feature.home.HomeActivity.png`);
     //var text_data = require( `/Users/vuminhduc796/Desktop/Research/Research Platform/accessibility-tool/src/data/domain/phone-vertical/normal_light_mode/googleScanner/issues/au.com.domain.feature.home.HomeActivity/au.com.domain.feature.home.HomeActivity.txt`);

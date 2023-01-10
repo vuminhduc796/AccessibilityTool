@@ -13,7 +13,7 @@ import { AppContext } from '../../context/Context';
 const AcivityGraph = React.memo(()  => {
 
     var data = useContext(AppContext);
-    var [currentNode, setNode] = data["currentNode"]
+    var [currentActivity, setActivity] = data["currentActivity"]
     var [gData, setData] = data["gData"]
     var [currentConfig,setCurrentConfig] = data["currentConfig"]
     var [configs,setConfigs] = data["configs"]
@@ -21,9 +21,6 @@ const AcivityGraph = React.memo(()  => {
     const [cacheData, setCacheData] =  useState({});
     const [cacheConfigs, setCacheConfigs] =  useState({});
     const [directory, setDirectory] =  useState("");
-    
-    const modesMapping = {"Light mode": "normal_light_mode", "Dark mode": "dark_mode"}
-    const devicesMapping = {"Vertical Phone": "phone-vertical", "Vertical Tablet": "tablet-vertical", "Horizontal Phone": "phone-horizontal", "Horizontal Tablet": "tablet-horizontal"}
 
     const graphRef = useRef();
 
@@ -55,7 +52,7 @@ const AcivityGraph = React.memo(()  => {
           var isFound = false;
           for(var currentConfigIndex = 0; currentConfigIndex < dataConfigs.length; currentConfigIndex ++){
             var dataConfig = dataConfigs[currentConfigIndex]
-              if (dataConfig.config.device === currentConfig.device && dataConfig.config.mode ===  currentConfig.mode){
+              if (dataConfig.config.device === currentConfig.device && dataConfig.config.mode ===  currentConfig.mode && dataConfig.config.appName === currentConfig.appName){
                 isFound = true
                 loadDataForGraph(dataConfig)
               }
@@ -77,20 +74,39 @@ const AcivityGraph = React.memo(()  => {
         var newData = {nodes: [], links: []};
         var currentID = 0;
         for (var i = 0; i < dataConfig.config.activities.length; i++){
-          var activityScreenshot = dataConfig.config.activities[i];
-          var newNode = {
-            id: currentID.toString(),
-            img: activityScreenshot + ".png",
-            activity: activityScreenshot,
-            config: folderPath
-          };
-          if (currentID === 0) {
-            setNode(newNode);
+          var activityName = dataConfig.config.activities[i];
+          for (var j = 0; j < dataConfig.config.nodes.length; j++) {
+            var nodeName = dataConfig.config.nodes[j];
+            if (nodeName.includes(activityName)) {
+              var newNode = {
+                id: nodeName,
+                img: activityName + "/" + nodeName + ".png",
+                activity: activityName,
+                nodeName: nodeName,
+                config: folderPath
+              };
+              if (currentID === 0) {
+                setActivity(newNode);
+              }
+              
+              newData.nodes.push(newNode);
+              currentID ++;
+            }
           }
-          
-          newData.nodes.push(newNode);
-          currentID ++;
         }
+
+        for (var i=0; i<dataConfig.config.edges.length; i++) {
+          var link = dataConfig.config.edges[i]
+          if (link.source && link.destination) {
+            newData.links.push(
+              {
+                "target":link.destination,
+                "source":link.source
+              }
+            )
+          }
+        }
+        
         setData(newData);
     }
     const [width, height] = useWindowSize();
@@ -105,7 +121,7 @@ const AcivityGraph = React.memo(()  => {
         var img = new Image(); 
         img.src = require( `../../data/${directory}activity_screenshots/${node.img}`)
 
-        if(node.activity === currentNode.activity) {
+        if(node.activity === currentActivity.activity) {
           ctx.beginPath();
           ctx.fillStyle = "#fffb03";
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
@@ -121,7 +137,7 @@ const AcivityGraph = React.memo(()  => {
         linkWidth={5}
         height= {height * 0.92}
         width= {width/1.7} 
-        onNodeClick={ node => {setNode(node)}}
+        onNodeClick={ node => {setActivity(node)}}
         onNodeDragEnd={node => {
           node.fx = node.x;
           node.fy = node.y;

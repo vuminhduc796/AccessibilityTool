@@ -10,60 +10,56 @@ import { AppContext } from "../../context/Context";
 import config from '../../data/config.json'
 export const Home = () => {
 
-    const appNames = [];
-    const modes = [];
-    const devices = [];
-    const configObject = {};
-    let appName, mode, device;
-    for (let i=0; i<config.configs.length; i++) {
-        appName = config.configs[i].config.appName;
-        mode = config.configs[i].config.mode;
-        device = config.configs[i].config.device;
-        if (!appNames.includes(appName)) {
-            appNames.push(appName);
-        }
-        if (!modes.includes(mode)) {
-            modes.push(mode);
-        }
-        if (!devices.includes(device)) {
-            devices.push(device);
-        }
-
-        if (configObject[appName] === undefined) {
-            configObject[appName] = {}
-        }
-        if (configObject[appName][device] === undefined) {
-            configObject[appName][device] = [mode]
-        }
-        else {
-            configObject[appName][device].push(mode);
-        }
-        
-    }
-    console.log(configObject);
-
-    //const modes = ["Light mode", "Dark mode"]
-  
-   console.log(config.configs);
-
-    const [currentConfig, setCurrentConfig] = useState({
-        app: appNames[0],
-        mode: modes[0],
-        device: devices[0]
-    })
-
-    const [nodeData, setCurrentNode] = useState({
+    const [activityData, setCurrentActivity] = useState({
         id: 1,
         img: "72213.jpg",
-        activity: "aactivity"
+        activity: "aactivity",
+        nodeName: "node"
       });
 
       const [configs, setConfigs] = useState([]);
       const [gData, setData] = useState({nodes: [], links: []});
 
+      const appNames = [];
+      const modes = [];
+      const devices = [];
+      const configObject = {};
+      let appName, mode, device;
+      for (let i=0; i<config.configs.length; i++) {
+          appName = config.configs[i].config.appName;
+          mode = config.configs[i].config.mode;
+          device = config.configs[i].config.device;
+          if (!appNames.includes(appName)) {
+              appNames.push(appName);
+          }
+          if (!modes.includes(mode)) {
+              modes.push(mode);
+          }
+          if (!devices.includes(device)) {
+              devices.push(device);
+          }
+  
+          if (configObject[appName] === undefined) {
+              configObject[appName] = {}
+          }
+          if (configObject[appName][device] === undefined) {
+              configObject[appName][device] = [mode]
+          }
+          else {
+              configObject[appName][device].push(mode);
+          }
+      }
+  
+      const [currentConfig, setCurrentConfig] = useState({
+          appName: appNames[0],
+          mode: modes[0],
+          device: devices[0]
+      })
+
     return(
         <AppContext.Provider value = {{
-            "currentNode": [nodeData, setCurrentNode], 
+            "currentActivity": [activityData, setCurrentActivity], 
+            
             "gData": [gData, setData],
             "configs": [configs, setConfigs],
             "currentConfig": [currentConfig, setCurrentConfig]
@@ -79,12 +75,12 @@ export const Home = () => {
             <Dropdown.Toggle variant="secondary" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "20px"
                     }}>
-                {currentConfig.app}
+                {currentConfig.appName}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
                 {appNames.map((value) => <Dropdown.Item 
-                    onClick={() => setCurrentConfig({...currentConfig,app: value})}>
+                    onClick={() => setCurrentConfig({...currentConfig,appName: value})}>
                     {value}</Dropdown.Item>)}
                 
             </Dropdown.Menu>
@@ -97,7 +93,7 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {devices.filter((value) => configObject[currentConfig.app][value] !== undefined)
+                {devices.filter((value) => configObject[currentConfig.appName][value] !== undefined)
                 .map((value) => <Dropdown.Item 
                     onClick={() => setCurrentConfig({...currentConfig,device: value})}>
                     {value}</Dropdown.Item>)}
@@ -113,7 +109,7 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {modes.filter((value) => configObject[currentConfig.app][currentConfig.device].includes(value) !== undefined)
+                {modes.filter((value) => configObject[currentConfig.appName][currentConfig.device].includes(value) !== undefined)
                 .map((value) => <Dropdown.Item 
                     onClick={() => setCurrentConfig({...currentConfig,mode: value})}>
                     {value}</Dropdown.Item>)}
@@ -132,14 +128,14 @@ export const Home = () => {
             <Dropdown.Toggle variant="success" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "25px"
                     }}>
-                {nodeData.activity}
+                {activityData.nodeName}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "25px"}} >
                 {gData.nodes.map((node) => <Dropdown.Item 
-                    onClick={() => setCurrentNode(node)}
+                    onClick={() => setCurrentActivity(node)}
                 
-                >{node.activity}</Dropdown.Item>)}
+                >{node.nodeName}</Dropdown.Item>)}
             </Dropdown.Menu>
             </Dropdown>        
             <DetailPage/>
