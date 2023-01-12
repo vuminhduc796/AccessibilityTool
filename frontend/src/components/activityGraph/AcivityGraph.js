@@ -70,8 +70,26 @@ const AcivityGraph = React.memo(()  => {
     const loadDataForGraph = dataConfig => {
       var folderPath = dataConfig.config.appName + "/" + dataConfig.config.device + "/" + dataConfig.config.mode + "/" ;
       setDirectory(folderPath);
+
+      var sources = []
+      var newData = {nodes: [], links: []};
+      for (var i=0; i<dataConfig.config.edges.length; i++) {
+        var link = dataConfig.config.edges[i]
+        if (link.source && link.destination) {
+          newData.links.push(
+            {
+              "target":link.destination,
+              "source":link.source
+            }
+          )
+        }
+        else {
+          sources.push(link.destination)
+        }
+      }
+
       // set data for node
-        var newData = {nodes: [], links: []};
+        
         var currentID = 0;
         for (var i = 0; i < dataConfig.config.activities.length; i++){
           var activityName = dataConfig.config.activities[i];
@@ -84,7 +102,8 @@ const AcivityGraph = React.memo(()  => {
                 activity: activityName,
                 activityId: i,
                 nodeName: nodeName,
-                config: folderPath
+                config: folderPath,
+                source: sources.includes(nodeName)
               };
               if (currentID === 0) {
                 setNode(newNode);
@@ -93,18 +112,6 @@ const AcivityGraph = React.memo(()  => {
               newData.nodes.push(newNode);
               currentID ++;
             }
-          }
-        }
-
-        for (var i=0; i<dataConfig.config.edges.length; i++) {
-          var link = dataConfig.config.edges[i]
-          if (link.source && link.destination) {
-            newData.links.push(
-              {
-                "target":link.destination,
-                "source":link.source
-              }
-            )
           }
         }
         
@@ -135,15 +142,17 @@ const AcivityGraph = React.memo(()  => {
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
+        var x=node.x;var y=node.y;
+
+
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
+        if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
+
         }} 
-        
-        //onRenderFramePost
         linkDirectionalArrowLength={20}
         linkDirectionalArrowRelPos={0.5}
         linkDirectionalArrowColor={() => "black"}
-        nodeColor={() => "red"}
         linkCurvature={0.25} 
         linkWidth={5}
         height= {height * 0.92}
@@ -158,12 +167,49 @@ const AcivityGraph = React.memo(()  => {
           ctx.fillStyle = color;
           ctx.fillRect(node.x - 32, node.y - 67, 96, 135);
         }}
-        linkAutoColorBy={link => link.source.activityId}
         />
     </div>
 
    
   )
 });
+
+function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
+  //variables to be used when creating the arrow
+  var headlen = 2;
+  var angle = Math.atan2(toy-fromy,tox-fromx);
+
+  ctx.save();
+  ctx.strokeStyle = color;
+
+  //starting path of the arrow from the start square to the end square
+  //and drawing the stroke
+  ctx.beginPath();
+  ctx.moveTo(fromx, fromy);
+  ctx.lineTo(tox, toy);
+  ctx.lineWidth = arrowWidth;
+  ctx.stroke();
+
+  //starting a new path from the head of the arrow to one of the sides of
+  //the point
+  ctx.beginPath();
+  ctx.moveTo(tox, toy);
+  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
+             toy-headlen*Math.sin(angle-Math.PI/7));
+
+  //path from the side point of the arrow, to the other side point
+  ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),
+             toy-headlen*Math.sin(angle+Math.PI/7));
+
+  //path from the side point back to the tip of the arrow, and then
+  //again to the opposite side point
+  ctx.lineTo(tox, toy);
+  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
+             toy-headlen*Math.sin(angle-Math.PI/7));
+
+  //draws the paths created above
+  ctx.stroke();
+  ctx.restore();
+}
 
 export default AcivityGraph
