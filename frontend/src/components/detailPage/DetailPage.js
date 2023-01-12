@@ -7,7 +7,7 @@ import { AppContext } from '../../context/Context';
 const DetailPage = () => {
 
   var data = useContext(AppContext);
-  var [node, setNode] = data["currentActivity"]
+  var [node, setNode] = data["currentNode"]
 
   const [google_report, setData] = useState("")
   if (node.config !== undefined){

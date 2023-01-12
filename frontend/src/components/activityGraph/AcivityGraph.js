@@ -13,7 +13,7 @@ import { AppContext } from '../../context/Context';
 const AcivityGraph = React.memo(()  => {
 
     var data = useContext(AppContext);
-    var [currentActivity, setActivity] = data["currentActivity"]
+    var [currentNode, setNode] = data["currentNode"]
     var [gData, setData] = data["gData"]
     var [currentConfig,setCurrentConfig] = data["currentConfig"]
     var [configs,setConfigs] = data["configs"]
@@ -82,11 +82,12 @@ const AcivityGraph = React.memo(()  => {
                 id: nodeName,
                 img: activityName + "/" + nodeName + ".png",
                 activity: activityName,
+                activityId: i,
                 nodeName: nodeName,
                 config: folderPath
               };
               if (currentID === 0) {
-                setActivity(newNode);
+                setNode(newNode);
               }
               
               newData.nodes.push(newNode);
@@ -119,11 +120,18 @@ const AcivityGraph = React.memo(()  => {
       
       nodeCanvasObject={(node, ctx, globalScale) => { 
         var img = new Image(); 
+        const activityColors = ["red", "green", "blue", "purple", "orange", "pink"]
         img.src = require( `../../data/${directory}activity_screenshots/${node.img}`)
 
-        if(node.activity === currentActivity.activity) {
+        if(node.activity === currentNode.activity) {
           ctx.beginPath();
           ctx.fillStyle = "#fffb03";
+          ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
+          ctx.stroke();
+        }
+        else{
+          ctx.beginPath();
+          ctx.fillStyle = activityColors[node.activityId];
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
@@ -131,13 +139,16 @@ const AcivityGraph = React.memo(()  => {
 
         }} 
         
-        linkDirectionalArrowLength={5.5}
-        linkDirectionalArrowRelPos={100}
+        //onRenderFramePost
+        linkDirectionalArrowLength={20}
+        linkDirectionalArrowRelPos={0.5}
+        linkDirectionalArrowColor={() => "black"}
+        nodeColor={() => "red"}
         linkCurvature={0.25} 
         linkWidth={5}
         height= {height * 0.92}
         width= {width/1.7} 
-        onNodeClick={ node => {setActivity(node)}}
+        onNodeClick={ node => {setNode(node)}}
         onNodeDragEnd={node => {
           node.fx = node.x;
           node.fy = node.y;
@@ -147,6 +158,7 @@ const AcivityGraph = React.memo(()  => {
           ctx.fillStyle = color;
           ctx.fillRect(node.x - 32, node.y - 67, 96, 135);
         }}
+        linkAutoColorBy={link => link.source.activityId}
         />
     </div>
 

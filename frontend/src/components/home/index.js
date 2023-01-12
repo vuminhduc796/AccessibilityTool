@@ -10,7 +10,7 @@ import { AppContext } from "../../context/Context";
 import config from '../../data/config.json'
 export const Home = () => {
 
-    const [activityData, setCurrentActivity] = useState({
+    const [nodeData, setCurrentNode] = useState({
         id: 1,
         img: "72213.jpg",
         activity: "aactivity",
@@ -58,7 +58,7 @@ export const Home = () => {
 
     return(
         <AppContext.Provider value = {{
-            "currentActivity": [activityData, setCurrentActivity], 
+            "currentNode": [nodeData, setCurrentNode], 
             
             "gData": [gData, setData],
             "configs": [configs, setConfigs],
@@ -128,12 +128,12 @@ export const Home = () => {
             <Dropdown.Toggle variant="success" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "25px"
                     }}>
-                {activityData.nodeName}
+                {nodeData.nodeName}
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "25px"}} >
                 {gData.nodes.map((node) => <Dropdown.Item 
-                    onClick={() => setCurrentActivity(node)}
+                    onClick={() => setCurrentNode(node)}
                 
                 >{node.nodeName}</Dropdown.Item>)}
             </Dropdown.Menu>
