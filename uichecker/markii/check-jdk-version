@@ -4,10 +4,11 @@ import subprocess
 import re
 
 s = str(subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT), "utf-8")
-version = re.search("version \"([\d\.\_]+)\"", s).group(1)
+
+version = re.search('"(.*)"', s).group(1)
 
 s_javac = str(subprocess.check_output(["javac", "-version"], stderr=subprocess.STDOUT), "utf-8")
-version_javac = re.search("version \"([\d\.\_]+)\"", s).group(1)
+version_javac = s_javac[6:]
 
 help_msg = "JDK version is not 1.8: %s\n" % version
 help_msg_javac = "JDK version is not 1.8: %s\n" % version_javac

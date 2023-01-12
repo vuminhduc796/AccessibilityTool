@@ -29,7 +29,7 @@ emulators:
     name: emulator-5556
   tablet-vertical:
     name: emulator-5560
-finished: 'true'
+finished: 'false'
 font_size: normal
 java_home_path: /Users/vuminhduc796/Library/Java/JavaVirtualMachines/liberica-1.8.0_312/jre
 sdk_platform_path: /Users/vuminhduc796/Library/Android/sdk
