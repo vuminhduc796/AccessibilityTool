@@ -165,6 +165,53 @@ def run_xbot_check(activity, output_dir, device):
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
+def match_crash_log(output_dir):
+    crashRecords = {}
+    with open(output_dir + '/crashlog.txt', 'r') as f:
+        crashlog = f.read()
+        for line in crashlog.splitlines():
+            if "FATAL EXCEPTION" in line:
+                crashtimeStr = line.split("  ")[0]
+                crashtime = datetime.strptime(crashtimeStr, "%m-%d %H:%M:%S.%f")
+                crashRecords[crashtimeStr] = {
+                    "crash_time": crashtime,
+                    "crash_log": line + '\n',
+                    "action_detail": {
+                        "activity": "",
+                        "clicked_view": "",
+                    },
+                }
+            else:
+                crashtimeStr = line.split("  ")[0]
+                if crashtimeStr in crashRecords:
+                    crashRecords[crashtimeStr]["crash_log"] += line + '\n'
+
+    with open(output_dir + '/clicked_views.txt', 'r') as f:
+        clicked_views = f.read()
+        for line in clicked_views.splitlines():
+            if ';;;' not in line:
+                continue
+            clickTime = line.split(" ;;; ")[0]
+            # change the time format to datatime format
+            clickTime = datetime.strptime(clickTime, "%m-%d %H:%M:%S.%f")
+            # check if the time is same as the crash time or within 1 second
+            for crashRecordTime in crashRecords:
+                if time == crashRecordTime or (int(clickTime.timestamp()) - int(crashRecords[crashRecordTime]['crash_time'].timestamp()) <= 2):
+                    crashRecords[crashRecordTime]["action_detail"]["clicked_view"] = line.split(" ;;; ")[1]
+                    crashRecords[crashRecordTime]["action_detail"]["activity"] = line.split(" ;;; ")[2]
+
+    # serialize the timestamp in crashRecords
+    for crashRecordTime in crashRecords:
+        crashRecords[crashRecordTime]["crash_time"] = crashRecords[crashRecordTime]["crash_time"].strftime("%m-%d %H:%M:%S.%f")
+    # save the crash records to a file
+    with open(output_dir + '/crash_records.json', 'w') as f:
+        json.dump(crashRecords, f)
+
+    # remove the crashlog and clicked_views file
+    # os.remove(output_dir + '/crashlog.txt')
+    # os.remove(output_dir + '/clicked_views.txt')
+
+    return crashRecords
 
 def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, login_options,
                          log_save_path, test_time=1200, reinstall=False):
@@ -270,6 +317,13 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
     d.disconnect()
 
+    # stop the crash log
+    proc.terminate()
+    proc.wait()
+
+    #read the crash log and clicked_views and match them with the timestamp
+    match_crash_log(output_dir)
+
 MAX_DEPTH = 4
 
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
@@ -358,6 +412,10 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         screen.addToClickedView(click_view)
         time.sleep(1)
         d.tap_view(click_view)
+        # save the clicked view and the current screen by timestamp
+        with open(output_dir + "/clicked_views.txt", "a+") as myfile:
+            #save time to time format mm-dd H:M:S
+            myfile.write(str(datetime.now().strftime("%m-%d %H:%M:%S.%f")) + " ;;; " + str(click_view) + " ;;; " +currentActivity + '\n\n')
         time.sleep(1)
         isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp, depth)
         if len(unclicked_views) <= 0:
