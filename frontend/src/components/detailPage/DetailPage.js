@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { AppContext } from '../../context/Context';
+import "./DetailPage.css";
 
 const DetailPage = () => {
 
@@ -26,24 +27,22 @@ const DetailPage = () => {
    }
 
   return (
-    <div style={{width: "100%", paddingTop: "15px"}}>
+    <div style={{width: "100%", paddingTop: "15px"}} className="detail-page">
 
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Visual Issues</h2>
         <Row>
-        <img src= {cam_img} style= {{width: '33%'}} alt = "cam scanner img"/>
-        <img src= {cam_gb_img} style= {{width: '33%'}} alt = "cam gb scanner img"/>
-        <img src= {gb_img} style= {{width: '33%'}} alt = "gb scanner img"/>
+        <Col><img src= {cam_img} style= {{width: '100%'}} alt = "cam scanner img"/></Col>
+        <Col><img src= {cam_gb_img} style= {{width: '100%'}} alt = "cam gb scanner img"/></Col>
+        <Col><img src= {gb_img} style= {{width: '100%'}} alt = "gb scanner img"/></Col>
         </Row>
         <br/> 
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Google Accessibility Scanner Report</h2>
-        <Row>
+        <Row> 
         {/* <img src= {google_scanner_img} style= {{width: '33%'}} alt = "google scanner img"/> */}
-        <textarea style= {{width: '90%', height: '150px', position: 'relative', left: '4%'}} defaultValue={google_report}></textarea>
+        <Col><textarea style= {{width: '90%', height: '150px'}} defaultValue={google_report} readOnly={'true'}></textarea></Col>
         </Row>
         <br />
-        <Row>
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> uichecker</h2>
-        </Row>
         
     </div>
   )

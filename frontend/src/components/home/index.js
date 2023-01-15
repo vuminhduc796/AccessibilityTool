@@ -65,7 +65,7 @@ export const Home = () => {
             "currentConfig": [currentConfig, setCurrentConfig]
         }}
             >
-        <div>
+        <div style={{overflow:'hidden'}}>
         <Row >
         <Col style={{padding:"0px", margin: "0px", backgroundColor:"#a7b099", border:"5px solid grey"}} > 
         <div >
@@ -123,8 +123,8 @@ export const Home = () => {
         </div>
         <AcivityGraph/> 
         </Col>    
-        <Col style={{padding:"10px", margin: "0px", backgroundColor:"#e5e8e1"}}>
-        <Dropdown style={{width:"100%"}}>
+        <Col style={{padding:"10px", margin: "0px", backgroundColor:"#e5e8e1", height: "100vh", overflowY: "scroll"}}>
+        <Dropdown style={{width:"98%"}}>
             <Dropdown.Toggle variant="success" id="dropdown-basic" 
                 style={{width:"100%", fontSize: "25px"
                     }}>
