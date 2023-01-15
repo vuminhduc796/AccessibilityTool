@@ -884,6 +884,20 @@ class Device(object):
         """
         self.adb.drag(start_xy, end_xy, duration)
 
+
+    def view_scroll_diagonal(self, view):
+        bound = view["bounds"]
+        padding = 10
+        if bound is not None and len(bound) == 2 and len(bound[0]) == 2 and len(bound[1]) == 2:
+            bottom = bound[1][1] - padding
+            right = bound[1][0] - padding
+            top = bound[0][1] + padding
+            left = bound[0][0] + padding
+            print("SCROLL: " + str(bottom) +":" + str(right) + " to " + str(top) + ":" + str(left))
+            self.adb.drag((bottom,right), (top,left), 1000)
+
+
+
     def view_append_text(self, text):
         if self.droidbot_ime.connected:
             self.droidbot_ime.input_text(text=text, mode=1)

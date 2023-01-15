@@ -1,14 +1,15 @@
 import os
 import shutil
 import re
+import subprocess
 import time
 
 pressLocations = {
     "emulator-5554": {
         "name": "phone-vertical",
         "check": {
-            "x": 200,
-            "y": 200
+            "x": 300,
+            "y": 300
         },
         "share": {
             "x": 1221,
@@ -19,8 +20,8 @@ pressLocations = {
     "emulator-5558": {
         "name": "phone-horizontal",
         "check": {
-            "x": 200,
-            "y": 200
+            "x": 300,
+            "y": 300
         },
         "share": {
             "x": 2817,
@@ -30,8 +31,8 @@ pressLocations = {
     "emulator-5556": {
         "name": "tablet-horizontal",
         "check": {
-            "x": 200,
-            "y": 200
+            "x": 300,
+            "y": 300
         },
         "share": {
             "x": 2376,
@@ -41,8 +42,8 @@ pressLocations = {
     "emulator-5560": {
         "name": "tablet-vertical",
         "check": {
-            "x": 200,
-            "y": 200
+            "x": 300,
+            "y": 300
         },
         "share": {
             "x": 1680,
@@ -77,7 +78,7 @@ def clean_tmp_folder(folder):
         # os.remove(file)
 
 
-def scan_and_return(deviceId):
+def scan_and_return(deviceId, activity, output_dir, device, numberedActName):
     # function from xbot to click on certain button from the current screen
 
     # scan and share
@@ -105,16 +106,21 @@ def scan_and_return(deviceId):
         os.system('adb shell input tap ' + str(1440 - 150) + " " + str(150))
 
     time.sleep(3)
+
+    os.system('adb shell input keyevent 4')
+    time.sleep(1)
+
     # cancel and back
-    os.system('adb shell input keyevent 4')
-    time.sleep(1)
-    os.system('adb shell input keyevent 4')
-    time.sleep(1)
+
+    isHavingResult = collect_results(activity, output_dir, device, numberedActName)
+    if isHavingResult:
+        os.system('adb shell input keyevent 4')
+        time.sleep(1)
     # os.system('adb shell input keyevent 3')
     # time.sleep(1)
 
 
-def collect_results(activity, output_dir, device, isNewActivity, numberedActName):
+def collect_results(activity, output_dir, device, numberedActName):
 
     #  function from xbot to save the result from the device
     # print("collectResultFunc")
@@ -122,12 +128,12 @@ def collect_results(activity, output_dir, device, isNewActivity, numberedActName
      # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
     # To save issues and screenshot temporarily in order to rename.
-    tmp_folder = os.path.join(output_dir, "tmp", device.serial)
+    tmp_folder = os.path.join(output_dir, "tmp")
     if not os.path.exists(tmp_folder):
         os.makedirs(tmp_folder)
 
     '''Pull issues and rename'''
-    extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pkg, tmp_folder)
+    isHavingResult = extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pkg, tmp_folder)
 
     '''Pull screenshot and rename'''
     screenshot_path_act = os.path.join(output_dir,'activity_screenshots', activity)
@@ -145,7 +151,7 @@ def collect_results(activity, output_dir, device, isNewActivity, numberedActName
             cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,numberedActName)
             os.system(cmd)
     clean_tmp_folder(tmp_folder)
-
+    return isHavingResult
 
 def clean_up_scanner_data(adb_command, scanner_pkg):
     clean_results = adb_command + ' shell rm -rf /data/data/%s/cache/export/' % scanner_pkg
@@ -160,8 +166,13 @@ def extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pk
         os.makedirs(issue_path)
 
     pull_results = adb_command + " pull /data/data/%s/cache/export/ %s" % (scanner_pkg, tmp_folder)
-    # pull_results = adb + " pull /data/data/ %s" % ("./testhere")
-    os.system(pull_results)
+    # os.system(pull_results)
+    result = subprocess.run(pull_results, shell=True, stdout=subprocess.PIPE)
+    if 'error' in result.stdout.decode("utf-8"):
+        isHavingResult = False
+    else:
+        isHavingResult = True
+
     zip_folder = os.path.join(tmp_folder + "/export")
     if os.path.exists(zip_folder):
         print(os.listdir(zip_folder))
@@ -187,15 +198,7 @@ def extract_issue(activity, adb_command, numberedActName, output_dir, scanner_pk
                 os.system(mv_cmd)
                 # os.system('mv "%s/%s" "%s/%s.zip"' % (zip_folder, zip, issue_path, activity))
     clean_tmp_folder(tmp_folder)
-    # if os.path.exists(os.path.join(issue_path, activity + '.zip')):
-    #     zipfile = os.path.join(issue_path, activity + '.zip')
-    #
-    #     '''unzip result file and delete zip file'''
-    #     tmp_folder =
-    #
-    #     # rename txt and png file name
-    #     issue_folder = zipfile.split('.zip')[0]
-    #     if os.path.exists(issue_folder) and os.path.isdir(issue_folder):
+    return isHavingResult
 
 
 

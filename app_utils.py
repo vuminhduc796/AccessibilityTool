@@ -32,7 +32,7 @@ def get_list_of_configs():
         data = json.load(fp)
         if "configs" in data:
             list_configs = data["configs"]
-            print(list_configs)
+            # print(list_configs)
 
     return list_configs
 
@@ -82,7 +82,7 @@ def add_new_activity_to_config(app_name, device, mode, activity_name):
             "mode"] == mode:
             current_config["activities"].append(activity_name)
 
-    print(list_configs)
+    # print(list_configs)
     write_config_file(list_configs)
 
 
@@ -91,12 +91,12 @@ def add_new_node_to_config(app_name, device, mode, node):
     list_configs = get_list_of_configs()
     for config in list_configs:
         current_config = config["config"]
-        print(current_config)
+        # print(current_config)
         if current_config["appName"] == app_name and current_config["device"] == device and current_config[
             "mode"] == mode:
             current_config["nodes"].append(node.nodeActivityName)
 
-    print(list_configs)
+    # print(list_configs)
     write_config_file(list_configs)
 
 
@@ -105,7 +105,7 @@ def add_new_edge_to_config(app_name, device, mode, edge):
     list_configs = get_list_of_configs()
     for config in list_configs:
         current_config = config["config"]
-        print(current_config)
+        # print(current_config)
         if current_config["appName"] == app_name and current_config["device"] == device and current_config[
             "mode"] == mode:
             current_config["edges"].append({
@@ -113,5 +113,5 @@ def add_new_edge_to_config(app_name, device, mode, edge):
                 "destination": edge.dest
             })
 
-    print(list_configs)
+    # print(list_configs)
     write_config_file(list_configs)

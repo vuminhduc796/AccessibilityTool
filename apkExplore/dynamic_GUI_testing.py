@@ -161,9 +161,8 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     adb_command = "adb -s " + device.serial
     clean_up_scanner_data(adb_command, scanner_pkg)
     print('Starting scan...')
-    scan_and_return(device.serial)
-    print('Scan complete. Collecting results...')
-    collect_results(activity, output_dir, device, False, numberedActName)
+    scan_and_return(device.serial, activity, output_dir, device, numberedActName)
+    print('Scan complete. Clean up...')
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
@@ -267,13 +266,13 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     d.disconnect()
 
 
-MAX_DEPTH = 3
+MAX_DEPTH = 4
 
 
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
     # early exit when time is up or depth is exceeded
     depth += 1
-    if time.time() > t_end or depth >= MAX_DEPTH:
+    if time.time() > t_end:
         print("time is up")
         return False
 
@@ -287,7 +286,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         print("App exited -- restart")
         d.start_app(targetApp)
 
-    currentScreenHash, views, clickable_views = hash_screen(currentActivity, temp_views)
+    currentScreenHash, views, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
 
     print("This screen has " + str(len(clickable_views)) + " clickable views.")
 
@@ -335,14 +334,31 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     # navigation
     time.sleep(1)
 
+    if depth >= MAX_DEPTH - 1:
+        print("deep reached")
+        return False
+
+
     # back when no view to click
-    if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
-        print("No button to click == go back")
+    if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews) :
+        # check this
+        for view in scrollable_views:
+            print("try scrolling when no button to click")
+            d.view_scroll_diagonal(view)
+            time.sleep(2)
+            temp_views = d.get_views()
+            currentActivity = d.get_top_activity_name().split("/")[-1]
+            newHash, newViews, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
+            if newHash != currentScreenHash:
+                start_exploration(activity, d, graph, output_dir, screen.nodeHash, "Scroll", t_end, targetApp,
+                                  depth)
+
+        print("No button to click -- go back")
         d.key_press('BACK')
         time.sleep(1)
         temp_views = d.get_views()
         currentActivity = d.get_top_activity_name().split("/")[-1]
-        newHash, newViews, clickable_views = hash_screen(currentActivity, temp_views)
+        newHash, newViews, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
 
         # solve soft keyboard prevent back issues
         if newHash == currentScreenHash:
@@ -353,6 +369,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     # click each element on the screen (DFS)
     isContinue = True
+
     while isContinue is True:
         unclicked_views = []
         for element in screen.clickableViews:
@@ -383,7 +400,6 @@ def collect_current_state(d, activity, numberedActName, output_dir):
     filename = numberedActName + ".json"
     filepath = os.path.join(dir_path, filename)
     stateJson = d.get_current_state().to_dict()
-    print(stateJson)
     with open(filepath, 'w') as f:
         json.dump(stateJson, f,  indent=4, separators=(',', ': '))
 
@@ -404,9 +420,14 @@ def hash_screen(currentActivity, temp_views):
     currentScreenHash = ""
 
     clickable_views = []
+    scrollable_views = []
     for view in views:
         if view["clickable"] is True and view['enabled'] is True:
             clickable_views.append(view)
+        if view['scrollable'] is True:
+            scrollable_views.append(view)
+
+    print("scrollable: " + str(len(scrollable_views)))
 
     for view in clickable_views:
         viewHash = str(view["editable"]) + str(view[
@@ -417,7 +438,7 @@ def hash_screen(currentActivity, temp_views):
             currentScreenHash += viewHash
     print("=== HASH === Time taken: " + str(time.time() - start_hashing_time))
     currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
-    return currentScreenHash, views, clickable_views
+    return currentScreenHash, views, clickable_views, scrollable_views
 
 
 def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, android_device, current_setting):
@@ -464,7 +485,7 @@ if __name__ == '__main__':
     #                            "normal")
 
     graph = Graph("AliExpress", "phone-vertical", "normal")
-    dynamic_GUI_testing("emulator-5554", "AliExpress", os.getcwd().replace("/apkExplore", ""), {},
+    dynamic_GUI_testing("emulator-5554", "note", os.getcwd().replace("/apkExplore", ""), {},
                         "phone-vertical", "normal")
 
     # attempt to get resource -> get xml
