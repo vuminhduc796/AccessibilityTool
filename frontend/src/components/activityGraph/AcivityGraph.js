@@ -12,6 +12,7 @@ import { AppContext } from '../../context/Context';
 
 const AcivityGraph = React.memo(()  => {
 
+    var newData = {nodes: [], links: []};
     var data = useContext(AppContext);
     var [currentNode, setNode] = data["currentNode"]
     var [gData, setData] = data["gData"]
@@ -72,7 +73,6 @@ const AcivityGraph = React.memo(()  => {
       setDirectory(folderPath);
 
       var sources = []
-      var newData = {nodes: [], links: []};
       for (var i=0; i<dataConfig.config.edges.length; i++) {
         var link = dataConfig.config.edges[i]
         if (link.source && link.destination) {
@@ -114,16 +114,30 @@ const AcivityGraph = React.memo(()  => {
             }
           }
         }
-        
         setData(newData);
     }
     const [width, height] = useWindowSize();
+
+    const tickFunc = (ref) => {
+      console.log(ref)
+      try {
+        ref.d3Force('center').strength(0)
+        ref.d3Force('charge').strength(-60)
+        //ref.d3Force('link').distance(400)
+        ref.d3Force('link').strength(-0.01)
+      }
+      catch(err) {
+        console.log(err)
+      }
+    }
+
   return (
     <div >
 <ForceGraph2D
       ref={graphRef}
       graphData={gData}
       maxZoom = {20}
+      forceEngine="d3"
       
       nodeCanvasObject={(node, ctx, globalScale) => { 
         var img = new Image(); 
@@ -149,7 +163,10 @@ const AcivityGraph = React.memo(()  => {
 
         if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
 
-        }} 
+        }}
+
+        d3AlphaMin={0.01}
+        onEngineTick={tickFunc(graphRef.current)}
         linkDirectionalArrowLength={20}
         linkDirectionalArrowRelPos={0.5}
         linkDirectionalArrowColor={() => "black"}

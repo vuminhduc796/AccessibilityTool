@@ -39,7 +39,7 @@ const DetailPage = () => {
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Google Accessibility Scanner Report</h2>
         <Row> 
         {/* <img src= {google_scanner_img} style= {{width: '33%'}} alt = "google scanner img"/> */}
-        <Col><textarea style= {{width: '90%', height: '150px'}} defaultValue={google_report} readOnly={'true'}></textarea></Col>
+        <Col><textarea style= {{width: '90%', height: '150px'}} defaultValue={google_report} readOnly={true}></textarea></Col>
         </Row>
         <br />
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> uichecker</h2>
