@@ -11,6 +11,7 @@ const DetailPage = () => {
   var [node, setNode] = data["currentNode"]
 
   const [google_report, setData] = useState("")
+  const [uichecker, setUichecker] = useState("")
   if (node.config !== undefined){
     var cam_gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam_gb.jpg`);
     var cam_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam.jpg`);
@@ -24,7 +25,17 @@ const DetailPage = () => {
   //       .then(text  => {
   //         setData(text);
   //       }) 
+    var crash = true
+    try {
+      var text = require(`../../data/${node.config}crash_record.json`);
+    } catch (error) {
+      crash = false
+    }
+    
+
+    console.log(text)
    }
+   
 
   return (
     <div style={{width: "100%", paddingTop: "15px"}} className="detail-page">
@@ -42,8 +53,8 @@ const DetailPage = () => {
         <Col><textarea style= {{width: '90%', height: '150px'}} defaultValue={google_report} readOnly={true}></textarea></Col>
         </Row>
         <br />
-        <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> uichecker</h2>
-        
+        {crash ? <div><h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Crash Record</h2>
+          <pre style={{'text-align': 'left', 'background-color': 'white', width: '98%'}}>{JSON.stringify(text, null, 2) }</pre></div> : ''}
     </div>
   )
 }
