@@ -243,9 +243,11 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # open app and get the screenshot of the first activity
     if isAppOpened:
         # start to track the crash
-
-        with open(output_dir + '/crashlog.txt', 'w') as f:
-            proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
+        crashRecords = {}
+        with open(output_dir + '/crash_records.json', 'w') as f:
+            json.dump(crashRecords, f)
+        # with open(output_dir + '/crashlog.txt', 'w') as f:
+        #     proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
 
         # d.start_app(targetApp)
         # time.sleep(2)
@@ -291,7 +293,11 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     if currentScreen in activity:
                         print('currentScreen {} in activity {}'.format(currentScreen, activity))
                         t_end = time.time() + 300
-                        start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0)
+                        history = {
+                            "activity": currentScreen,
+                            "action" : "root",
+                        }
+                        start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
                         numberOfSuccessful += 1
                         time.sleep(2)
                         # d.go_home()
@@ -313,15 +319,17 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     d.disconnect()
 
     # stop the crash log
-    proc.terminate()
-    proc.wait()
+    # proc.terminate()
+    # proc.wait()
 
     #read the crash log and clicked_views and match them with the timestamp
-    match_crash_log(output_dir)
+    # match_crash_log(output_dir)
 
 MAX_DEPTH = 4
 
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth):
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth, history):
+    with open(output_dir + '/crashlogTemp.txt', 'w') as f:
+        proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
     # early exit when time is up or depth is exceeded
     depth += 1
     if time.time() > t_end:
@@ -402,8 +410,16 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             currentActivity = d.get_top_activity_name().split("/")[-1]
             newHash, newViews, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
             if newHash != currentScreenHash:
+                newHistory = {
+                    "activity": currentActivity,
+                    "action": {
+                        "action": "Scroll",
+                        "view": str(view),
+                    },
+                    "parent": history,
+                }
                 start_exploration(activity, d, graph, output_dir, screen.nodeHash, "Scroll", t_end, targetApp,
-                                  depth)
+                                  depth, newHistory)
 
         print("No button to click -- go back")
         d.key_press('BACK')
@@ -442,8 +458,45 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             #save time to time format mm-dd H:M:S
             myfile.write(str(datetime.now().strftime("%m-%d %H:%M:%S.%f")) + " ;;; " + str(click_view) + " ;;; " +currentActivity + '\n\n')
         time.sleep(1)
+
+        # check if crash by checking the crash file have content
+        with open(output_dir + '/crashlogTemp.txt', 'r') as f:
+            crashlog = f.read()
+            for line in crashlog.splitlines():
+                # if package name is in line
+                if targetApp.package_name in line:
+                    print("App crashed")
+                    #save the temp log to crashlog with time and action trace
+                    crashtimeStr = line.split("  ")[0]
+                    crashtime = datetime.strptime(crashtimeStr, "%m-%d %H:%M:%S.%f")
+                    #read crashRecords
+                    with open(output_dir + '/crashRecords.json', 'r') as f:
+                        crashRecords = json.load(f)
+                    crashRecords[crashtimeStr] = {
+                        "crash_time": crashtime,
+                        "crash_log": crashlog,
+                        "action_trace": history,
+                    }
+                    #write crashRecords
+                    with open(output_dir + '/crashRecords.json', 'w') as f:
+                        json.dump(crashRecords, f)
+
+        # clear the temp file
+        with open(output_dir + '/crashlogTemp.txt', 'w') as f:
+            f.write('')
+        # restart the proc
+        proc.terminate()
+        proc.wait()
+        newHistory = {
+            "activity": currentActivity,
+            "action": {
+                "type": "click",
+                "view": str(click_view),
+            },
+            "parent": history,
+        }
         isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp,
-                                       depth)
+                                       depth, newHistory)
 
     return True
 
@@ -454,9 +507,12 @@ def collect_current_state(d, activity, numberedActName, output_dir):
         os.makedirs(dir_path)
     filename = numberedActName + ".json"
     filepath = os.path.join(dir_path, filename)
-    stateJson = d.get_current_state().to_dict()
-    with open(filepath, 'w') as f:
-        json.dump(stateJson, f,  indent=4, separators=(',', ': '))
+    try:
+        stateJson = d.get_current_state().to_dict()
+        with open(filepath, 'w') as f:
+            json.dump(stateJson, f,  indent=4, separators=(',', ': '))
+    except Exception as e:
+        return
 
 
 def hash_screen(currentActivity, temp_views):
