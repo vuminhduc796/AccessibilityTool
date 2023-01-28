@@ -10,7 +10,7 @@ const_string = 'const-string'
 package_identifier = 'package="'
 equals_smali = 'Ljava/lang/String;->equals'
 contains_smali = 'Ljava/util/Set;->contains'
-
+intent_para = {}
 
 # NOT USED
 # first check the field contains_smali and equals_smali to judge if equals or contains is existed
