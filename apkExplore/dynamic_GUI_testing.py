@@ -159,6 +159,7 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
     # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
+
     clean_up_scanner_data(adb_command, scanner_pkg)
     print('Starting scan...')
     scan_and_return(device.serial, activity, output_dir, device, numberedActName)
@@ -329,7 +330,8 @@ MAX_DEPTH = 4
 
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth, history):
     with open(output_dir + '/crashlogTemp.txt', 'w') as f:
-        proc = subprocess.Popen(['adb', 'logcat', '--buffer=crash'], stdout=f)
+
+        proc = subprocess.Popen(['adb', '-s', d.serial, 'logcat', '--buffer=crash'], stdout=f)
     # early exit when time is up or depth is exceeded
     depth += 1
     if time.time() > t_end:
@@ -570,6 +572,7 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     check_and_create_dir(current_directory + '/visited_rates/')
 
     current_graph = Graph(app_name, android_device, current_setting)
+    print(current_graph)
     unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, current_graph,
                          login_options,
                          log,
