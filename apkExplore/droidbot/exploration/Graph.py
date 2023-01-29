@@ -13,6 +13,9 @@ class Graph:
         self.app = app
         self.device = device
         self.mode = mode
+        self.screens = []
+        self.edges = []
+        self.activity_count = {}
 
     def addScreen(self, screen):
         self.screens.append(screen)

@@ -56,8 +56,8 @@ currentIndex = 0
 
 
 
-def get_screen_size():
-    cmd = "adb shell wm size"
+def get_screen_size(adb_command):
+    cmd = adb_command + "shell wm size"
     # print(cmd)
     process = os.popen(cmd)
     output = process.read()
@@ -91,30 +91,31 @@ def scan_and_return(deviceId, activity, output_dir, device, numberedActName):
     # print(pressLocations.get(current_emulator))
     if 'emulator' not in current_emulator:
         current_emulator = 'emulator-5554'
-    os.system('adb shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
+    adb_command = 'adb -s ' + current_emulator + ' '
+    os.system(adb_command + 'shell input tap ' + str(pressLocations.get(current_emulator).get("check").get("x")) + " " + str(
         pressLocations.get(current_emulator).get("check").get("y")))
     time.sleep(3)
 
-    screensize = get_screen_size()
+    screensize = get_screen_size(adb_command)
     # horizontal phone need higher cut in cuz more pixel
     if current_emulator == "emulator-5558":
 
-        os.system('adb shell input tap ' + str(int(screensize) - 360) + " " + str(170))
+        os.system(adb_command + 'shell input tap ' + str(int(screensize) - 360) + " " + str(170))
     elif screensize is not None:
-        os.system('adb shell input tap ' + str(int(screensize) - 150) + " " + str(150))
+        os.system(adb_command + 'shell input tap ' + str(int(screensize) - 150) + " " + str(150))
     else:
-        os.system('adb shell input tap ' + str(1440 - 150) + " " + str(150))
+        os.system(adb_command + 'shell input tap ' + str(1440 - 150) + " " + str(150))
 
     time.sleep(3)
 
-    os.system('adb shell input keyevent 4')
+    os.system(adb_command + 'shell input keyevent 4')
     time.sleep(1)
 
     # cancel and back
 
     isHavingResult = collect_results(activity, output_dir, device, numberedActName)
     if isHavingResult:
-        os.system('adb shell input keyevent 4')
+        os.system(adb_command + 'shell input keyevent 4')
         time.sleep(1)
     # os.system('adb shell input keyevent 3')
     # time.sleep(1)

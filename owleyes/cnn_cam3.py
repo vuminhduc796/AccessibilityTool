@@ -273,6 +273,9 @@ def owleyes_scan(currentActivity, newAct, output_dir):
 
     image_name = newAct + ".png"
     image = os.path.join(output_dir, "activity_screenshots",currentActivity, image_name)
+    if not os.path.exists(image):
+        print("no image found")
+        return
     output_folder = os.path.join(output_dir, "ui_issue_cam",currentActivity,newAct)
     if not os.path.exists(os.path.join(output_dir, "ui_issue_cam")):
         os.mkdir(os.path.join(output_dir, "ui_issue_cam"))
@@ -296,25 +299,26 @@ def owleyes_scan(currentActivity, newAct, output_dir):
                        "40"], use_cuda=False)
 
     img = cv2.imread(image, 1)
-    img = np.float32(cv2.resize(img, (448, 768))) / 255
+    if img is not None:
+        img = np.float32(cv2.resize(img, (448, 768))) / 255
 
-    input = preprocess_image(image)
+        input = preprocess_image(image)
 
-    target_index = None
-    mask = grad_cam(input, target_index)
-    show_cam_on_image(img, mask, newAct, output_folder)
-    gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
-    gb = gb_model(input, index=target_index)
+        target_index = None
+        mask = grad_cam(input, target_index)
+        show_cam_on_image(img, mask, newAct, output_folder)
+        gb_model = GuidedBackpropReLUModel(model=model, use_cuda=False)
+        gb = gb_model(input, index=target_index)
 
-    gb = gb.transpose((1, 2, 0))
+        gb = gb.transpose((1, 2, 0))
 
-    cam_mask = cv2.merge([mask, mask, mask])
-    cam_gb = deprocess_image(cam_mask * gb)
-    gb = deprocess_image(gb)
+        cam_mask = cv2.merge([mask, mask, mask])
+        cam_gb = deprocess_image(cam_mask * gb)
+        gb = deprocess_image(gb)
 
-    cv2.imwrite(output_folder + "/gb.jpg", gb)
-    cv2.imwrite(output_folder + "/cam_gb.jpg", cam_gb)
-    print("done: " + output_folder)
+        cv2.imwrite(output_folder + "/gb.jpg", gb)
+        cv2.imwrite(output_folder + "/cam_gb.jpg", cam_gb)
+        print("done: " + output_folder)
     # app_utils.add_new_activity_to_config(
     #     apk_name, emulator_name_android_studio, current_setting, image_num)
 def old_owleyes_scan( parent_folder):
