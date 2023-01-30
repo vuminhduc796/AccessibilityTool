@@ -12,6 +12,7 @@ import { AppContext } from '../../context/Context';
 
 const AcivityGraph = React.memo(()  => {
 
+    var newData = {nodes: [], links: []};
     var data = useContext(AppContext);
     var [currentNode, setNode] = data["currentNode"]
     var [gData, setData] = data["gData"]
@@ -21,9 +22,6 @@ const AcivityGraph = React.memo(()  => {
     const [cacheData, setCacheData] =  useState({});
     const [cacheConfigs, setCacheConfigs] =  useState({});
     const [directory, setDirectory] =  useState("");
-    
-    const modesMapping = {"Light mode": "normal_light_mode", "Dark mode": "dark_mode"}
-    const devicesMapping = {"Vertical Phone": "phone-vertical", "Vertical Tablet": "tablet-vertical", "Horizontal Phone": "phone-horizontal", "Horizontal Tablet": "tablet-horizontal"}
 
     const graphRef = useRef();
 
@@ -42,10 +40,8 @@ const AcivityGraph = React.memo(()  => {
            
         
         var readData = tryLoadData()
-        console.log(readData)
 
         if (readData !== null){
-          console.log("Dddsd")
 
           var dataConfigs = readData.configs;     
 
@@ -57,13 +53,12 @@ const AcivityGraph = React.memo(()  => {
           var isFound = false;
           for(var currentConfigIndex = 0; currentConfigIndex < dataConfigs.length; currentConfigIndex ++){
             var dataConfig = dataConfigs[currentConfigIndex]
-              if (dataConfig.config.device === devicesMapping[currentConfig.device] && dataConfig.config.mode ===  modesMapping[currentConfig.mode]){
+              if (dataConfig.config.device === currentConfig.device && dataConfig.config.mode ===  currentConfig.mode && dataConfig.config.appName === currentConfig.appName){
                 isFound = true
                 loadDataForGraph(dataConfig)
               }
 
             }
-            console.log(isFound)
             setCacheData(dataConfigs);
             setCacheConfigs(currentConfig);
           }
@@ -76,37 +71,82 @@ const AcivityGraph = React.memo(()  => {
     const loadDataForGraph = dataConfig => {
       var folderPath = dataConfig.config.appName + "/" + dataConfig.config.device + "/" + dataConfig.config.mode + "/" ;
       setDirectory(folderPath);
+
+      var sources = []
+      for (var i=0; i<dataConfig.config.edges.length; i++) {
+        var link = dataConfig.config.edges[i]
+        if (link.source && link.destination) {
+          newData.links.push(
+            {
+              "target":link.destination,
+              "source":link.source
+            }
+          )
+        }
+        else {
+          sources.push(link.destination)
+        }
+      }
+
       // set data for node
-        var newData = {nodes: [], links: []};
+        
         var currentID = 0;
         for (var i = 0; i < dataConfig.config.activities.length; i++){
-          var activityScreenshot = dataConfig.config.activities[i];
-          var newNode = {
-            id: currentID.toString(),
-            img: activityScreenshot + ".png",
-            activity: activityScreenshot,
-            config: folderPath
-          };
-          if (currentID === 0) {
-            setNode(newNode);
+          var activityName = dataConfig.config.activities[i];
+          for (var j = 0; j < dataConfig.config.nodes.length; j++) {
+            var nodeName = dataConfig.config.nodes[j];
+            if (nodeName.includes(activityName)) {
+              var newNode = {
+                id: nodeName,
+                img: activityName + "/" + nodeName + ".png",
+                activity: activityName,
+                activityId: i,
+                nodeName: nodeName,
+                config: folderPath,
+                source: sources.includes(nodeName)
+              };
+              if (currentID === 0) {
+                setNode(newNode);
+              }
+              
+              newData.nodes.push(newNode);
+              currentID ++;
+            }
           }
-          
-          newData.nodes.push(newNode);
-          currentID ++;
         }
         setData(newData);
     }
     const [width, height] = useWindowSize();
+
+    const tickFunc = (ref) => {
+      try {
+        ref.d3Force('center').strength(0)
+        ref.d3Force('charge').strength(-60)
+        //ref.d3Force('link').distance(400)
+        ref.d3Force('link').strength(-0.01)
+      }
+      catch(err) {
+
+      }
+    }
+
   return (
     <div >
 <ForceGraph2D
       ref={graphRef}
       graphData={gData}
       maxZoom = {20}
+      forceEngine="d3"
       
       nodeCanvasObject={(node, ctx, globalScale) => { 
         var img = new Image(); 
-        img.src = require( `../../data/${directory}activity_screenshots/${node.img}`)
+        const activityColors = ["red", "green", "blue", "purple", "orange", "pink"]
+        try {
+          img.src = require( `../../data/${directory}activity_screenshots/${node.img}`)
+        } catch (error) {
+          
+        }
+        
 
         if(node.activity === currentNode.activity) {
           ctx.beginPath();
@@ -114,12 +154,26 @@ const AcivityGraph = React.memo(()  => {
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
+        else{
+          ctx.beginPath();
+          ctx.fillStyle = activityColors[node.activityId];
+          ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
+          ctx.stroke();
+        }
+        var x=node.x;var y=node.y;
+
+
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
-        }} 
-        
-        linkDirectionalArrowLength={5.5}
-        linkDirectionalArrowRelPos={100}
+        if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
+
+        }}
+
+        d3AlphaMin={0.01}
+        onEngineTick={tickFunc(graphRef.current)}
+        linkDirectionalArrowLength={20}
+        linkDirectionalArrowRelPos={0.5}
+        linkDirectionalArrowColor={() => "black"}
         linkCurvature={0.25} 
         linkWidth={5}
         height= {height * 0.92}
@@ -140,5 +194,43 @@ const AcivityGraph = React.memo(()  => {
    
   )
 });
+
+function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
+  //variables to be used when creating the arrow
+  var headlen = 2;
+  var angle = Math.atan2(toy-fromy,tox-fromx);
+
+  ctx.save();
+  ctx.strokeStyle = color;
+
+  //starting path of the arrow from the start square to the end square
+  //and drawing the stroke
+  ctx.beginPath();
+  ctx.moveTo(fromx, fromy);
+  ctx.lineTo(tox, toy);
+  ctx.lineWidth = arrowWidth;
+  ctx.stroke();
+
+  //starting a new path from the head of the arrow to one of the sides of
+  //the point
+  ctx.beginPath();
+  ctx.moveTo(tox, toy);
+  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
+             toy-headlen*Math.sin(angle-Math.PI/7));
+
+  //path from the side point of the arrow, to the other side point
+  ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),
+             toy-headlen*Math.sin(angle+Math.PI/7));
+
+  //path from the side point back to the tip of the arrow, and then
+  //again to the opposite side point
+  ctx.lineTo(tox, toy);
+  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
+             toy-headlen*Math.sin(angle-Math.PI/7));
+
+  //draws the paths created above
+  ctx.stroke();
+  ctx.restore();
+}
 
 export default AcivityGraph

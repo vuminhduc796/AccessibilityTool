@@ -25,12 +25,19 @@ from typing import List, Optional
 app = typer.Typer(help="Android Accessibility Tool", no_args_is_help=True)
 config_app = typer.Typer()
 app.add_typer(config_app, name="config", help="Manage config.", no_args_is_help=True)
+emulator_app = typer.Typer()
+app.add_typer(emulator_app, name="emulator",help="Manage emulators.",no_args_is_help=True)
 current_directory = os.getcwd()
 cond = threading.Condition()
+sdk = sys_config.config_content["sdk_platform_path"]
+adb = sdk + '/platform-tools/adb'
+avdmanager = sdk + "/tools/bin/avdmanager"
+sdkmanager = sdk + "/tools/bin/sdkmanager"
+emulator = sdk + "/emulator/emulator"
+
 # export system variables
 os.system("export ANDROID_SDK=" + sys_config.config_content["sdk_platform_path"])
-print(sys_config.config_content["sdk_platform_path"])
-print(os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"]))
+os.system("export ANDROID_SDK_ROOT=" + sys_config.config_content["sdk_platform_path"])
 
 
 def delete_auto_login_config(remove_auto_login: bool):
@@ -251,6 +258,158 @@ def replay():
     """
     pass
 
+@emulator_app.command("default")
+def create_default_emulators(tablet: bool = typer.Option(False, "--tablet", "-t", help="Create tablet emulators")):
+    """
+        Create default emulators.
+    """
+    # delete previous AVDs
+    try:
+        os.system(avdmanager + " delete avd -n phone-vertical")
+        os.system(avdmanager + " delete avd -n phone-horizontal")
+        if tablet:
+            os.system(avdmanager + " delete avd -n tablet-vertical")
+            os.system(avdmanager + " delete avd -n tablet-horizontal")
+    except Exception as e:
+        print(e)
+
+    # setup new AVDs
+    emulator_setup("phone-horizontal", "pixel_xl", True, tablet)
+    emulator_setup("phone-vertical", "pixel_xl", False, tablet)
+    if tablet:
+        emulator_setup("tablet-horizontal", "pixel_c", True, tablet)
+        emulator_setup("tablet-vertical", "pixel_c", False, tablet)
+
+@emulator_app.command("devices")
+def view_devices():
+    """
+    View available devices
+    """
+    os.system(avdmanager + " list device")
+
+@emulator_app.command("view")
+def view_emulators():
+    """
+    View created emulators
+    """
+    os.system(avdmanager + " list avd")
+
+@emulator_app.command("delete")
+def view_emulators(emulator_names: List[str] = typer.Argument(..., help="List of names of the emulators to delete")):
+    """
+    Delete existing emulator
+    """
+    for name in emulator_names:
+        os.system(avdmanager + " delete avd -n " + name)
+
+@emulator_app.command("create")
+def create_emulator(name: str = typer.Option(..., "--name", "-n", help="Name of the emulator"),
+                    device: str = typer.Option("pixel_xl", "--device", "-d", help="Device index or id"),
+                    horizontal: bool = typer.Option(False, "--horizontal", "-h", help="Create the horizontal device"),
+                    tablet: bool = typer.Option(False, "--tablet", "-t", help="Create tablet emulator")):
+    """
+    Create emulator
+    """
+    emulator_setup(name, device, horizontal, tablet)
+
+@emulator_app.command("snapshot_save")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Save snapshot and store in emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} emu avd snapshot save {name}')
+
+
+@emulator_app.command("snapshot_load")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Load snapshot stored in emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} emu avd snapshot load {name}')
+
+@emulator_app.command("snapshot_export")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Export snapshot from emulator to /snapshots
+    """
+    if serial:
+        serial = ' -s ' + serial
+    path = os.getcwd() + "/snapshots/" + name
+    os.system(f'{adb}{serial} emu avd snapshot pull {name} {path}')
+
+@emulator_app.command("snapshot_import")
+def snapshot_save(name: str = typer.Option(..., "--name", "-n", help="Name of the snapshot"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Import snapshot from /snapshots to emulator
+    """
+    if serial:
+        serial = ' -s ' + serial
+    path = os.getcwd() + "/snapshots/" + name
+    os.system(f'{adb}{serial} emu avd snapshot push {name} {path}')
+
+@emulator_app.command("font_size")
+def snapshot_save(value: str = typer.Option(..., "--value", "-v", help="Value to set as the font size"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Set the font size
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} shell settings put system font_scale {value}')
+
+@emulator_app.command("screen_size")
+def snapshot_save(value: str = typer.Option(..., "--value", "-v", help="Value to set as the font size"),
+                  serial: str = typer.Option("", "--serial", "-s", help="emulator serial number. e.g. emulator-5554. Can be left blank if there is only one emulator running")):
+    """
+    Set the screen size
+    """
+    if serial:
+        serial = ' -s ' + serial
+    os.system(f'{adb}{serial} shell wm size {value}')
+
+@emulator_app.command("running")
+def snapshot_save():
+    """
+    View running emulator serial numbers
+    """
+    os.system(adb + ' devices')
+
+
+def emulator_setup(name, device, horizontal, tablet):
+    if sys_config.config_content["arm64"] == 'true':
+        package = "system-images;android-28;default;arm64-v8a"
+    else:
+        package = "system-images;android-28;default;x86"
+
+    os.system(sdkmanager + f' "{package}"')
+    os.system(avdmanager + f' create avd -n {name} -k "{package}" -d {device}')
+    os.system(emulator + f' -avd {name} -port 5584 &')  # start the emulator
+
+    time.sleep(1)
+    os.system(adb + ' -s emulator-5584 wait-for-device')
+    while subprocess.check_output(adb + ' -s emulator-5584 shell getprop sys.boot_completed', shell=True, text=True).strip() != "1":
+        time.sleep(1)
+
+    # install scanner apk
+    scanner_apk = os.getcwd() + "/xbot/scanner.apk"
+    os.system(adb + ' -s emulator-5584 install ' + scanner_apk)
+
+    os.system(adb + " -s emulator-5584 shell settings put system font_scale 1.0")  # set font size to 1
+    if (horizontal and not tablet) or (not horizontal and tablet):
+        os.system(adb + " shell settings put system accelerometer_rotation 0")
+        os.system(adb + " shell settings put system user_rotation 3")
+
+    time.sleep(1)
+    os.system(adb + " -s emulator-5584 emu kill")  # kill the emulator
+    time.sleep(5)
 
 @config_app.command("emulator")
 def emulator_config(add_emulator: Optional[List[str]] = typer.Option(None, "--add",
