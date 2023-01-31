@@ -14,6 +14,7 @@ const DetailPage = () => {
   const [uichecker, setUichecker] = useState("")
   if (node.config !== undefined){
     try {
+      var original_img = require( `../../data/${node.config}activity_screenshots/${node.activity}/${node.nodeName}.png`);
       var cam_gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam_gb.jpg`);
       var cam_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/cam.jpg`);
       var gb_img = require( `../../data/${node.config}ui_issue_cam/${node.activity}/${node.nodeName}/gb.jpg`);
@@ -41,7 +42,12 @@ const DetailPage = () => {
 
   return (
     <div style={{width: "100%", paddingTop: "15px"}} className="detail-page">
-
+        <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Original Image</h2>
+        <Row>
+          <Col>
+            <img src={original_img} style={{width: '30%'}} alt = "original img"/>
+          </Col>
+        </Row>
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Visual Issues</h2>
         <Row>
         <Col><img src= {cam_img} style= {{width: '100%'}} alt = "cam scanner img"/></Col>
