@@ -29,12 +29,15 @@ const DetailPage = () => {
     } catch (error) {
       issues = false;
     }
-  
-    fetch(text_data)
+
+    if (issues) {
+      fetch(text_data)
         .then((r) => r.text())
         .then(text  => {
           setData(text);
         }) 
+    }
+    
     var crash = true
     try {
       var text = require(`../../data/${node.config}crash_record.json`);
@@ -42,7 +45,6 @@ const DetailPage = () => {
       crash = false
     }
    }
-   
 
   return (
     <div style={{width: "100%", paddingTop: "15px"}} className="detail-page">
@@ -60,13 +62,13 @@ const DetailPage = () => {
         </Row>
         <br/> 
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Google Accessibility Scanner Report</h2>
-        {issues ? <div><Row> 
-        <Col><img src= {google_scanner_img} style= {{width: '70%'}} alt = "google scanner img"/></Col>
-        <Col><textarea style= {{width: '90%', height: '100%'}} defaultValue={google_report} readOnly={true}></textarea></Col>
-        </Row></div> : <p>No issues found</p>}
+        {issues ? <div> 
+        <img src= {google_scanner_img} style= {{width: '15vw', paddingBottom:10}} alt = "google scanner img"/>
+        <pre style={{'text-align': 'left', 'backgroundColor': 'white', width: '97%', height: '50vh'}}>{google_report}</pre>
+        </div> : <p>No issues found</p>}
         <br />
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Crash Record</h2>
-        {crash ? <div><pre style={{'text-align': 'left', 'background-color': 'white', width: '98%'}}>{JSON.stringify(text, null, 2) }</pre></div> : <p>No crash record found</p>}
+        {crash ? <div><pre style={{'text-align': 'left', 'backgroundColor': 'white', width: '98%'}}>{JSON.stringify(text, null, 2) }</pre></div> : <p>No crash record found</p>}
     </div>
   )
 }
