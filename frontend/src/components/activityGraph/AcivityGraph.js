@@ -162,11 +162,15 @@ const AcivityGraph = React.memo(()  => {
         }
         var x=node.x;var y=node.y;
 
-
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
         if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
 
+        if (node.nodeName === currentNode.nodeName) {
+          var eye_img = new Image();
+          eye_img.src = require(`../../images/eye.png`);
+          ctx.drawImage(eye_img, node.x-20, node.y-18, 50, 30);
+        }
         }}
 
         d3AlphaMin={0.01}
