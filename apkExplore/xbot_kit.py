@@ -58,7 +58,6 @@ currentIndex = 0
 
 def get_screen_size(adb_command):
     cmd = adb_command + "shell wm size"
-    # print(cmd)
     process = os.popen(cmd)
     output = process.read()
     m = re.search(r'(\d+)x(\d+)', output)
@@ -88,7 +87,6 @@ def scan_and_return(deviceId, activity, output_dir, device, numberedActName):
     # os.system(adb + ' shell input tap 720 826')
     time.sleep(1)
     current_emulator = deviceId
-    # print(pressLocations.get(current_emulator))
     if 'emulator' not in current_emulator:
         current_emulator = 'emulator-5554'
     adb_command = 'adb -s ' + current_emulator + ' '
@@ -124,9 +122,7 @@ def scan_and_return(deviceId, activity, output_dir, device, numberedActName):
 def collect_results(activity, output_dir, device, numberedActName):
 
     #  function from xbot to save the result from the device
-    # print("collectResultFunc")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
-     # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
     # To save issues and screenshot temporarily in order to rename.
     tmp_folder = os.path.join(output_dir, "tmp")

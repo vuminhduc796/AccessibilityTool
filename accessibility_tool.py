@@ -16,7 +16,6 @@ import shutil
 from apkExplore.dynamic_GUI_testing import dynamic_GUI_testing
 from guidedExplore.run_preprocess import run_deer
 from owleyes.cnn_cam3 import owleyes_scan
-from xbot.code.run_xbot import run_xbot
 from typing import List, Optional
 
 
@@ -91,7 +90,7 @@ def detect_file_availability_issues(
             devices_names.append(device)
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
-    print(apks)
+
     for apk in apks:
 
         apk_output_folder = current_directory + "/output/" + apk[:-4]
@@ -141,11 +140,6 @@ def detect_file_availability_issues(
         front_end_thread = threading.Thread(target=front_end_run)
         thread_list.append(front_end_thread)
 
-        # if xbot or complete:
-        #     xbot_thread = threading.Thread(target=xbot_thread_run, args=(
-        #         apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size))
-        #     thread_list.append(xbot_thread)
-
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
             thread_list.append(ui_checker_thread)
@@ -156,14 +150,12 @@ def detect_file_availability_issues(
             thread_list.append(deer_thread)
 
         # if gcam or screenshot_issue or complete:
-        #     print("hehe")
         #     owleyes_thread = threading.Thread(target=owleyes_thread_run, args=(
         #         devices_names, device_name_alias, apk_output_folder, current_setting))
         #     thread_list.append(owleyes_thread)
 
         for thread in thread_list:
             thread.start()
-            print('thread runnnn')
         for thread in thread_list:
             thread.join()
 
@@ -172,17 +164,6 @@ def front_end_run():
     # start frontend
     start_front_end_cmd = "cd frontend && npm start"
     p = subprocess.run(start_front_end_cmd, shell=True)
-
-
-def xbot_thread_run(apk, apk_output_folder, android_studio_devices, current_dark_mode, current_font_size):
-    # output folder for xbot
-    with cond:
-        # typer.secho("========Xbot========", fg=typer.colors.MAGENTA)
-        if not os.path.exists(apk_output_folder):
-            os.makedirs(apk_output_folder)
-        # typer.secho("========Start running Xbot========", fg=typer.colors.MAGENTA)
-        run_xbot(android_studio_devices, apk, current_directory, current_dark_mode, current_font_size)
-        # typer.secho("========Xbot Finished========", fg=typer.colors.MAGENTA)
 
 
 def ui_checker_thread_run(apk_path, apk):
@@ -243,7 +224,6 @@ def deer_thread_run(apk, devices_names, device_name_alias, current_setting):
 
 # def owleyes_thread_run(devices_names, device_name_alias, apk_output_folder, current_setting):
 #     for device in devices_names:
-#         print("hehehehi")
 #         emulator_name_android_studio = device_name_alias[device]["alias"]
 #         # typer.secho("========Start running owleye========", fg=typer.colors.MAGENTA)
 #         path = os.path.join(apk_output_folder, emulator_name_android_studio, current_setting)

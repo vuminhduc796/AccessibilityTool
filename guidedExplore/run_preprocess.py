@@ -3,19 +3,13 @@ import shutil
 from os.path import isfile, join
 
 from guidedExplore.decompile_apk import unit_decpmpile
-from guidedExplore.extract_atg import batch_extract, activity_searching
 from guidedExplore.extract_intent import extractIntent
 from guidedExplore.extract_intent_paras import smali_intent_para_extractor
-from guidedExplore.inject_apk import injectApk
-from guidedExplore.instrument_apk import unit_inject
 from guidedExplore.merge_deeplink_params import ParamGenerator
 
 def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path,outmost_directory):
-    # if not os.path.exists(app_save_dir):
-    #     print(app_save_dir, 'not found')
-    #     return
 
-    # recompile apk
+
     print('recompile', apk_path)
     unit_decpmpile(apk_path, app_save_dir)
 
@@ -25,17 +19,8 @@ def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplink
     repackage_app_save_apk = os.path.join(repackage_app_save_dir, apk)
     if not os.path.exists(repackage_app_save_apk):
         os.mkdir(repackage_app_save_apk)
-    print(deeplinks_path)
     extractIntent(app_save_dir, deeplinks_path)
 
-
-    # extract atg commented out because currently under investigation due to low coverage.
-
-    # atg_save_dir = os.path.join(save_dir, 'activity_atg')
-    # if not os.path.exists(atg_save_dir):
-    #     os.mkdir(atg_save_dir)
-    # batch_extract(decompiled_apks=recompiled_apks, save_dir=atg_save_dir)
-    #
 
     # extract intent parameters
     paras_save_path = os.path.join(save_dir, 'intent_para.json')
@@ -72,7 +57,6 @@ def run_deer(apk_file, outmost_directory):
         print("filename invalid")
         return
     app_name = apk_file[:-4]
-    print(outmost_directory)
     current_directory = os.path.join(outmost_directory, "guidedExplore/data")
 
     app_save_dir = current_directory + "/recompiled_apks/" + app_name

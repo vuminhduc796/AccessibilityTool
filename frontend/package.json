@@ -47,8 +47,5 @@
       "last 1 safari version"
     ]
     
-  },
-  "overrides": {
-    "autoprefixer": "10.4.5"
-}
+  }
 }

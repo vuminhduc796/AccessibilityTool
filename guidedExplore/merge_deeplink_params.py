@@ -84,8 +84,7 @@ class ParamGenerator:
                                 param_dict = mapKey(param_dict, "extra_float", 1, key)
                             elif type == "getLongExtra":
                                 param_dict = mapKey(param_dict, "extra_long", 1, key)
-                        print("Dsd")
-                        print(param_dict)
+
                         for key, value in param_dict.items():
                             for component in activities[activity]:
                                 component[key] = value

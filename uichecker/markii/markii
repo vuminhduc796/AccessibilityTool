@@ -84,7 +84,7 @@ def analyze(args, unknown):
         print('>>>>>> %s does not exist, try to install with sdkmanager...' % android_jar)
         sub_cmd = [os.path.join(args.sdkpath, 'tools', 'bin', 'sdkmanager'),
                    'platforms;android-%s' % target_level]
-        # print('>>>>>> %s' % ' '.join(sub_cmd))
+
         call(sub_cmd)
     if args.google:
         google_api_dir = find_best_google_api(args.sdkpath, target_level)
@@ -92,11 +92,11 @@ def analyze(args, unknown):
             print(">>>>>> Google API Level: %d not installed, try to install with sdkmanager..." % target_level)
             sub_cmd = [os.path.join(args.sdkpath, 'tools', 'bin', 'sdkmanager'),
                        'add-ons;addon-google_apis-google-%s' % target_level]
-            # print('>>>>>> %s' % ' '.join(sub_cmd))
+
             if call(sub_cmd) != 0:
                 sub_cmd = [os.path.join(args.sdkpath, 'tools', 'bin', 'sdkmanager'),
                            'add-ons;addon-google_apis-google-24']
-                # print('>>>>>> %s' % ' '.join(sub_cmd))
+
                 call(sub_cmd)
             google_api_dir = find_best_google_api(args.sdkpath, target_level)
         google_api = extract_libs_from_path(google_api_dir + "/libs")

@@ -57,7 +57,7 @@ class Dataset(data.Dataset):
         if self.mode == 'train':                                   
             img = Image.open(self.list_img[item])                     
             label = self.list_label[item]                              
-            # print(self.list_img[item])
+
             return self.transform(img), torch.LongTensor([label])      
         elif self.mode == 'test':                                    
             img = Image.open(self.list_img[item])

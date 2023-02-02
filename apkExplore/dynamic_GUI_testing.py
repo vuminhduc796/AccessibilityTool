@@ -61,7 +61,6 @@ def email_password_login(d, login_options):
     passwordView = currentState.get_input_view_with_keywords('password')
     if passwordView is not None:
         x, y = currentState.get_view_center(passwordView)
-        print(passwordView)
         d.view_touch(x, y)
         d.view_set_text(login_options['password'])
         time.sleep(5)
@@ -75,7 +74,6 @@ def email_password_login(d, login_options):
     if loginView is None:
         loginView = currentState.get_view_with_keywords('sign in')
     if loginView is not None:
-        print(loginView)
         x, y = currentState.get_view_center(loginView)
         d.view_touch(x, y)
         time.sleep(5)
@@ -157,13 +155,12 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     device.adb.shell(
         "settings put secure enabled_accessibility_services com.google.android.apps.accessibility.auditor/com.google.android.apps.accessibility.auditor.ScannerService")
     scanner_pkg = 'com.google.android.apps.accessibility.auditor'
-    # print('Collecting scan results from device...')
     adb_command = "adb -s " + device.serial
 
     clean_up_scanner_data(adb_command, scanner_pkg)
-    print('Starting scan...')
+    print('Accessibility Scanner: Starting scan...')
     scan_and_return(device.serial, activity, output_dir, device, numberedActName)
-    print('Scan complete. Clean up...')
+    print('Accessibility Scanner: Scan complete. Clean up...')
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
@@ -279,9 +276,6 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     except subprocess.CalledProcessError as e:
                         print("Ping stdout output:\n", e.output)
                     time.sleep(2)
-                    print(intent.__str__())
-
-                    print("desire: " + activity)
 
                     # if login_options['hasLogin']:
                     #     print("login")
@@ -289,10 +283,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     #
                     # if login_options['facebookLogin']:
                     #     login_with_facebook(d, login_options)
-                    # print(clickable_views)
+
                     currentScreen = d.get_top_activity_name().split("/")[-1]
                     if currentScreen in activity:
-                        print('currentScreen {} in activity {}'.format(currentScreen, activity))
+                        print('Exploration: currentScreen {} in activity {}'.format(currentScreen, activity))
                         t_end = time.time() + 300
                         history = {
                             "activity": currentScreen,
@@ -304,15 +298,14 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                         # d.go_home()
                         break
                     else:
-                        print('currentScreen {} not in activity {}'.format(currentScreen, activity))
+                        print('Exploration: currentScreen {} not in activity {}'.format(currentScreen, activity))
                     d.go_home()
                     time.sleep(1)
                     d.start_app(targetApp)
                     time.sleep(1)
 
-                print("total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
+                print("Exploration: total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
 
-    # print(currentState.views)
     # try automatic login
 
     visited_activities.append(mainActivity)
@@ -335,7 +328,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     # early exit when time is up or depth is exceeded
     depth += 1
     if time.time() > t_end:
-        print("time is up")
+        print("Exploration: time is up")
         return False
 
     time.sleep(1)
@@ -345,17 +338,14 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     while currentActivity[0] == '.':
         currentActivity = currentActivity[1:]
     if currentActivity in "com.android.launcher3/.Launcher":
-        print("App exited -- restart")
+        print("Exploration: App exited -- restart")
         d.start_app(targetApp)
 
     currentScreenHash, views, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
 
-    print("This screen has " + str(len(clickable_views)) + " clickable views.")
-
     # TODO: support text input views and other actions such as swipe and scroll
 
     if not graph.checkScreenExisted(currentScreenHash):
-        print("Added new screen")
         newAct = graph.getActivityStoringName(currentActivity)
         graph.addScreen(Screen(views, currentScreenHash, newAct,
                                clickable_views))
@@ -371,10 +361,10 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         time.sleep(2)
         # check if app exited
         if d.get_top_activity_name() == "com.android.launcher3/.Launcher":
-            print("App exited -- restart")
+            print("Exploration: App exited -- restart")
             d.start_app(targetApp)
     else:
-        print("screen existed")
+        print("Exploration: Screen existed")
 
     print(graph)
     screen = graph.getScreenFromExisted(currentScreenHash)
@@ -382,7 +372,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
     # add Edge
     if previous_view_hash != currentScreenHash:
-        print("Added new edge")
 
         previousNode = graph.getScreenFromExisted(previous_view_hash)
         if previousNode is None:
@@ -397,7 +386,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     time.sleep(1)
 
     if depth >= MAX_DEPTH - 1:
-        print("deep reached")
+        print("Exploration: Deep reached")
         return False
 
 
@@ -423,7 +412,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
                 start_exploration(activity, d, graph, output_dir, screen.nodeHash, "Scroll", t_end, targetApp,
                                   depth, newHistory)
 
-        print("No button to click -- go back")
         d.key_press('BACK')
         time.sleep(1)
         temp_views = d.get_views()
@@ -432,7 +420,6 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
 
         # solve soft keyboard prevent back issues
         if newHash == currentScreenHash:
-            print("Repress BACK")
             d.key_press('BACK')
             time.sleep(1)
         return True
@@ -449,7 +436,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         elif len(unclicked_views) <= 0:
             isContinue = False
             break
-        print("clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(
+        print("Exploration: Clicking " + str(len(unclicked_views)) + " in " + str(len(screen.clickedViews)) + "/" + str(
             len(screen.clickableViews)))
 
         screen.addToClickedView(click_view)
@@ -467,7 +454,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             for line in crashlog.splitlines():
                 # if package name is in line
                 if targetApp.package_name in line:
-                    print("App crashed")
+                    print("Exploration: App crashed")
                     #save the temp log to crashlog with time and action trace
                     crashtimeStr = line.split("  ")[0]
                     crashtime = datetime.strptime(crashtimeStr, "%m-%d %H:%M:%S.%f")
@@ -528,8 +515,6 @@ def hash_screen(currentActivity, temp_views):
 
         if bottom_bound > top_bound and right_bound > left_bound:
             views.append(view)
-    print("Collected " + str(len(views)) + "/" + str(len(temp_views)))
-    start_hashing_time = time.time()
     currentScreenHash = ""
 
     clickable_views = []
@@ -540,8 +525,6 @@ def hash_screen(currentActivity, temp_views):
         if view['scrollable'] is True:
             scrollable_views.append(view)
 
-    print("scrollable: " + str(len(scrollable_views)))
-
     for view in clickable_views:
         viewHash = str(view["editable"]) + str(view[
                                                    "clickable"]) + view["class"] + view["size"] + str(view[
@@ -549,7 +532,6 @@ def hash_screen(currentActivity, temp_views):
 
         if viewHash not in currentScreenHash:
             currentScreenHash += viewHash
-    print("=== HASH === Time taken: " + str(time.time() - start_hashing_time))
     currentScreenHash = hashlib.sha1(currentScreenHash.encode("utf-8")).hexdigest()
     return currentScreenHash, views, clickable_views, scrollable_views
 
@@ -572,7 +554,7 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
     check_and_create_dir(current_directory + '/visited_rates/')
 
     current_graph = Graph(app_name, android_device, current_setting)
-    print(current_graph)
+    print("Exploration: Start Exploration")
     unit_dynamic_testing(emulator, apk_path, atg_json, output_directory, deeplinks_json, atg_save_dir, current_graph,
                          login_options,
                          log,
@@ -580,7 +562,6 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
 
 
 if __name__ == '__main__':
-    print(os.getcwd())
     outmost_directory = os.getcwd().replace('/apkExplore', '')
     # login_options = {
     #     'hasLogin': True,
