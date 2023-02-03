@@ -226,6 +226,8 @@ def deeplink_component_extraction(activity, activityName, isActivityExported, pk
             if 'data' in activity['intent-filter'].keys():
                 dataField = activity['intent-filter']['data']
                 thisDict = extractLink(dataField, thisDict, activityName)
+    else:
+        thisDict = addComponent(activityName, thisDict, pkName, "android.intent.action.VIEW", None)
     return thisDict
 
 

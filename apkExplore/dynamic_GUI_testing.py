@@ -164,6 +164,7 @@ def run_xbot_check(activity, output_dir, device, numberedActName):
     clean_up_scanner_data(adb_command, scanner_pkg)
     device.adb.shell("am force-stop com.google.android.apps.accessibility.auditor")
 
+
 def match_crash_log(output_dir):
     crashRecords = {}
     with open(output_dir + '/crashlog.txt', 'r') as f:
@@ -195,13 +196,15 @@ def match_crash_log(output_dir):
             clickTime = datetime.strptime(clickTime, "%m-%d %H:%M:%S.%f")
             # check if the time is same as the crash time or within 1 second
             for crashRecordTime in crashRecords:
-                if time == crashRecordTime or (int(clickTime.timestamp()) - int(crashRecords[crashRecordTime]['crash_time'].timestamp()) <= 2):
+                if time == crashRecordTime or (
+                        int(clickTime.timestamp()) - int(crashRecords[crashRecordTime]['crash_time'].timestamp()) <= 2):
                     crashRecords[crashRecordTime]["action_detail"]["clicked_view"] = line.split(" ;;; ")[1]
                     crashRecords[crashRecordTime]["action_detail"]["activity"] = line.split(" ;;; ")[2]
 
     # serialize the timestamp in crashRecords
     for crashRecordTime in crashRecords:
-        crashRecords[crashRecordTime]["crash_time"] = crashRecords[crashRecordTime]["crash_time"].strftime("%m-%d %H:%M:%S.%f")
+        crashRecords[crashRecordTime]["crash_time"] = crashRecords[crashRecordTime]["crash_time"].strftime(
+            "%m-%d %H:%M:%S.%f")
     # save the crash records to a file
     with open(output_dir + '/crash_records.json', 'w') as f:
         json.dump(crashRecords, f)
@@ -211,6 +214,7 @@ def match_crash_log(output_dir):
     # os.remove(output_dir + '/clicked_views.txt')
 
     return crashRecords
+
 
 def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, current_graph,
                          login_options,
@@ -234,6 +238,10 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # install app
     targetApp = App(apk_path, output_dir=atg_save_dir)
     isAppOpened = d.install_app(targetApp)
+
+    if not isAppOpened:
+        print("Exploration: APK failed to install")
+        return
     mainActivity = targetApp.main_activity
 
     numberOfActivities = 0
@@ -249,62 +257,28 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
 
         # d.start_app(targetApp)
         # time.sleep(2)
+
         with open(deeplinks_json, 'r', encoding='utf8') as f:
-            activities = json.loads(f.read())
+            activities = []
+            try:
+                activities = json.loads(f.read())
+            except:
+                print("No acitivity found")
+            print(activities)
+            if len(activities) == 0:
+                d.install_app(targetApp)
+                t_end = time.time() + 1200
+                history = {
+                    "activity": d.get_top_activity_name(),
+                    "action": "root",
+                }
+                start_exploration(d.get_top_activity_name(), d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
+
+            print("Exploration: total number of activities found: " + str(len(activities)))
             for activity in activities:
                 numberOfActivities += 1
-                for deeplink in activities[activity]:
-                    intent = Intent(component=deeplink["component"],
-                                    action=deeplink["action"],
-                                    category=deeplink["category"],
-                                    extra_boolean=deeplink["extra_boolean"],
-                                    extra_int=deeplink["extra_int"],
-                                    data_uri=deeplink["data_uri"],
-                                    extra_keys=deeplink["extra_keys"],
-                                    extra_array_float=deeplink["extra_array_float"],
-                                    extra_array_long=deeplink["extra_array_long"],
-                                    extra_array_int=deeplink["extra_array_int"],
-                                    extra_float=deeplink["extra_float"],
-                                    extra_long=deeplink["extra_long"],
-                                    extra_component=deeplink["extra_component"],
-                                    extra_string=deeplink["extra_string"],
-                                    )
-
-                    time.sleep(2)
-                    try:
-                        d.send_intent(intent=intent.get_cmd())
-                    except subprocess.CalledProcessError as e:
-                        print("Ping stdout output:\n", e.output)
-                    time.sleep(2)
-
-                    # if login_options['hasLogin']:
-                    #     print("login")
-                    #     email_password_login(d, login_options)
-                    #
-                    # if login_options['facebookLogin']:
-                    #     login_with_facebook(d, login_options)
-
-                    currentScreen = d.get_top_activity_name().split("/")[-1]
-                    if currentScreen in activity:
-                        print('Exploration: currentScreen {} in activity {}'.format(currentScreen, activity))
-                        t_end = time.time() + 300
-                        history = {
-                            "activity": currentScreen,
-                            "action" : "root",
-                        }
-                        start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
-                        numberOfSuccessful += 1
-                        time.sleep(2)
-                        # d.go_home()
-                        break
-                    else:
-                        print('Exploration: currentScreen {} not in activity {}'.format(currentScreen, activity))
-                    d.go_home()
-                    time.sleep(1)
-                    d.start_app(targetApp)
-                    time.sleep(1)
-
-                print("Exploration: total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
+                explore_activity(activities, activity, current_graph, d, numberOfActivities, numberOfSuccessful,
+                                 output_dir, targetApp)
 
     # try automatic login
 
@@ -316,12 +290,71 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
     # proc.terminate()
     # proc.wait()
 
-    #read the crash log and clicked_views and match them with the timestamp
+    # read the crash log and clicked_views and match them with the timestamp
     # match_crash_log(output_dir)
 
-MAX_DEPTH = 4
 
-def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth, history):
+def explore_activity(activities, activity, current_graph, d, numberOfActivities, numberOfSuccessful, output_dir,
+                     targetApp):
+    for deeplink in activities[activity]:
+        intent = Intent(component=deeplink["component"],
+                        action=deeplink["action"],
+                        category=deeplink["category"],
+                        extra_boolean=deeplink["extra_boolean"],
+                        extra_int=deeplink["extra_int"],
+                        data_uri=deeplink["data_uri"],
+                        extra_keys=deeplink["extra_keys"],
+                        extra_array_float=deeplink["extra_array_float"],
+                        extra_array_long=deeplink["extra_array_long"],
+                        extra_array_int=deeplink["extra_array_int"],
+                        extra_float=deeplink["extra_float"],
+                        extra_long=deeplink["extra_long"],
+                        extra_component=deeplink["extra_component"],
+                        extra_string=deeplink["extra_string"],
+                        )
+
+        time.sleep(2)
+        try:
+            d.send_intent(intent=intent.get_cmd())
+        except subprocess.CalledProcessError as e:
+            print("Ping stdout output:\n", e.output)
+        time.sleep(2)
+
+        # if login_options['hasLogin']:
+        #     print("login")
+        #     email_password_login(d, login_options)
+        #
+        # if login_options['facebookLogin']:
+        #     login_with_facebook(d, login_options)
+
+        currentScreen = d.get_top_activity_name().split("/")[-1]
+        if True:
+            print('Exploration: currentScreen {} in activity {}'.format(currentScreen, activity))
+            t_end = time.time() + 300
+            history = {
+                "activity": currentScreen,
+                "action": "root",
+            }
+            start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
+            numberOfSuccessful += 1
+            time.sleep(2)
+            # d.go_home()
+            break
+        else:
+            print('Exploration: currentScreen {} not in activity {}'.format(currentScreen, activity))
+        d.go_home()
+        time.sleep(1)
+        d.start_app(targetApp)
+        time.sleep(1)
+    print(
+        "Exploration: total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
+
+
+MAX_DEPTH = 5
+
+
+def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth,
+                      history):
     with open(output_dir + '/crashlogTemp.txt', 'w') as f:
 
         proc = subprocess.Popen(['adb', '-s', d.serial, 'logcat', '--buffer=crash'], stdout=f)
@@ -334,6 +367,10 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     time.sleep(1)
 
     temp_views = d.get_views()
+    if temp_views is None:
+        d.key_press('BACK')
+        time.sleep(2)
+        temp_views = d.get_views()
     currentActivity = d.get_top_activity_name().split("/")[-1]
     while currentActivity[0] == '.':
         currentActivity = currentActivity[1:]
@@ -389,12 +426,10 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         print("Exploration: Deep reached")
         return False
 
-
     # back when no view to click
-    if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews) :
+    if len(screen.clickableViews) == 0 or len(screen.clickableViews) == len(screen.clickedViews):
         # check this
         for view in scrollable_views:
-            print("try scrolling when no button to click")
             d.view_scroll_diagonal(view)
             time.sleep(2)
             temp_views = d.get_views()
@@ -444,8 +479,9 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         d.tap_view(click_view)
         # save the clicked view and the current screen by timestamp
         with open(output_dir + "/clicked_views.txt", "a+") as myfile:
-            #save time to time format mm-dd H:M:S
-            myfile.write(str(datetime.now().strftime("%m-%d %H:%M:%S.%f")) + " ;;; " + str(click_view) + " ;;; " +currentActivity + '\n\n')
+            # save time to time format mm-dd H:M:S
+            myfile.write(str(datetime.now().strftime("%m-%d %H:%M:%S.%f")) + " ;;; " + str(
+                click_view) + " ;;; " + currentActivity + '\n\n')
         time.sleep(1)
 
         # check if crash by checking the crash file have content
@@ -455,19 +491,19 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
                 # if package name is in line
                 if targetApp.package_name in line:
                     print("Exploration: App crashed")
-                    #save the temp log to crashlog with time and action trace
+                    # save the temp log to crashlog with time and action trace
                     crashtimeStr = line.split("  ")[0]
                     crashtime = datetime.strptime(crashtimeStr, "%m-%d %H:%M:%S.%f")
-                    #read crashRecords
-                    with open(output_dir + '/crashRecords.json', 'r') as f:
+                    # read crashRecords
+                    with open(output_dir + '/crash_records.json', 'r') as f:
                         crashRecords = json.load(f)
                     crashRecords[crashtimeStr] = {
-                        "crash_time": crashtime,
+                        "crash_time": str(crashtime),
                         "crash_log": crashlog,
                         "action_trace": history,
                     }
-                    #write crashRecords
-                    with open(output_dir + '/crashRecords.json', 'w') as f:
+                    # write crashRecords
+                    with open(output_dir + '/crash_records.json', 'w') as f:
                         json.dump(crashRecords, f)
 
         # clear the temp file
@@ -499,12 +535,14 @@ def collect_current_state(d, activity, numberedActName, output_dir):
     try:
         stateJson = d.get_current_state().to_dict()
         with open(filepath, 'w') as f:
-            json.dump(stateJson, f,  indent=4, separators=(',', ': '))
+            json.dump(stateJson, f, indent=4, separators=(',', ': '))
     except Exception as e:
         return
 
 
 def hash_screen(currentActivity, temp_views):
+    if temp_views is None:
+        return "Not found", [], [], []
     views = []
     for view in temp_views:
         view_bound = view["bounds"]

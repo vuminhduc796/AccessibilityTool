@@ -10,7 +10,7 @@ from guidedExplore.merge_deeplink_params import ParamGenerator
 def unit_run_preprocess(apk_path, app_save_dir, repackage_app_save_dir, deeplinks_path, save_dir, recompiled_apks, merged_path,outmost_directory):
 
 
-    print('recompile', apk_path)
+    print('Preprocess: Decompling: ', apk_path)
     unit_decpmpile(apk_path, app_save_dir)
 
     # instrument apk

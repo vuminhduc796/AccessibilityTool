@@ -57,16 +57,13 @@ def detect_file_availability_issues(
                                       ),
         devices: Optional[List[str]] = typer.Option(sys_config.config_content["emulators"]["default"], "--device",
                                                     "--d", help="Uses device to test accessibility issues"),
-        xbot: bool = typer.Option(False, "--scan", help="Uses Xbot to scan to generate screenshots."),
         uichecker: bool = typer.Option(False, "--ui", "--u", help="Uses UI Checker to generate accessibility "
                                                                   "report of UI in json format"),
-        # deer: bool = typer.Option(False, "--graph", "--g", help="Uses Deer to form transition graphs"),
-        deer: bool = typer.Option(False, "--screenshot", "--s", help="Uses OwlEye to generate screenshots of errors"),
         screenshot_issue: bool = typer.Option(False, "--screenshot_issue", "--s",
                                               help="Uses OwlEye to generate screenshots of errors"),
-        gcam: bool = typer.Option(False, "--gcam", "--gc",
-                                  help="Uses OwlEye to generate screenshots of errors"),
         complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
+                                                                  "OwlEye)"),
+        ui: bool = typer.Option(False, "--frontend", "--display_result", help="Uses all the tools(Xbot, UI checker, deer and "
                                                                   "OwlEye)")
 ):
     """
@@ -75,9 +72,13 @@ def detect_file_availability_issues(
 
     # check options
     os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
-    if not complete and not xbot and not uichecker and not deer and not screenshot_issue and not gcam and not complete:
-        typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
-        exit()
+    if not complete and not screenshot_issue and not complete:
+        if ui:
+            front_end_thread = threading.Thread(target=front_end_run)
+            front_end_thread.start()
+        else:
+            typer.secho("Please select at least one tool to detect.", fg=typer.colors.MAGENTA)
+            exit()
     # replace devices with their real names
     devices_names = []
     device_name_alias = {}
@@ -90,12 +91,15 @@ def detect_file_availability_issues(
             devices_names.append(device)
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
-
+    print(apks)
     for apk in apks:
+
+        if apk.startswith('.') or apk.startswith("DS.S"):
+            continue
 
         apk_output_folder = current_directory + "/output/" + apk[:-4]
         # set up emulators
-        if deer or screenshot_issue or complete or xbot:
+        if screenshot_issue or complete:
             android_studio_devices, current_dark_mode, current_font_size = set_up_devices(device_name_alias)
         else:
             current_font_size = sys_config.config_content["font_size"]
@@ -144,7 +148,7 @@ def detect_file_availability_issues(
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
             thread_list.append(ui_checker_thread)
 
-        if deer or screenshot_issue or complete:
+        if screenshot_issue or complete:
             deer_thread = threading.Thread(target=deer_thread_run,
                                            args=(apk, devices_names, device_name_alias, current_setting))
             thread_list.append(deer_thread)
