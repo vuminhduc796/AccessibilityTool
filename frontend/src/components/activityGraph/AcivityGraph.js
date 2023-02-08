@@ -98,7 +98,7 @@ const AcivityGraph = React.memo(()  => {
             if (nodeName.includes(activityName)) {
               var newNode = {
                 id: nodeName,
-                img: activityName + "/" + nodeName + ".png",
+                img: activityName + "/" + nodeName + ".jpg",
                 activity: activityName,
                 activityId: i,
                 nodeName: nodeName,
