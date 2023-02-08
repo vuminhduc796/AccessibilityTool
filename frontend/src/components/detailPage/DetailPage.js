@@ -64,7 +64,7 @@ const DetailPage = () => {
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Google Accessibility Scanner Report</h2>
         {issues ? <div> 
         <img src= {google_scanner_img} style= {{width: '15vw', paddingBottom:10}} alt = "google scanner img"/>
-        <pre style={{'textAlign': 'left', 'backgroundColor': 'white', width: '97%', height: '50vh'}}>{google_report}</pre>
+        <pre style={{'textAlign': 'left', 'backgroundColor': 'white', width: '97%'}}>{google_report}</pre>
         </div> : <p>No issues found</p>}
         <br />
         <h2 className="d-flex justify-content-between" style={{fontWeight: "bold"}}> Crash Record</h2>
