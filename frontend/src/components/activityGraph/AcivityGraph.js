@@ -158,7 +158,6 @@ const AcivityGraph = React.memo(()  => {
         } catch (error) {
           
         }
-        
 
         if(node.activity === currentNode.activity) {
           ctx.beginPath();
@@ -172,7 +171,6 @@ const AcivityGraph = React.memo(()  => {
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
-        var x=node.x;var y=node.y;
 
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
@@ -187,6 +185,10 @@ const AcivityGraph = React.memo(()  => {
           eye_img.src = require(`../../images/eye.png`);
           ctx.drawImage(eye_img, node.x-20, node.y-18, 50, 30);
         }
+
+        ctx.font = "10px Arial"
+        ctx.textAlign = "center";
+        ctx.fillText(node.activity, node.x, node.y+80);
         }}
 
         d3AlphaMin={0.01}
