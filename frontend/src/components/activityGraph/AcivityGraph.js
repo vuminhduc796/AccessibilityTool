@@ -176,7 +176,11 @@ const AcivityGraph = React.memo(()  => {
 
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
-        if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
+        if (node.source) {
+          var entry_img = new Image();
+          entry_img.src = require(`../../images/entry.png`)  
+          ctx.drawImage(entry_img, node.x-40, node.y-65, 40, 35)
+        }
 
         if (node.nodeName === currentNode.nodeName) {
           var eye_img = new Image();
