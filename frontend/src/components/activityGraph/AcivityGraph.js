@@ -130,6 +130,18 @@ const AcivityGraph = React.memo(()  => {
       }
     }
 
+    function getUniqueColor(n) {
+      const rgb = [0, 0, 0];
+  
+      for (let i = 0; i < 24; i++) {
+          rgb[i%3] <<= 1;
+          rgb[i%3] |= n & 0x01;
+          n >>= 1;
+      }
+  
+      return '#' + rgb.reduce((a, c) => (c > 0x0f ? c.toString(16) : '0' + c.toString(16)) + a, '');
+  }
+
   return (
     <div >
 <ForceGraph2D
@@ -156,7 +168,7 @@ const AcivityGraph = React.memo(()  => {
         }
         else{
           ctx.beginPath();
-          ctx.fillStyle = activityColors[node.activityId];
+          ctx.fillStyle = getUniqueColor(node.activityId);
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
