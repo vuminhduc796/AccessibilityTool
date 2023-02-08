@@ -142,7 +142,7 @@ def detect_file_availability_issues(
         # timer2.start()
 
         front_end_thread = threading.Thread(target=front_end_run)
-        thread_list.append(front_end_thread)
+        front_end_thread.start()
 
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
