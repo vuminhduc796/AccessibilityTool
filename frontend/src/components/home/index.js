@@ -78,7 +78,7 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {appNames.map((value) => <Dropdown.Item 
+                {appNames.map((value) => <Dropdown.Item key={value}
                     onClick={() => setCurrentConfig({...currentConfig,appName: value})}>
                     {value}</Dropdown.Item>)}
                 
@@ -92,9 +92,10 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {devices.map((value) => <Dropdown.Item 
+                {currentConfig.appName ? devices.filter((value) => configObject[currentConfig.appName][value] !== undefined)
+                .map((value) => <Dropdown.Item key={value}
                     onClick={() => setCurrentConfig({...currentConfig,device: value})}>
-                    {value}</Dropdown.Item>)}
+                    {value}</Dropdown.Item>) : ''}
                 
             </Dropdown.Menu>
             </Dropdown>
@@ -107,9 +108,10 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "20px"}} >
-                {modes.map((value) => <Dropdown.Item 
+            {currentConfig.appName && currentConfig.device ? modes.filter((value) => configObject[currentConfig.appName][currentConfig.device].includes(value) !== undefined)
+                .map((value) => <Dropdown.Item key={value}
                     onClick={() => setCurrentConfig({...currentConfig,mode: value})}>
-                    {value}</Dropdown.Item>)}
+                    {value}</Dropdown.Item>) : ''}
                 
             </Dropdown.Menu>
             </Dropdown>
@@ -129,7 +131,7 @@ export const Home = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{width:"100%", fontSize: "25px"}} >
-                {gData.nodes.map((node) => <Dropdown.Item 
+                {gData.nodes.map((node) => <Dropdown.Item key={node.nodeName}
                     onClick={() => setCurrentNode(node)}
                 
                 >{node.nodeName}</Dropdown.Item>)}

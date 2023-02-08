@@ -98,7 +98,7 @@ const AcivityGraph = React.memo(()  => {
             if (nodeName.includes(activityName)) {
               var newNode = {
                 id: nodeName,
-                img: activityName + "/" + nodeName + ".png",
+                img: activityName + "/" + nodeName + ".jpg",
                 activity: activityName,
                 activityId: i,
                 nodeName: nodeName,
@@ -130,6 +130,18 @@ const AcivityGraph = React.memo(()  => {
       }
     }
 
+    function getUniqueColor(n) {
+      const rgb = [0, 0, 0];
+  
+      for (let i = 0; i < 24; i++) {
+          rgb[i%3] <<= 1;
+          rgb[i%3] |= n & 0x01;
+          n >>= 1;
+      }
+  
+      return '#' + rgb.reduce((a, c) => (c > 0x0f ? c.toString(16) : '0' + c.toString(16)) + a, '');
+  }
+
   return (
     <div >
 <ForceGraph2D
@@ -146,7 +158,6 @@ const AcivityGraph = React.memo(()  => {
         } catch (error) {
           
         }
-        
 
         if(node.activity === currentNode.activity) {
           ctx.beginPath();
@@ -156,17 +167,28 @@ const AcivityGraph = React.memo(()  => {
         }
         else{
           ctx.beginPath();
-          ctx.fillStyle = activityColors[node.activityId];
+          ctx.fillStyle = getUniqueColor(node.activityId);
           ctx.fillRect(node.x - 34, node.y - 69, 79, 139);
           ctx.stroke();
         }
-        var x=node.x;var y=node.y;
-
 
         ctx.drawImage(img, node.x - 32, node.y - 67, 75, 135);
 
-        if (node.source) {drawArrow(ctx, x-33, y-80, x-30, y-70, 3, "red");}
+        if (node.source) {
+          var entry_img = new Image();
+          entry_img.src = require(`../../images/entry.png`)  
+          ctx.drawImage(entry_img, node.x-40, node.y-65, 40, 35)
+        }
 
+        if (node.nodeName === currentNode.nodeName) {
+          var eye_img = new Image();
+          eye_img.src = require(`../../images/eye.png`);
+          ctx.drawImage(eye_img, node.x-20, node.y-18, 50, 30);
+        }
+
+        ctx.font = "10px Arial"
+        ctx.textAlign = "center";
+        ctx.fillText(node.activity, node.x, node.y+80);
         }}
 
         d3AlphaMin={0.01}

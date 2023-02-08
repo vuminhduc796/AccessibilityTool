@@ -3,6 +3,8 @@ import shutil
 import re
 import subprocess
 import time
+from PIL import Image
+from pathlib import Path
 
 pressLocations = {
     "emulator-5554": {
@@ -118,6 +120,11 @@ def scan_and_return(deviceId, activity, output_dir, device, numberedActName):
     # os.system('adb shell input keyevent 3')
     # time.sleep(1)
 
+def compress_image(source_path, dest_path):
+    with Image.open(source_path) as img:
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        img.save(dest_path, "JPEG", optimize=True, quality=10)
 
 def collect_results(activity, output_dir, device, numberedActName):
 
@@ -145,8 +152,11 @@ def collect_results(activity, output_dir, device, numberedActName):
         os.makedirs(screenshot_path_tmp)
     for img in os.listdir(screenshot_path_tmp):
         if not img.endswith('thumbnail.png'):
+            compress_image(Path('%s/%s' % (screenshot_path_tmp, img)),
+                           Path('%s/%s.jpg' % (screenshot_path_act, numberedActName)))
             cmd = 'mv "%s/%s" "%s/%s.png"'%(screenshot_path_tmp,img,screenshot_path_act,numberedActName)
             os.system(cmd)
+            print(Path('%s/%s.png'%(screenshot_path_act, numberedActName)))
     clean_tmp_folder(tmp_folder)
     return isHavingResult
 
