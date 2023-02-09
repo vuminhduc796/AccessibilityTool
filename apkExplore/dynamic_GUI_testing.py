@@ -15,6 +15,7 @@ import time
 
 from owleyes.cnn_cam3 import owleyes_scan
 
+MAX_DEPTH = 5
 
 def check_and_create_dir(dir_name):
     if not os.path.exists(dir_name):
@@ -219,6 +220,7 @@ def match_crash_log(output_dir):
 def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_json, atg_save_dir, current_graph,
                          login_options,
                          log_save_path, test_time=1200, reinstall=False):
+    global MAX_DEPTH
     visited_rate = []
     visited_activities = []
     # connect to device and install app
@@ -272,11 +274,14 @@ def unit_dynamic_testing(deviceId, apk_path, atg_json, output_dir, deeplinks_jso
                     "activity": d.get_top_activity_name(),
                     "action": "root",
                 }
-                start_exploration(d.get_top_activity_name(), d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
+                MAX_DEPTH = 10
+                start_exploration(d.get_top_activity_name(), d, current_graph, output_dir, "", "", t_end, targetApp, 0, history, targetApp.get_package_name())
 
             print("Exploration: total number of activities found: " + str(len(activities)))
             for activity in activities:
                 numberOfActivities += 1
+
+                MAX_DEPTH = 5
                 explore_activity(activities, activity, current_graph, d, numberOfActivities, numberOfSuccessful,
                                  output_dir, targetApp)
 
@@ -316,45 +321,43 @@ def explore_activity(activities, activity, current_graph, d, numberOfActivities,
         time.sleep(2)
         try:
             d.send_intent(intent=intent.get_cmd())
-        except subprocess.CalledProcessError as e:
-            print("Ping stdout output:\n", e.output)
-        time.sleep(2)
+            time.sleep(10)
+            # if login_options['hasLogin']:
+            #     print("login")
+            #     email_password_login(d, login_options)
+            #
+            # if login_options['facebookLogin']:
+            #     login_with_facebook(d, login_options)
 
-        # if login_options['hasLogin']:
-        #     print("login")
-        #     email_password_login(d, login_options)
-        #
-        # if login_options['facebookLogin']:
-        #     login_with_facebook(d, login_options)
+            currentScreen = d.get_top_activity_name().split("/")[-1]
 
-        currentScreen = d.get_top_activity_name().split("/")[-1]
-        if True:
             print('Exploration: currentScreen {} in activity {}'.format(currentScreen, activity))
             t_end = time.time() + 300
             history = {
                 "activity": currentScreen,
                 "action": "root",
             }
-            start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0, history)
+            start_exploration(activity, d, current_graph, output_dir, "", "", t_end, targetApp, 0, history,
+                              targetApp.get_package_name() )
             numberOfSuccessful += 1
-            time.sleep(2)
-            # d.go_home()
-            break
-        else:
-            print('Exploration: currentScreen {} not in activity {}'.format(currentScreen, activity))
-        d.go_home()
-        time.sleep(1)
-        d.start_app(targetApp)
-        time.sleep(1)
+            time.sleep(1)
+
+
+        except subprocess.CalledProcessError as e:
+            print("Ping stdout output:\n", e.output)
+        time.sleep(2)
+
+
+
     print(
         "Exploration: total: " + numberOfActivities.__str__() + ", success: " + numberOfSuccessful.__str__())
 
 
-MAX_DEPTH = 5
+
 
 
 def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicked_btn, t_end, targetApp, depth,
-                      history):
+                      history, current_package):
     with open(output_dir + '/crashlogTemp.txt', 'w') as f:
 
         proc = subprocess.Popen(['adb', '-s', d.serial, 'logcat', '--buffer=crash'], stdout=f)
@@ -374,9 +377,19 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
     currentActivity = d.get_top_activity_name().split("/")[-1]
     while currentActivity[0] == '.':
         currentActivity = currentActivity[1:]
+
     if currentActivity in "com.android.launcher3/.Launcher":
         print("Exploration: App exited -- restart")
         d.start_app(targetApp)
+    elif current_package  not in d.get_top_activity_name().split("/")[0]:
+        print(d.get_top_activity_name().split("/")[0] + " / " + current_package)
+
+        d.key_press('BACK')
+        print("Exploration: Outside the app - GO BACK")
+        d.start_app(targetApp)
+        time.sleep(1)
+        temp_views = d.get_views()
+        currentActivity = d.get_top_activity_name().split("/")[-1]
 
     currentScreenHash, views, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
 
@@ -445,7 +458,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
                     "parent": history,
                 }
                 start_exploration(activity, d, graph, output_dir, screen.nodeHash, "Scroll", t_end, targetApp,
-                                  depth, newHistory)
+                                  depth, newHistory, current_package)
 
         d.key_press('BACK')
         time.sleep(1)
@@ -521,7 +534,7 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
             "parent": history,
         }
         isContinue = start_exploration(activity, d, graph, output_dir, screen.nodeHash, click_view, t_end, targetApp,
-                                       depth, newHistory)
+                                       depth, newHistory, current_package)
 
     return True
 
@@ -597,7 +610,8 @@ def dynamic_GUI_testing(emulator, app_name, outmost_directory, login_options, an
                          login_options,
                          log,
                          reinstall=False)
-
+    print("Exploration completed for " + str(app_name))
+    return
 
 if __name__ == '__main__':
     outmost_directory = os.getcwd().replace('/apkExplore', '')
