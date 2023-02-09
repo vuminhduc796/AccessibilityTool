@@ -92,6 +92,10 @@ def detect_file_availability_issues(
 
     apks = [f for f in os.listdir(apk_path) if isfile(join(current_directory + "/input", f))]
     print(apks)
+
+    front_end_thread = threading.Thread(target=front_end_run)
+    front_end_thread.start()
+
     for apk in apks:
 
         if apk.startswith('.') or apk.startswith("DS.S"):
@@ -141,8 +145,7 @@ def detect_file_availability_issues(
         # timer2 = RepeatTimer(10, owleyes_thread_run,[devices_names, device_name_alias, apk_output_folder, current_setting])
         # timer2.start()
 
-        front_end_thread = threading.Thread(target=front_end_run)
-        front_end_thread.start()
+
 
         if uichecker or complete:
             ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))

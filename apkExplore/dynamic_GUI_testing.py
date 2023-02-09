@@ -390,6 +390,8 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
         time.sleep(1)
         temp_views = d.get_views()
         currentActivity = d.get_top_activity_name().split("/")[-1]
+        while currentActivity[0] == '.':
+            currentActivity = currentActivity[1:]
 
     currentScreenHash, views, clickable_views, scrollable_views = hash_screen(currentActivity, temp_views)
 
