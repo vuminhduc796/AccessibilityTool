@@ -118,16 +118,15 @@ const AcivityGraph = React.memo(()  => {
     }
     const [width, height] = useWindowSize();
 
-    const tickFunc = (ref) => {
-      try {
-        ref.d3Force('center').strength(0)
-        ref.d3Force('charge').strength(-60)
-        //ref.d3Force('link').distance(400)
-        ref.d3Force('link').strength(-0.01)
-      }
-      catch(err) {
+    let ref = graphRef.current
+    try {
+      ref.d3Force('center').strength(0)
+      ref.d3Force('charge').strength(-60)
+      //ref.d3Force('link').distance(400)
+      ref.d3Force('link').strength(-0.01)
+    }
+    catch(err) {
 
-      }
     }
 
     function getUniqueColor(n) {
@@ -192,7 +191,6 @@ const AcivityGraph = React.memo(()  => {
         }}
 
         d3AlphaMin={0.01}
-        onEngineTick={tickFunc(graphRef.current)}
         linkDirectionalArrowLength={20}
         linkDirectionalArrowRelPos={0.5}
         linkDirectionalArrowColor={() => "black"}
