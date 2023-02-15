@@ -136,7 +136,7 @@ const AcivityGraph = React.memo(()  => {
       ref.d3Force('charge').strength(-100)
       // ref.d3Force('link').distance(400)
       ref.d3Force('link').strength(0.0001)
-      ref.zoom(0.8)
+      ref.zoom(1.1)
     }
     catch(err) {
       // console.log(err)
