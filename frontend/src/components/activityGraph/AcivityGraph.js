@@ -22,6 +22,7 @@ const AcivityGraph = React.memo(()  => {
     const [cacheData, setCacheData] =  useState({});
     const [cacheConfigs, setCacheConfigs] =  useState({});
     const [directory, setDirectory] =  useState("");
+    const [loaded, setLoaded] = useState(false)
 
     const graphRef = useRef();
 
@@ -32,6 +33,22 @@ const AcivityGraph = React.memo(()  => {
        return null;
       }
     };
+
+    let ref = graphRef.current
+
+    if (!loaded) {
+      try {
+        ref.d3Force('charge').strength(-150)
+        //ref.d3Force('link').distance(400)
+        ref.d3Force('link').strength(0.0001)
+        ref.zoom(1.1)
+        setLoaded(true)
+      }
+      catch(err) {
+        // console.log(err)
+      } 
+    }
+    
 
     useEffect(() => {
       
@@ -97,6 +114,8 @@ const AcivityGraph = React.memo(()  => {
           for (var j = 0; j < dataConfig.config.nodes.length; j++) {
             var nodeName = dataConfig.config.nodes[j];
             if (nodeName.includes(activityName)) {  
+              x += 15;
+              y += 10;
               var newNode = {
                 id: nodeName,
                 img: activityName + "/" + nodeName + ".jpg",
@@ -129,18 +148,6 @@ const AcivityGraph = React.memo(()  => {
     const [width, height] = useWindowSize();
     const graphHeight = height * 0.92;
     const graphWidth = width/1.7;
-
-    let ref = graphRef.current
-
-    try {
-      ref.d3Force('charge').strength(-150)
-      //ref.d3Force('link').distance(400)
-      ref.d3Force('link').strength(0.0001)
-      ref.zoom(1.1)
-    }
-    catch(err) {
-      // console.log(err)
-    }
 
     function getUniqueColor(n) {
       const rgb = [0, 0, 0];
