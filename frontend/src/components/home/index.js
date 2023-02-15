@@ -55,10 +55,13 @@ export const Home = () => {
           device: devices[0]
       })
 
+      const handleRefresh = () => {
+        setCurrentConfig({...currentConfig})
+      }
+
     return(
         <AppContext.Provider value = {{
             "currentNode": [nodeData, setCurrentNode], 
-            
             "gData": [gData, setData],
             "configs": [configs, setConfigs],
             "currentConfig": [currentConfig, setCurrentConfig]
@@ -116,7 +119,7 @@ export const Home = () => {
             </Dropdown.Menu>
             </Dropdown>
 
-            <Button style={{width:"10%", fontSize: "20px"}} variant="success"> Refresh</Button>    
+            <Button style={{width:"10%", fontSize: "20px"}} variant="success" onClick={handleRefresh}> Refresh</Button>    
             </Row>
      
         </div>
