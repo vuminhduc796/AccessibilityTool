@@ -1,34 +1,55 @@
-# Accessibility Tool CLI
+# Android App Usability & Accessibility Testing Tool 
+Accessibility Tool is an automated Android testing tool that is integrated multiple modules to report usability and accessibility issues. The main objective is to automatically detect issues of given APKs on multiple devices with multiple device settings.
 
-## Usage
 
-![image-20220701214621933](./images/toolhelp.png)
+https://user-images.githubusercontent.com/68264720/219286070-d0cb3874-834a-48c7-be6f-c7936b672f21.mp4
+
+
+👨🏻‍💻 Following features have been provided by our tool:
+
+- Generating screenshots and transition graphs for testing application.
+- Generating accessibility reports for each screen in the application via Google Accessibility Scanner.
+- Reporting bug and crash logs.
+- Detecting GUI visual defects via Owleyes.
+
+ℹ️ Please check out our wiki page for more information.
+
+## Installations
+We have included the full instruction in our Wiki page.
+
+1. Clone the repo into your local machine ✅
+2. Set up your local configurations in `config.yml` ✅
+3. Install all required packages `conda create --name <env> --file requirement.txt` ✅
+4. Set up the emulators ✅
+5. Add your APKs into the `./input` folder ✅
+6. Start a complete scan with `python accessibility_tool.py detect --d phone-vertical --all` ✅
+
+## Usages
+### Help page
 
 ```bash
 # help
 python accessibility_tool.py --help
 ```
 
-Three commands are available
+![image-20220701214621933](./images/toolhelp.png)
 
-- **config**
-- **detect**
-- **replay**
 
-## Detect Accessibility issues
+### Issue Detection
+
 
 ```bash
 # help
 python accessibility_tool.py detect --help
-# detect
-python accessibility_tool.py detect --intput ./input --complete
-python accessibility_tool.py detect --device emulator-5554 --xbot
-python accessibility_tool.py detect --intput ./input --device emulator-5554 --xbot --uichecker
-python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot --uichecker
+
+# detection example
+python accessibility_tool.py detect --input ./input --all
+python accessibility_tool.py detect --device emulator-5554 --all
+python accessibility_tool.py detect --input ./input --device emulator-5554 --xbot
+python accessibility_tool.py detect --d emulator-5554 --d phone-vertical --xbot
 ```
 
 ![image-20220701224352948](./images/detecthelp.png)
-
 
 
 **--input**: the directory where apps are
@@ -85,22 +106,8 @@ You can manually modify **config.yml**.
 
 ![img.png](images/config.png)
 =======
-## TODO: Replay Accessibility issues
 
-```bash
-python accessibility_tool.py replay --help
-```
+# Coming Soon 🚀
 
-**--video --v** : video file name
-
-**--utg --u**: GUI transition graph in json format depicting the screenshots transitions
-
-**--artifact -a**: screenshots in UTG
-
-# Other Issues
-
-- Hard-coded locations for tapping
-- UI Automator used is not compatible with android arm64 architecture
-  - currently only for linux_armv7
-  - could improve the program to make it compatible with different architecture devices
-
+- Replay bugs on emulators.
+- Input generation techniques.
