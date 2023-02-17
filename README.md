@@ -20,7 +20,7 @@ We have included the full instruction in our Wiki page.
 1. Clone the repo into your local machine ✅
 2. Set up your local configurations in `config.yml` ✅
 3. Install all required packages `conda create --name <env> --file requirement.txt` ✅
-4. Set up the emulators ✅
+4. Make sure all [dependencies](https://github.com/vuminhduc796/AccessibilityTool/wiki/Dependencies) are met and [set up the emulators](https://github.com/vuminhduc796/AccessibilityTool/wiki/Emulators-Set-Up) ✅
 5. Add your APKs into the `./input` folder ✅
 6. Start a complete scan with `python accessibility_tool.py detect --d phone-vertical --all` ✅
 
@@ -114,7 +114,8 @@ Commands:
 ```
 \_**config/config.yml** [REQUIRED]\_
 
-You need to modify **config.yml**.
+You need to modify **config.yml**. 
+[Visit our Wiki page for more information](https://github.com/vuminhduc796/AccessibilityTool/wiki/Config-File).
 
 ```
 aapt: /Users/username/Library/Android/sdk/build-tools/30.0.3/aapt
@@ -216,6 +217,8 @@ python accessibility_tool.py config auto-login --setting 123456:123456 # default
 python accessibility_tool.py config auto-login --delete
 python accessibility_tool.py config auto-login --d
 ```
+# Feedback 
+Has any feedback? Please reach out to us at vuminhduc796@gmail.com.
 
 # Coming Soon 🚀
 
