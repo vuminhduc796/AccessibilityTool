@@ -22,6 +22,7 @@ const AcivityGraph = React.memo(()  => {
     const [cacheData, setCacheData] =  useState({});
     const [cacheConfigs, setCacheConfigs] =  useState({});
     const [directory, setDirectory] =  useState("");
+    const [loaded, setLoaded] = useState(false)
 
     const graphRef = useRef();
 
@@ -32,6 +33,22 @@ const AcivityGraph = React.memo(()  => {
        return null;
       }
     };
+
+    let ref = graphRef.current
+
+    if (!loaded) {
+      try {
+        ref.d3Force('charge').strength(-150)
+        //ref.d3Force('link').distance(400)
+        ref.d3Force('link').strength(0.0001)
+        ref.zoom(1.1)
+        setLoaded(true)
+      }
+      catch(err) {
+        // console.log(err)
+      } 
+    }
+    
 
     useEffect(() => {
       
@@ -87,15 +104,18 @@ const AcivityGraph = React.memo(()  => {
           sources.push(link.destination)
         }
       }
-
-      // set data for node
         
+      // set data for node
         var currentID = 0;
+        let x=-graphWidth/2, y=0
         for (var i = 0; i < dataConfig.config.activities.length; i++){
           var activityName = dataConfig.config.activities[i];
+
           for (var j = 0; j < dataConfig.config.nodes.length; j++) {
             var nodeName = dataConfig.config.nodes[j];
-            if (nodeName.includes(activityName)) {
+            if (nodeName.includes(activityName)) {  
+              x += 15;
+              y += 10;
               var newNode = {
                 id: nodeName,
                 img: activityName + "/" + nodeName + ".jpg",
@@ -103,7 +123,9 @@ const AcivityGraph = React.memo(()  => {
                 activityId: i,
                 nodeName: nodeName,
                 config: folderPath,
-                source: sources.includes(nodeName)
+                source: sources.includes(nodeName),
+                x: x,
+                y: y
               };
               if (currentID === 0) {
                 setNode(newNode);
@@ -113,22 +135,19 @@ const AcivityGraph = React.memo(()  => {
               currentID ++;
             }
           }
+
+          x += 250;
+          if (x > graphWidth/2){
+            x = -graphWidth/2;
+            y += 300;
+          }
         }
         setData(newData);
     }
+
     const [width, height] = useWindowSize();
-
-    const tickFunc = (ref) => {
-      try {
-        ref.d3Force('center').strength(0)
-        ref.d3Force('charge').strength(-60)
-        //ref.d3Force('link').distance(400)
-        ref.d3Force('link').strength(-0.01)
-      }
-      catch(err) {
-
-      }
-    }
+    const graphHeight = height * 0.92;
+    const graphWidth = width/1.7;
 
     function getUniqueColor(n) {
       const rgb = [0, 0, 0];
@@ -152,7 +171,6 @@ const AcivityGraph = React.memo(()  => {
       
       nodeCanvasObject={(node, ctx, globalScale) => { 
         var img = new Image(); 
-        const activityColors = ["red", "green", "blue", "purple", "orange", "pink"]
         try {
           img.src = require( `../../data/${directory}activity_screenshots/${node.img}`)
         } catch (error) {
@@ -190,16 +208,15 @@ const AcivityGraph = React.memo(()  => {
         ctx.textAlign = "center";
         ctx.fillText(node.activity, node.x, node.y+80);
         }}
-
+        
         d3AlphaMin={0.01}
-        onEngineTick={tickFunc(graphRef.current)}
         linkDirectionalArrowLength={20}
         linkDirectionalArrowRelPos={0.5}
         linkDirectionalArrowColor={() => "black"}
         linkCurvature={0.25} 
         linkWidth={5}
-        height= {height * 0.92}
-        width= {width/1.7} 
+        height= {graphHeight}
+        width= {graphWidth} 
         onNodeClick={ node => {setNode(node)}}
         onNodeDragEnd={node => {
           node.fx = node.x;
@@ -216,43 +233,5 @@ const AcivityGraph = React.memo(()  => {
    
   )
 });
-
-function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
-  //variables to be used when creating the arrow
-  var headlen = 2;
-  var angle = Math.atan2(toy-fromy,tox-fromx);
-
-  ctx.save();
-  ctx.strokeStyle = color;
-
-  //starting path of the arrow from the start square to the end square
-  //and drawing the stroke
-  ctx.beginPath();
-  ctx.moveTo(fromx, fromy);
-  ctx.lineTo(tox, toy);
-  ctx.lineWidth = arrowWidth;
-  ctx.stroke();
-
-  //starting a new path from the head of the arrow to one of the sides of
-  //the point
-  ctx.beginPath();
-  ctx.moveTo(tox, toy);
-  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
-             toy-headlen*Math.sin(angle-Math.PI/7));
-
-  //path from the side point of the arrow, to the other side point
-  ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),
-             toy-headlen*Math.sin(angle+Math.PI/7));
-
-  //path from the side point back to the tip of the arrow, and then
-  //again to the opposite side point
-  ctx.lineTo(tox, toy);
-  ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),
-             toy-headlen*Math.sin(angle-Math.PI/7));
-
-  //draws the paths created above
-  ctx.stroke();
-  ctx.restore();
-}
 
 export default AcivityGraph
