@@ -57,8 +57,6 @@ def detect_file_availability_issues(
                                       ),
         devices: Optional[List[str]] = typer.Option(sys_config.config_content["emulators"]["default"], "--device",
                                                     "--d", help="Uses device to test accessibility issues"),
-        uichecker: bool = typer.Option(False, "--ui", "--u", help="Uses UI Checker to generate accessibility "
-                                                                  "report of UI in json format"),
         screenshot_issue: bool = typer.Option(False, "--screenshot_issue", "--s",
                                               help="Uses OwlEye to generate screenshots of errors"),
         complete: bool = typer.Option(False, "--all", "--a", help="Uses all the tools(Xbot, UI checker, deer and "
@@ -145,11 +143,6 @@ def detect_file_availability_issues(
         # timer2 = RepeatTimer(10, owleyes_thread_run,[devices_names, device_name_alias, apk_output_folder, current_setting])
         # timer2.start()
 
-
-
-        if uichecker or complete:
-            ui_checker_thread = threading.Thread(target=ui_checker_thread_run, args=(apk_path, apk))
-            thread_list.append(ui_checker_thread)
 
         if screenshot_issue or complete:
             deer_thread = threading.Thread(target=deer_thread_run,

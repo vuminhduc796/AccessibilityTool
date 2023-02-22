@@ -508,12 +508,11 @@ def start_exploration(activity, d, graph, output_dir, previous_view_hash, clicke
                     print("Exploration: App crashed")
                     # save the temp log to crashlog with time and action trace
                     crashtimeStr = line.split("  ")[0]
-                    crashtime = datetime.strptime(crashtimeStr, "%m-%d %H:%M:%S.%f")
                     # read crashRecords
                     with open(output_dir + '/crash_records.json', 'r') as f:
                         crashRecords = json.load(f)
                     crashRecords[crashtimeStr] = {
-                        "crash_time": str(crashtime),
+                        "crash_time": crashtimeStr,
                         "crash_log": crashlog,
                         "action_trace": history,
                     }
