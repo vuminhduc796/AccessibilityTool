@@ -41,7 +41,7 @@ const AcivityGraph = React.memo(()  => {
         ref.d3Force('charge').strength(-150)
         //ref.d3Force('link').distance(400)
         ref.d3Force('link').strength(0.0001)
-        ref.zoom(1.1)
+        ref.zoom(0.5)
         setLoaded(true)
       }
       catch(err) {
@@ -108,14 +108,16 @@ const AcivityGraph = React.memo(()  => {
       // set data for node
         var currentID = 0;
         let x=-graphWidth/2, y=0
+        let max = 20;
+        let min = -20
         for (var i = 0; i < dataConfig.config.activities.length; i++){
           var activityName = dataConfig.config.activities[i];
 
           for (var j = 0; j < dataConfig.config.nodes.length; j++) {
             var nodeName = dataConfig.config.nodes[j];
             if (nodeName.includes(activityName)) {  
-              x += 15;
-              y += 10;
+              x += Math.floor(Math.random() * (max - min + 1)) + min;
+              y += Math.floor(Math.random() * (max - min + 1)) + min;
               var newNode = {
                 id: nodeName,
                 img: activityName + "/" + nodeName + ".jpg",
@@ -136,10 +138,10 @@ const AcivityGraph = React.memo(()  => {
             }
           }
 
-          x += 250;
-          if (x > graphWidth/2){
+          x += 700;
+          if (x > graphWidth){
             x = -graphWidth/2;
-            y += 300;
+            y += 700;
           }
         }
         setData(newData);
